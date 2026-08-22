@@ -324,11 +324,15 @@ export function _resolveApiStyle(model, config) {
  * Builds the request payload for the Interactions API (ai.interactions.create).
  * Uses Content_2 blocks for input and TextResponseFormat for structured output.
  *
- * SDK-verified shapes:
+ * SDK-verified shapes (@google/genai 2.18.0):
  *   input: Array<Content_2> where Content_2 = TextContent | ImageContent
  *   TextContent:  { type: "text", text: string }
  *   ImageContent: { type: "image", data: base64String, mime_type: string }
  *   response_format: { type: "text", mime_type: "application/json", schema: {...} }
+ *   generation_config.thinking_level: "low" | "medium" | "high" (default "medium")
+ *
+ * Gemini 3.x rejects deprecated sampling parameters (temperature, top_p,
+ * top_k, candidate_count) and the legacy thinking_budget; none are sent.
  *
  * @param {import("./extraction-contract.mjs").ExtractionRequest} request
  * @param {string} model
@@ -354,6 +358,12 @@ export function _buildInteractionsRequest(request, model) {
       type: "text",
       mime_type: "application/json",
       schema: EXTRACTION_RESPONSE_SCHEMA_LOWER,
+    },
+    // Gemini 3.x: thinking_level replaces thinking_budget; default is medium.
+    // Deprecated sampling parameters (temperature/top_p/top_k/candidate_count)
+    // are intentionally never sent.
+    generation_config: {
+      thinking_level: "medium",
     },
     store: false,
   };
@@ -713,6 +723,10 @@ export function createProviderCallFunction(client) {
  *   1. GEMINI_MODEL environment variable
  *   2. provider-capabilities.json approvedModelIdentifier
  *   3. DEFAULT_GEMINI_MODEL fallback
+ *
+ * Note: config.json pinnedModelIdentifier is intentionally NOT consulted
+ * here. Selecting the pinned model (gemini-3.7-flash) requires an explicit
+ * GEMINI_MODEL env override, which keeps the approved default unchanged.
  * @returns {string}
  */
 function _resolveModel() {
@@ -755,9 +769,10 @@ async function _tryAutoCreateClient() {
         return { text: response.text || "" };
       },
       async interactionsCreate(interactionsReq) {
-        const { model, input, response_format, store } = interactionsReq;
+        const { model, input, response_format, generation_config, store } = interactionsReq;
         const params = { model, input };
         if (response_format) params.response_format = response_format;
+        if (generation_config) params.generation_config = generation_config;
         if (store !== undefined) params.store = store;
         const interaction = await ai.interactions.create(params);
         return { output_text: interaction.output_text || "" };

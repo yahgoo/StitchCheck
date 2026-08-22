@@ -25,6 +25,13 @@ export interface ExtractionResult {
   validationMessages: string[];
   requiresUserConfirmation: boolean;
   syntheticDemo: boolean;
+  // Provenance fields for evidence-aware labeling
+  evidenceSource?: 'gemini-live' | 'gemini-offline' | 'local-fallback' | 'local-fixture';
+  provider?: string;
+  executed?: boolean;
+  fallbackUsed?: boolean;
+  validationOutcome?: 'valid' | 'invalid' | 'partial' | 'unknown';
+  provenanceMode?: 'fictional-local' | 'live-evidence' | 'offline-replay';
 }
 
 export interface RiskResult {
@@ -41,6 +48,8 @@ export interface RiskResult {
   errorMessage: string | null;
   // Evidence tracking fields
   evidenceSource?: 'nosana-evidence' | 'local-fallback';
+  provider?: string;
+  executed?: boolean;
   evidenceLabel?: string;
   simulationCount?: number;
   assumptions?: string[];
@@ -69,6 +78,10 @@ export interface SearchResult {
   errorCode: string | null;
   errorMessage: string | null;
   fallbackUsed: boolean;
+  // Provenance fields for evidence-aware labeling
+  evidenceSource?: 'atlas-sandbox' | 'atlas-production' | 'atlas-offline' | 'local-fixture' | 'local-fallback';
+  provider?: string;
+  executed?: boolean;
 }
 
 export interface ComparisonOriginal {

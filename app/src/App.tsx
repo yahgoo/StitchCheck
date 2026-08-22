@@ -137,7 +137,7 @@ export default function App() {
     <div className="sc-app">
       <header className="sc-header">
         <h1>StitchCheck</h1>
-        <span className="sc-header__badge">Synthetic Demo — No Live Services</span>
+        <span className="sc-header__badge">Fictional Demo — Live Providers Where Labelled</span>
       </header>
 
       <NarrationBar
@@ -206,7 +206,7 @@ export default function App() {
 
             <StatusBanner
               type="success"
-              message="Itinerary confirmed. No external service call was made. Downstream panels are now active with local synthetic placeholder data."
+              message="Itinerary confirmed. No external service call was made. Downstream panels are now active with local fixture data."
             />
 
             <div className="sc-panels-grid">
@@ -239,8 +239,8 @@ export default function App() {
 
       <footer className="sc-footer">
         <p>
-          StitchCheck Synthetic Demo · No external calls · No booking, payment,
-          or order created · All data is fictional and local
+          StitchCheck Fictional Demo · No booking, payment,
+          or order created · Fictional itinerary · Live providers where labelled
         </p>
       </footer>
     </div>

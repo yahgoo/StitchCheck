@@ -27,9 +27,9 @@ Install **only** the following inside `app/`:
 
 These facts are established and must not be altered or contradicted by the UI:
 
-- GEM-01 passed only as: `OpenRouter temporary path — not direct Gemini validation`
-- Direct Gemini remains unexecuted.
-- Nosana and Atlas remain unexecuted.
+- GEM-01 passed as: `OpenRouter temporary path — not direct Gemini validation` (historical). Direct Gemini 3.7 live extraction was subsequently verified via the Interactions API.
+- Direct Gemini 3.7 live extraction succeeded; schema-valid, no fallback. The browser walkthrough uses a local fixture.
+- Nosana workload validated offline; live execution was not verified. Atlas Sandbox Search/Verify was verified read-only.
 - Local risk and alternatives data are synthetic placeholders, not service evidence.
 - The user must edit/review and explicitly confirm itinerary data before local risk or alternatives panels unlock.
 - No booking, payment, verification, ticket, reservation, order, or write action may exist in the application.

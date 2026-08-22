@@ -17,16 +17,16 @@ Four cards may appear in the status display area. Each card has a fixed label,
 visual state, and evidence footnote. The labels below are **exact strings** —
 do not paraphrase.
 
-### Card 1 — LIVE: OpenRouter Gemini Extraction
+### Card 1 — Gemini Extraction
 
 | Field | Value |
 |---|---|
-| **Badge** | `LIVE` |
-| **Title** | `OpenRouter Gemini extraction` |
-| **Evidence label** | `OpenRouter temporary path — not direct Gemini validation` |
-| **Visual state** | Green badge, solid border. |
+| **Badge** | `LOCAL FIXTURE` |
+| **Title** | `Fictional itinerary — local demo fixture` |
+| **Evidence label** | `Fictional itinerary — local demo fixture` |
+| **Visual state** | Grey badge, dashed border. |
 | **When shown** | Segment 2 (0:18–0:36) while GEM-01 extraction result is displayed. |
-| **Footnote** | `GEM-01 executed via OpenRouter temporary path. Direct Gemini remains unexecuted.` |
+| **Footnote** | `Browser walkthrough uses fictional local fixture. Direct Gemini 3.7 live extraction was verified separately.` |
 
 ### Card 2 — LIVE SEARCH: Atlas Production Data
 
@@ -114,12 +114,12 @@ tooltip, console overlay, or screen capture during the live demo.
 | Segment | Time | Cards visible |
 |---|---|---|
 | 1 — The Problem | 0:00–0:18 | None (safety notice and header badge only). |
-| 2 — Extraction | 0:18–0:36 | Card 1 (`LIVE — OpenRouter Gemini extraction`). |
+| 2 — Extraction | 0:18–0:36 | Card 1 (`LOCAL FIXTURE — Fictional itinerary — local demo fixture`). |
 | 3 — Human Correction | 0:36–0:52 | Card 1 (remains visible). |
 | 4 — Confirm Itinerary | 0:52–1:06 | Card 1 (fades after segment transition). |
 | 5 — Risk Panel | 1:06–1:22 | Card 3 (`BLOCKED — Nosana`). |
 | 6 — Alternatives | 1:22–1:40 | Card 4 (`LOCAL PLACEHOLDER`) and optionally Card 2 (`LIVE SEARCH — Atlas production data`). |
-| 7 — Close | 1:40–2:00 | All cards collapse into a single summary strip: `LIVE: OpenRouter · BLOCKED: Nosana · LOCAL PLACEHOLDER: Atlas fixtures · LIVE SEARCH: Atlas (reference-only)`. |
+| 7 — Close | 1:40–2:00 | All cards collapse into a single summary strip: `LOCAL FIXTURE: Gemini · LOCAL FALLBACK: Nosana · LOCAL FIXTURE: Atlas · Live providers verified separately` |
 
 ---
 

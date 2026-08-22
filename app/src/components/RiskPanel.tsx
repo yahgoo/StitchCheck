@@ -1,4 +1,4 @@
-import { LABELS, DISABLED_MESSAGE } from '../data/labels';
+import { LABELS, DISABLED_MESSAGE, NOSANA_UI_LABELS } from '../data/labels';
 import type { RiskResult, RiskScenario } from '../data/types';
 
 interface Props {
@@ -40,13 +40,18 @@ export function RiskPanel({ enabled, riskResult, scenario, onScenarioChange }: P
 
   // Determine evidence source label
   const isNosanaEvidence = riskResult.evidenceSource === 'nosana-evidence';
+  const isNosanaLive = isNosanaEvidence && !riskResult.fallbackUsed;
   const isLocalFallback = riskResult.evidenceSource === 'local-fallback' || riskResult.fallbackUsed;
-  const sourceLabel = isNosanaEvidence
-    ? LABELS.nosanaRiskEvidence
+  const sourceLabel = isNosanaLive
+    ? NOSANA_UI_LABELS.liveEvidence
+    : isNosanaEvidence
+    ? NOSANA_UI_LABELS.offlineValidated
     : isLocalFallback
-    ? LABELS.nosanaRiskFallback
-    : LABELS.nosanaRisk;
-  const sourceLabelClass = isNosanaEvidence
+    ? NOSANA_UI_LABELS.localFallback
+    : NOSANA_UI_LABELS.localFallback;
+  const sourceLabelClass = isNosanaLive
+    ? 'sc-source-label sc-source-label--live'
+    : isNosanaEvidence
     ? 'sc-source-label sc-source-label--evidence'
     : isLocalFallback
     ? 'sc-source-label sc-source-label--fallback'
@@ -113,20 +118,20 @@ export function RiskPanel({ enabled, riskResult, scenario, onScenarioChange }: P
           </div>
           {isLocalFallback && (
             <div className="sc-banner sc-banner--warning" role="status">
-              {LABELS.nosanaRiskFallback}
+              {NOSANA_UI_LABELS.offlineValidated}
             </div>
           )}
           <div className="sc-disclaimer">{riskResult.heuristicDisclaimer}</div>
           <p className="sc-explanation">{riskResult.failureCascadeExplanation}</p>
           <div className="sc-panel-actions">
-            <button className="sc-btn sc-btn--primary" disabled type="button" aria-label="Re-run risk assessment — disabled in synthetic demo">
+            <button className="sc-btn sc-btn--primary" disabled type="button" aria-label="Re-run risk assessment — disabled in fictional demo">
               Re-run risk assessment
             </button>
-            <button className="sc-btn sc-btn--secondary" disabled type="button" aria-label="Proceed without risk guidance — disabled in synthetic demo">
+            <button className="sc-btn sc-btn--secondary" disabled type="button" aria-label="Proceed without risk guidance — disabled in fictional demo">
               Proceed without risk guidance
             </button>
           </div>
-          <p className="sc-panel__demo-note">Retry is unavailable in this synthetic demo. No live provider is connected.</p>
+          <p className="sc-panel__demo-note">Retry is unavailable in this fictional demo. No live provider is connected.</p>
         </>
       )}
 
@@ -134,7 +139,7 @@ export function RiskPanel({ enabled, riskResult, scenario, onScenarioChange }: P
         <>
           {isLocalFallback && (
             <div className="sc-banner sc-banner--warning" role="status">
-              {LABELS.nosanaRiskFallback}
+              {NOSANA_UI_LABELS.offlineValidated}
             </div>
           )}
           <div className="sc-banner sc-banner--error" role="alert">
@@ -144,11 +149,11 @@ export function RiskPanel({ enabled, riskResult, scenario, onScenarioChange }: P
           <div className="sc-disclaimer">{riskResult.heuristicDisclaimer}</div>
           <p className="sc-explanation">{riskResult.failureCascadeExplanation}</p>
           <div className="sc-panel-actions">
-            <button className="sc-btn sc-btn--primary" disabled type="button" aria-label="Retry risk assessment — disabled in synthetic demo">
+            <button className="sc-btn sc-btn--primary" disabled type="button" aria-label="Retry risk assessment — disabled in fictional demo">
               Retry risk assessment
             </button>
           </div>
-          <p className="sc-panel__demo-note">Retry is unavailable in this synthetic demo. No live provider is connected.</p>
+          <p className="sc-panel__demo-note">Retry is unavailable in this fictional demo. No live provider is connected.</p>
         </>
       )}
 
@@ -156,7 +161,7 @@ export function RiskPanel({ enabled, riskResult, scenario, onScenarioChange }: P
         <>
           {isLocalFallback && (
             <div className="sc-banner sc-banner--warning" role="status">
-              {LABELS.nosanaRiskFallback}
+              {NOSANA_UI_LABELS.offlineValidated}
             </div>
           )}
           <div className="sc-banner sc-banner--warning" role="status">
@@ -166,11 +171,11 @@ export function RiskPanel({ enabled, riskResult, scenario, onScenarioChange }: P
           <div className="sc-disclaimer">{riskResult.heuristicDisclaimer}</div>
           <p className="sc-explanation">{riskResult.failureCascadeExplanation}</p>
           <div className="sc-panel-actions">
-            <button className="sc-btn sc-btn--primary" disabled type="button" aria-label="Retry risk assessment — disabled in synthetic demo">
+            <button className="sc-btn sc-btn--primary" disabled type="button" aria-label="Retry risk assessment — disabled in fictional demo">
               Retry risk assessment
             </button>
           </div>
-          <p className="sc-panel__demo-note">Retry is unavailable in this synthetic demo. No live provider is connected.</p>
+          <p className="sc-panel__demo-note">Retry is unavailable in this fictional demo. No live provider is connected.</p>
         </>
       )}
 

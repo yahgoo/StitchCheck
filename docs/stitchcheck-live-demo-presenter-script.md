@@ -32,9 +32,9 @@
 
 > "The user starts with a synthetic itinerary screenshot — fictional image, no real passenger data. We select GEM-01, a clear two-leg itinerary.
 >
-> Structured extraction was tested through an OpenRouter temporary path. The label on screen reads: **OpenRouter temporary path — not direct Gemini validation.** This is interface-level evidence only. Direct Gemini remains unexecuted."
+> Structured extraction uses a fictional local fixture. The label on screen reads: **Fictional itinerary — local demo fixture.** Direct Gemini 3.7 live extraction was verified separately via the Interactions API."
 
-**Visible proof:** Upload panel with fixture selection. GEM-01 selected. Source label visible: `OpenRouter temporary path — not direct Gemini validation`. Editable itinerary fields populated from fixture.
+**Visible proof:** Upload panel with fixture selection. GEM-01 selected. Source label visible: `Fictional itinerary — local demo fixture`. Editable itinerary fields populated from fixture.
 
 ---
 
@@ -102,9 +102,9 @@
 
 > "The traveler makes a local decision — Keep the current plan or Switch to an alternative. This is a UI-only selection. No booking, payment, reservation, ticket, order, verification, or other external action occurs.
 >
-> The final screen states it explicitly: no external action has been created. Direct Gemini remains unexecuted. Nosana remains unexecuted and not deployed. Atlas has shown reference-price search results only — no write action of any kind.
+> The final screen states it explicitly: no external action has been created. Direct Gemini 3.7 was live-verified separately. Nosana uses local fallback in this walkthrough. Atlas has shown reference-price search results only — no write action of any kind.
 >
-> StitchCheck demonstrates a review-first flow that keeps the traveler in control at every step \u2014 an honest local demo with synthetic data, ready for separately authorized live-service validation when each provider is deployed and evidence is collected."
+> StitchCheck demonstrates a review-first flow that keeps the traveler in control at every step — an honest local demo with synthetic data, the demo UI itself makes no live service calls."
 
 **Visible proof:** Decision buttons visible. Final statement: "No booking, payment, reservation, ticket, order, verification, or other write action has been created. This is a synthetic demo only." Metadata: `noOrderCreated: true`, `syntheticDemo: true`, `externalCallsMade: false`.
 
@@ -143,8 +143,8 @@ Before delivering this script, verify every spoken claim against the evidence re
 
 | Claim in script | Evidence source | Boundary |
 |---|---|---|
-| "OpenRouter temporary path — not direct Gemini validation" | `smoke-tests/gemini/results/results.json`, `smoke-tests/gemini/results/evidence-stub.md` | GEM-01 only; direct Gemini unexecuted. |
-| "Direct Gemini remains unexecuted" | `README.md`, `docs/stitchcheck-demo-readiness-report.md`, `docs/stitchcheck-submission-evidence-index.md` | Pass/fail for direct Gemini is intentionally blank. |
+| "Fictional itinerary — local demo fixture" | `app/src/data/labels.ts`, `app/src/data/fixtures.ts` | Browser walkthrough uses local fixture; direct Gemini 3.7 live-verified separately. |
+| "Direct Gemini 3.7 live extraction succeeded" | `smoke-tests/gemini/results/results-gemini-3.7-flash-success.json` | Verified via Interactions API; schema-valid, no fallback. |
 | "Nosana workload has been executed or deployed" — **negated** | `smoke-tests/nosana/results/2026-08-20T15-53-43Z/`, `README.md` | Blocked before any network request. No deployment, no execution. |
 | "Atlas authentication completed through the official Atlas Flight Booking Skill" | `docs/stitchcheck-submission-evidence-index.md` Provider Status table | Authentication via official Skill and CLI only. |
 | "One live read-only search returned five real production offers" | `docs/stitchcheck-submission-evidence-index.md` Provider Status table, `smoke-tests/live-demo-results/2026-08-21T05-37-31Z/atlas-live-result.md` | Two production searches: PVG→NRT/HND (5 offers) and SIN→BKK (8 offers via ATL-LIVE-01). Reference prices only. |

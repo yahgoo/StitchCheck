@@ -1,57 +1,47 @@
 # StitchCheck
 
-StitchCheck helps budget travellers understand the hidden risk of stitching two separately purchased flight tickets with a tight connection — before they pay.
+StitchCheck turns a flight screenshot into a confirmed itinerary, explains self-transfer risk, and compares safer alternatives before a traveller commits.
 
-**Target user:** Budget travellers booking self-transfer itineraries on separate tickets who need to understand connection risk before committing.
+## Hackathon Submission
 
-## Problem
+- **Event:** Build with Gemini Hackathon 2026
+- **Track:** Most Creative Gemini Hack
+- **Status:** Submitted
+- **Demo video:** <YOUR_YOUTUBE_URL_HERE>
 
-When two flights are booked as separate tickets, each ticket is an independent contract. If the first flight is delayed and the traveller misses the second, the second airline generally has no obligation to rebook, protect, or refund. The savings are visible at checkout; the exposure is not.
+## What It Does
 
-StitchCheck extracts itinerary details from a screenshot, reviews them with the traveller, assesses connection risk, and surfaces safer alternatives — all before any booking commitment.
+1. **Screenshot upload** — the traveller uploads a booking-page screenshot of two separately purchased flights.
+2. **Gemini multimodal extraction** — Gemini 3.7 (`ai.interactions.create`) parses the image into structured itinerary fields (origins, destinations, dates, airlines, flight numbers, times, connection duration).
+3. **Editable fields** — the traveller reviews and corrects every extracted field beside the source image.
+4. **User correction** — correction notes track each change the traveller makes.
+5. **Confirmation gate** — downstream panels stay locked until the traveller explicitly confirms the itinerary.
+6. **Risk analysis** — a Nosana decentralized-compute workload runs a Monte Carlo simulation over historical delay data to estimate connection risk.
+7. **Alternatives** — Atlas Sandbox Search/Verify returns single-ticket alternatives for the same route.
+8. **Keep / Switch decision** — a side-by-side comparison lets the traveller choose to keep the self-transfer or switch to a safer option. No booking, payment, or order is created.
 
-## Architecture Overview
+## Technology and Providers
 
-```
-┌─────────────────────────────────────────────────────────┐
-│  React / Vite / TypeScript browser demo                 │
-│                                                         │
-│  Safety Notice → Upload → Review → Confirm → Compare   │
-│                                                         │
-│  ┌──────────┐  ┌──────────┐  ┌──────────────────┐      │
-│  │ Extraction│  │   Risk   │  │   Alternatives    │      │
-│  │ (Gemini) │  │ (Nosana) │  │   (Atlas)         │      │
-│  └────┬─────┘  └────┬─────┘  └────────┬─────────┘      │
-│       │              │                  │                │
-│  Synthetic      Local fixture      Local fixture        │
-│  placeholder    (offline-safe)     (offline-safe)       │
-└─────────────────────────────────────────────────────────┘
-```
-
-- **Frontend:** React 19, Vite 8, TypeScript 7 — single-page app, all state in-memory.
-- **Provider adapters:** Isolated Node.js modules in `smoke-tests/` — each provider has its own harness, fixtures, and offline test suite.
-- **Fixture contracts:** JSON contracts in `app-fixture-contracts/` define the expected UI data shapes.
-- **No backend server:** The demo runs entirely in the browser. Provider adapters are server-side only and are not called by the browser bundle.
-
-## User Demo Flow
-
-1. **Acknowledge the safety notice** — confirms this is a synthetic demo with no live calls.
-2. **Select synthetic itinerary screenshot fixture(s)** — choose from pre-built fictional images (GEM-01 through GEM-05).
-3. **Review and edit extracted itinerary fields** — fields are displayed in editable inputs beside the source screenshots.
-4. **Confirm the itinerary** — the user must explicitly click *Confirm itinerary* before downstream panels activate.
-5. **View risk and alternatives** — the risk panel shows a heuristic placeholder; the alternatives panel shows sandbox-placeholder results.
-6. **Compare options and choose Keep or Switch** — a side-by-side comparison table.
-7. **Finish** — the final screen states that no booking, payment, or write action was created.
-
-## Provider Roles
-
-| Provider | Role | Status |
+| Component | Technology | Role |
 |---|---|---|
-| **Google Gemini** | Structured itinerary extraction from synthetic screenshots. | Direct Gemini 3.6: live extraction verified previously. Gemini 3.7: Interactions API path implemented and offline-tested; live verification pending. |
-| **Nosana** | Decentralized GPU workload for connection-risk estimation. | Nosana: offline/dry-run validated; live execution not verified. All risk data in the demo is a local synthetic placeholder. |
-| **Atlas** | Read-only flight search for safer alternatives. | Sandbox search + verify completed (20 offers, KUL→SIN). Production search completed (8 offers, SIN→BKK). All offers reference-price only. Ticketing activation-gated — no booking created. |
+| Itinerary extraction | Gemini 3.7 (`ai.interactions.create`, `@google/genai`) | Multimodal screenshot-to-structured-data extraction |
+| Risk analysis | Nosana decentralized compute | Validated Monte Carlo connection-risk workload |
+| Alternative routing | Atlas Sandbox Search/Verify | Read-only alternative itinerary evidence |
+| Frontend | React + Vite + TypeScript | Local browser walkthrough |
 
-## Setup Instructions
+## Provenance and Evidence Status
+
+The interactive browser walkthrough uses fictional local fixture data and makes no external provider calls.
+
+Gemini, Nosana, and Atlas evidence shown in the demo video and documentation was verified separately using dedicated smoke-test scripts.
+
+**Gemini 3.7** (`gemini-3.7-flash`, Interactions API): implemented and offline-validated; a later live verification attempt during final polish returned a transient error and was not retried, per project safety rules. The previously captured successful live evidence artifact remains available in `smoke-tests/gemini/results/`.
+
+**Nosana**: a completed live job was reconciled offline. Verified values: riskScore 0.2895, riskBand medium, simulationCount 800, costUsd 0.044, evidenceSource `"nosana-evidence"`, fallbackUsed false. This is a heuristic indication, not a guaranteed probability.
+
+**Atlas**: Sandbox Search and Verify evidence is read-only. No booking, payment, or ticketing was performed.
+
+## Setup
 
 ### Prerequisites
 
@@ -59,8 +49,6 @@ StitchCheck extracts itinerary details from a screenshot, reviews them with the 
 - npm
 
 ### Quick Start
-
-All commands run from the `app/` directory. The demo runs entirely offline — no external service calls occur.
 
 ```bash
 # Clone the repository
@@ -71,72 +59,87 @@ cd <repo-dir>
 cd app
 npm install
 
-# Start development server
+# (Optional) Configure provider keys for live smoke tests
+#    cp ../.env.example ../.env.local
+#    # Edit .env.local — never commit it
+
+# Start development server (runs entirely offline with fictional fixtures)
 npm run dev
 
-# Run type-check
-npm run typecheck
-
-# Run production build
+# Production build
 npm run build
+
+# Type-check
+npm run typecheck
 ```
 
-### Smoke Tests (offline)
+### Environment Variables
 
-Smoke tests run from their respective directories and make zero network requests.
+Copy `.env.example` to `.env.local` and fill in values for live smoke tests. The browser demo runs fully offline without any keys.
+
+| Variable | Purpose | Required |
+|---|---|---|
+| `GEMINI_API_KEY` | Google Gemini API key — server-side only, never exposed in browser bundle | No — demo runs offline with fictional fixtures when absent |
+| `GEMINI_MODEL` | Model identifier (e.g. `gemini-3.7-flash`) | No — defaults to `gemini-3.7-flash` |
+| `EXTRACTION_PROVIDER` | `gemini` (direct) or `openrouter` (legacy rollback) | No — defaults to `gemini` |
+| `NOSANA_API_KEY` | Nosana API key — server-side only | No — risk panel uses local fallback when absent |
+| `NOSANA_MARKET` | Nosana market address (Solana public key) | No — used only for live workload submission |
+| `NOSANA_COST_CEILING_USD` | Maximum USD spend ceiling (safety limit) | No — defaults to `10` |
+
+Never commit `.env.local` or any file containing real credentials.
+
+## Safety and Limitations
+
+- No booking, payment, ticketing, reservation, or order is created by this application.
+- The browser walkthrough uses fictional, non-PII data only.
+- Nosana's risk output is a heuristic indication, not a guaranteed probability.
+- Atlas evidence is read-only; ticketing remains gated and was never activated.
+- No real passenger personal data is processed.
+- `GEMINI_API_KEY` is server-side only — the browser bundle does not read, reference, or transmit this key.
+- Human confirmation gate — downstream panels remain locked until the user explicitly confirms the itinerary.
+
+## Testing
+
+The offline test suite covers 300+ tests across all providers and cross-cutting invariants:
+
+| Suite | Location | Coverage |
+|---|---|---|
+| Gemini adapter offline tests | `smoke-tests/gemini/adapter-offline-tests.mjs` | Extraction, schema validation, fallback labels |
+| Gemini 3.7 routing regression | `smoke-tests/gemini/gemini-3.7-routing-regression-tests.mjs` | Interactions API routing, model resolution, credential safety |
+| Atlas adapter offline tests | `smoke-tests/atlas/adapter-offline-tests.mjs` | Search/Verify contract, schema validation |
+| Atlas duplicate-booking guard | `smoke-tests/atlas/duplicate-booking-guard-offline-tests.mjs` | Duplicate booking prevention |
+| Nosana client offline tests | `smoke-tests/nosana/nosana-client-offline-tests.mjs` | Client boundary, credential isolation |
+| Nosana child-process regression | `smoke-tests/nosana/nosana-child-process-regression-tests.mjs` | Job runner, timeout, idempotency |
+| Nosana UI label assertions | `smoke-tests/nosana/nosana-ui-label-assertion-tests.mjs` | Provenance label truthfulness |
+| Nosana live-evidence reconciliation | `smoke-tests/nosana/nosana-live-evidence-reconciliation-tests.mjs` | Reconciled artifact validation |
+| Nosana timeout safety | `smoke-tests/nosana/nosana-timeout-safety-tests.mjs` | Platform timeout, watchdog, dry-run defaults |
+| Nosana cost unit tests | `smoke-tests/nosana/nosana-cost-unit-tests.mjs` | Cost ceiling, credits/cost distinction |
+| Provenance label tests | `smoke-tests/provenance-label-offline-tests.mjs` | Cross-provider label invariants |
+| Cross-provider invariant tests | `smoke-tests/cross-provider-invariant-tests.mjs` | Placeholder/evidence boundary enforcement |
 
 ```bash
 # From app/ — runs all offline test suites + typecheck + build
 npm run verify:offline
 
-# Individual suites
-cd smoke-tests/gemini && node adapter-offline-tests.mjs
-cd smoke-tests/atlas && node adapter-offline-tests.mjs
-cd smoke-tests/nosana && node nosana-client-offline-tests.mjs
+# Individual suites (from repo root)
+node smoke-tests/gemini/adapter-offline-tests.mjs
+node smoke-tests/gemini/gemini-3.7-routing-regression-tests.mjs
+node smoke-tests/atlas/adapter-offline-tests.mjs
+node smoke-tests/nosana/nosana-client-offline-tests.mjs
+node smoke-tests/nosana/nosana-timeout-safety-tests.mjs
 node smoke-tests/cross-provider-invariant-tests.mjs
+node smoke-tests/provenance-label-offline-tests.mjs
 ```
 
-## Environment Variables
+All tests make zero network requests and use no credentials.
 
-| Variable | Purpose | Required |
-|---|---|---|
-| `GEMINI_API_KEY` | Google Gemini API key for server-side extraction. **Server-side only — never expose in browser bundle.** | No — demo runs offline with synthetic fixtures when absent. |
-| `GEMINI_MODEL` | Model identifier (e.g. `gemini-3.6-flash`, `gemini-3.7-flash`). | No — defaults to `gemini-3.6-flash` in the adapter. |
-| `EXTRACTION_PROVIDER` | `gemini` (direct) or `openrouter` (legacy rollback). | No — defaults to `gemini`. |
-| `NOSANA_API_KEY` | Nosana API key for decentralized GPU workload submission. **Server-side only.** | No — risk panel uses local synthetic placeholder when absent. |
-| `NOSANA_MARKET` | Nosana market address (Solana public key). | No — used only for live workload submission. |
-| `NOSANA_COST_CEILING_USD` | Maximum USD spend ceiling for Nosana workloads (safety limit). | No — defaults to `10`. |
+## Known Limitations
 
-Copy `.env.example` to `.env.local` and fill in values. Never commit `.env.local`.
-
-### Fallback Behaviour
-
-When `GEMINI_API_KEY` is absent or the provider is not configured:
-- The extraction panel displays a synthetic local placeholder labelled `Synthetic local placeholder — not direct Gemini evidence`.
-- The risk panel displays a local fixture labelled `Synthetic local placeholder — not Nosana evidence`.
-- The alternatives panel displays a local fixture labelled `Synthetic local placeholder — not Atlas Sandbox evidence`.
-- The full demo flow remains functional end-to-end with these placeholders.
-
-## Evidence Labels
-
-All data in the browser demo is clearly labelled:
-
-- **Synthetic local placeholder** — pre-built fixture data, not from a live provider.
-- **Historical OpenRouter temporary path** — GEM-01 was executed via OpenRouter as a historical smoke-test; not evidence of direct Google Gemini execution.
-- **Atlas Sandbox evidence** — search + verify completed against the Atlas Sandbox environment.
-- **Local fallback** — Nosana was not executed; the risk result is a local heuristic simulation.
-
-No local placeholder is ever labelled as live provider evidence. This invariant is enforced by the cross-provider offline test suite.
-
-## Safety
-
-- **Synthetic, non-PII fixtures only.** All airport codes, flight numbers, dates, and prices in the demo are invented.
-- **No credential values are included.** API keys are referenced only as blank variable names in `.env.example`.
-- **No booking, payment, or write action exists.** No UI handler enables any of these actions.
-- **`GEMINI_API_KEY` is server-side only.** The browser bundle does not read, reference, or transmit this key.
-- **Human confirmation gate.** Downstream panels remain locked until the user explicitly confirms the itinerary.
-- **Atlas is read-only.** No write scope is requested or permitted.
-- **Nosana is offline-only.** The client boundary has zero network code, zero credential access, and zero mutation operations.
+- **Gemini 3.7 live path** is implemented and offline-tested; the most recent live attempt was inconclusive due to a transient error. The previously captured successful evidence artifact is preserved in `smoke-tests/gemini/results/`.
+- **Nosana live evidence** comes from a previously completed and reconciled job, not a fresh submission. No additional Nosana job was submitted during final polish.
+- **Atlas evidence** is Sandbox/read-only only. No production booking, payment, or ticketing was performed.
+- **Browser demo uses offline fixtures.** The risk and alternatives panels display local fixtures, not live provider results.
+- **No persistence.** All state resets on browser refresh.
 
 ## Repository Structure
 
@@ -150,19 +153,10 @@ smoke-tests/
   atlas/                      Atlas adapter, offline tests, fixtures
   nosana/                     Nosana client boundary, offline tests, fixtures
   cross-provider-invariant-tests.mjs
-scripts/                      Playwright capture and preflight scripts
+  provenance-label-offline-tests.mjs
+scripts/                      Capture and preflight scripts
 docs/                         Documentation and audit reports
 ```
-
-## Known Limitations
-
-- **Direct Gemini is not yet executed live.** The adapter is implemented and offline-tested. A live direct-Gemini result is not included in this evidence package.
-- **OpenRouter was a historical temporary test path.** GEM-01 was executed via OpenRouter; this is not evidence of direct Google Gemini execution.
-- **Nosana has not been executed live.** Nosana workload validated offline; local fallback used in recording.
-- **Atlas ticketing is activation-gated.** Search and verify succeeded; booking/ticketing is blocked.
-- **All browser demo data is synthetic.** Risk and alternatives are local placeholders, not live service results.
-- **State resets on browser refresh.** All state is in-memory; no persistence layer exists.
-- **No automated unit-test runner.** Validation relies on offline adapter tests and browser walkthrough.
 
 ## License
 

@@ -284,15 +284,15 @@ Original diagram drawn in the presentation tool. Status dashboard with three row
 Draw as an original diagram in the presentation tool.
 
 ### Evidence label treatment
-The exact Gemini temporary-path label is preserved: `OpenRouter temporary path — not direct Gemini validation`. The Atlas duplicate-booking guard is clearly marked as "offline-only" and "not live Atlas evidence."
+The extraction panel label reads: `Fictional itinerary — local demo fixture`. Direct Gemini 3.7 live extraction was verified separately. The Atlas duplicate-booking guard is clearly marked as "offline-only" and "not live Atlas evidence."
 
 ### Speaker emphasis
-We have a working local demo that proves the review-first flow, the confirmation gate, and the Keep-or-Switch decision — all with synthetic data and zero external calls. The Nosana smoke test was intentionally blocked before any network request because no reviewed workload, submission mechanism, or target environment exists yet — this is valid evidence of a safe stop. The next phase is to complete the six Nosana prerequisites and obtain the separately required human authorization for each service smoke test. Direct Gemini, Nosana, and Atlas validation are independent gates that must each be passed before any live-integration claim can be made.
+We have a working local demo that proves the review-first flow, the confirmation gate, and the Keep-or-Switch decision — the demo UI itself uses synthetic data and makes no live service calls. Direct Gemini 3.7 live extraction was verified separately via the Interactions API. Atlas Sandbox Search/Verify was verified separately read-only. Nosana workload validated offline; live execution was not verified. The browser walkthrough uses fictional local fixtures throughout.
 
 ### Do-not-show/do-not-claim
 - No presentation of offline tests as provider execution.
 - No claim that Atlas duplicate-booking protection has been tested against live Atlas.
-- No claim that any provider has been authenticated or executed.
+- No claim that the browser walkthrough calls any live provider.
 
 ---
 

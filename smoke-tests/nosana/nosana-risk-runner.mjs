@@ -24,12 +24,13 @@ import { spawn } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { validateJobDefinition } from "./nosana_run_job.mjs";
+import { validateJobDefinition, LOCAL_WATCHDOG_TIMEOUT_MS } from "./nosana_run_job.mjs";
 import {
   PLACEHOLDER_LABEL,
   HEURISTIC_DISCLAIMER,
   validateRiskRequest,
   validateRiskResult,
+  validateNosanaOutput,
 } from "./schema-validator.mjs";
 const here = path.dirname(fileURLToPath(import.meta.url));
 const HISTORICAL_DATA_PATH = path.join(here, "fixtures", "historical-delay-data.json");
@@ -276,7 +277,13 @@ export function localRiskCalculation(itineraryPayload, historicalData) {
  */
 export async function runNosanaRiskWorkload(itineraryPayload, options = {}) {
   const startedAt = Date.now();
-  const timeoutMs = options.timeoutMs || 120000;
+  // Platform timeout: 3600000ms (3600s) — the Nosana platform minimum for
+  // credit-paid jobs. This is passed to the Nosana API in the job definition.
+  // The workload itself completes in seconds, but the platform enforces this.
+  const platformTimeoutMs = options.timeoutMs || 3600000;
+  // Local watchdog: bounded observation window. Separate from the platform
+  // timeout. Prevents the local process from hanging indefinitely.
+  const localWatchdogMs = options.localWatchdogMs || LOCAL_WATCHDOG_TIMEOUT_MS;
   const market = options.market || process.env.NOSANA_MARKET || "7AtiXMSH6R1jjBxrcYjehCkkSF7zvYWte63gwEDBcGHq";
   const skipNosana = options.skipNosana === true;
   const dryRun = options.dryRun !== false; // default TRUE — must explicitly set false for live
@@ -332,17 +339,39 @@ export async function runNosanaRiskWorkload(itineraryPayload, options = {}) {
 
   // Attempt real Nosana submission via child process
   try {
-    const childResult = await runNosanaChildProcess(jobDef, market, timeoutMs);
+    const childResult = await runNosanaChildProcess(jobDef, market, platformTimeoutMs, localWatchdogMs);
+
+    // Persist sanitized evidence for EVERY live attempt immediately after the
+    // child returns — even when the outcome is a fallback — so an accepted,
+    // billed job is never silently dropped from the evidence trail.
+    writeLiveAttemptEvidence(childResult);
+
+    // Contract guard: a child success REQUIRES a job ID and an output object.
+    // A success without either is a child-contract violation — fall back but
+    // preserve whatever live metadata exists.
+    if (childResult.success && (!childResult.jobId || !childResult.output || typeof childResult.output !== "object")) {
+      return buildFallbackResult(
+        itineraryPayload,
+        startedAt,
+        "CHILD_CONTRACT_VIOLATION",
+        "Child reported success without a job ID or valid output — treating as failure",
+        extractLiveMetadata(childResult),
+      );
+    }
 
     if (childResult.success && childResult.output) {
       // Validate the raw output structure from Nosana
       const outputValidation = validateNosanaOutput(childResult.output);
       if (!outputValidation.valid) {
+        // CRITICAL: preserve live-attempt metadata (jobId, IPFS hashes,
+        // credits, cost) — the job was really submitted and billed; only the
+        // output failed validation. Previously this path dropped all of it.
         return buildFallbackResult(
           itineraryPayload,
           startedAt,
           "OUTPUT_INVALID",
           `Nosana output validation failed: ${outputValidation.issues.join("; ")}`,
+          extractLiveMetadata(childResult),
         );
       }
 
@@ -356,11 +385,17 @@ export async function runNosanaRiskWorkload(itineraryPayload, options = {}) {
       );
 
       // Validate the built risk result with validateRiskResult() before
-      // claiming Nosana evidence. If validation fails, use local fallback.
+      // claiming Nosana evidence. If validation fails, use local fallback —
+      // but still preserve the live-attempt metadata.
       const riskValidation = validateRiskResult(riskResult);
       if (!riskValidation.valid) {
-        const localResult = localRiskCalculation(itineraryPayload, safeLoadHistoricalData());
-        return buildLocalResult(itineraryPayload, localResult, startedAt, "RISK_RESULT_INVALID");
+        return buildFallbackResult(
+          itineraryPayload,
+          startedAt,
+          "RISK_RESULT_INVALID",
+          `Built risk result failed validation: ${riskValidation.issues.join("; ")}`,
+          extractLiveMetadata(childResult),
+        );
       }
 
       // SUCCESS — validated Nosana evidence
@@ -376,10 +411,15 @@ export async function runNosanaRiskWorkload(itineraryPayload, options = {}) {
           jobId: childResult.jobId,
           market,
           ipfsHash: childResult.ipfsHash,
+          resultIpfsHash: childResult.resultIpfsHash ?? null,
+          platformTimeoutSec: childResult.platformTimeoutSec ?? null,
           submittedAt: childResult.submittedAt,
           completedAt: childResult.completedAt,
           observedStates: childResult.observedStates || [],
           creditsUsed: childResult.creditsUsed ?? null,
+          costUsd: childResult.costUsd ?? null,
+          reservationId: childResult.reservationId ?? null,
+          project: childResult.project ?? null,
           containerImage: jobDef.ops?.[0]?.args?.image || RISK_WORKLOAD_IMAGE,
         },
         riskResult,
@@ -387,14 +427,23 @@ export async function runNosanaRiskWorkload(itineraryPayload, options = {}) {
       };
     }
 
-    // Child process returned failure
+    // Child process returned failure — preserve live attempt metadata
+    // (jobId, credits, cost) so the evidence is not lost.
+    const liveMetadata = extractLiveMetadata(childResult);
     return buildFallbackResult(
       itineraryPayload,
       startedAt,
       childResult.errorCode || "JOB_FAILED",
       childResult.error || "Nosana job failed without specific error",
+      liveMetadata,
     );
   } catch (err) {
+    // The child crashed or its stdout was unparseable. Any evidence the
+    // child wrote (post_accepted etc.) survives on disk; record the
+    // parent-side failure too.
+    writeLiveAttemptEvidence(null, {
+      forcedEventType: "child_process_error",
+    });
     return buildFallbackResult(
       itineraryPayload,
       startedAt,
@@ -406,12 +455,24 @@ export async function runNosanaRiskWorkload(itineraryPayload, options = {}) {
 
 // ── Child Process ──────────────────────────────────────────────────────────
 
-function runNosanaChildProcess(jobDef, market, timeoutMs) {
+/**
+ * Spawns nosana_run_job.mjs as a child process.
+ *
+ * @param {object} jobDef - The job definition
+ * @param {string} market - Market address
+ * @param {number} platformTimeoutMs - Platform job timeout in ms (passed to Nosana API as seconds)
+ * @param {number} localWatchdogMs - Local observation deadline in ms (safety net)
+ */
+function runNosanaChildProcess(jobDef, market, platformTimeoutMs, localWatchdogMs) {
   return new Promise((resolve, reject) => {
     const jobDefJson = JSON.stringify(jobDef);
     const helperPath = path.join(here, "nosana_run_job.mjs");
 
-    const child = spawn("node", [helperPath, "--market", market, "--timeout", String(Math.floor(timeoutMs / 1000))], {
+    // Pass both timeouts to the child process:
+    //   --timeout: platform job timeout in seconds (for the Nosana API)
+    //   --local-watchdog: local observation window in ms (for the poll loop)
+    const platformTimeoutSec = Math.floor(platformTimeoutMs / 1000);
+    const child = spawn("node", [helperPath, "--market", market, "--timeout", String(platformTimeoutSec), "--local-watchdog", String(localWatchdogMs)], {
       env: {
         ...process.env,
         NOSANA_JOB_DEF: jobDefJson,
@@ -419,7 +480,10 @@ function runNosanaChildProcess(jobDef, market, timeoutMs) {
         // NEVER add it to any log or output
       },
       stdio: ["pipe", "pipe", "pipe"],
-      timeout: timeoutMs + 5000, // slightly longer than the job timeout
+      // Local watchdog + grace period. The child process should exit well
+      // within the watchdog window; the extra 10s is a grace period for
+      // cleanup. This prevents the parent from hanging indefinitely.
+      timeout: localWatchdogMs + 10000,
     });
 
     let stdout = "";
@@ -449,6 +513,90 @@ function runNosanaChildProcess(jobDef, market, timeoutMs) {
       reject(err);
     });
   });
+}
+
+// ── Live metadata extraction ─────────────────────────────────────────────
+
+/**
+ * Extracts live-submission metadata from a child-process result so that
+ * it can be preserved even when the overall outcome is a fallback.
+ *
+ * This ensures that a failed job (e.g. COST_CEILING_EXCEEDED, timeout)
+ * retains its job address, credit count, USD cost, and other evidence
+ * rather than being overwritten by a local-fallback result.
+ */
+export function extractLiveMetadata(childResult) {
+  if (!childResult || typeof childResult !== "object") return null;
+  const hasAny = childResult.jobId || childResult.ipfsHash ||
+    childResult.creditsUsed != null || childResult.costUsd != null;
+  if (!hasAny) return null;
+  return {
+    jobId: childResult.jobId ?? null,
+    market: childResult.market ?? null,
+    ipfsHash: childResult.ipfsHash ?? null,
+    resultIpfsHash: childResult.resultIpfsHash ?? null,
+    platformTimeoutSec: childResult.platformTimeoutSec ?? null,
+    submittedAt: childResult.submittedAt ?? null,
+    completedAt: childResult.completedAt ?? null,
+    observedStates: childResult.observedStates ?? [],
+    creditsUsed: childResult.creditsUsed ?? null,
+    costUsd: childResult.costUsd ?? null,
+    reservationId: childResult.reservationId ?? null,
+    project: childResult.project ?? null,
+    phase: childResult.phase ?? null,
+    errorCode: childResult.errorCode ?? null,
+  };
+}
+
+// ── Live-attempt evidence artifacts ────────────────────────────────────────
+//
+// Writes ONE sanitized, timestamped evidence artifact per live attempt at
+// the moment the child process returns. The event type distinguishes:
+//   - completed_success           (validated Nosana evidence)
+//   - retrieval_failed            (child could not retrieve/parse IPFS result)
+//   - output_invalid              (retrieved output failed risk validation)
+//   - fallback_after_live_attempt (any other failure after a real submission)
+//   - child_process_error         (child output unparseable / crashed)
+//
+// Artifacts contain ONLY metadata already sanitized by the child contract —
+// never API keys, idempotency-key values, or raw response bodies.
+// Directory: results/evidence/ (override with NOSANA_EVIDENCE_DIR; used by
+// offline tests). Evidence-write failures must never break the runner.
+
+export function writeLiveAttemptEvidence(childResult, extra = {}) {
+  try {
+    const dir = process.env.NOSANA_EVIDENCE_DIR || path.join(here, "results", "evidence");
+    fs.mkdirSync(dir, { recursive: true });
+    let eventType;
+    if (extra.forcedEventType) {
+      eventType = extra.forcedEventType;
+    } else if (childResult?.success === true) {
+      eventType = "completed_success";
+    } else if (childResult?.errorCode === "RETRIEVAL_FAILED" || childResult?.errorCode === "RESULT_PARSE_ERROR") {
+      eventType = "retrieval_failed";
+    } else if (childResult?.errorCode === "OUTPUT_INVALID") {
+      eventType = "output_invalid";
+    } else {
+      eventType = "fallback_after_live_attempt";
+    }
+    const ts = new Date().toISOString().replace(/[:.]/g, "-");
+    const artifact = {
+      eventType,
+      recordedAt: new Date().toISOString(),
+      liveAttemptMetadata: extractLiveMetadata(childResult),
+      childSuccess: childResult?.success === true,
+      childErrorCode: childResult?.errorCode ?? null,
+      childError: childResult?.error ?? null,
+      childPhase: childResult?.phase ?? null,
+    };
+    fs.writeFileSync(
+      path.join(dir, `${ts}-parent-${eventType}.json`),
+      JSON.stringify(artifact, null, 2) + "\n",
+      "utf8",
+    );
+  } catch {
+    // best effort — evidence failure must never break the runner
+  }
 }
 
 // ── Result Builders ────────────────────────────────────────────────────────
@@ -509,7 +657,7 @@ function buildLocalResult(itineraryPayload, localOutput, startedAt, reason) {
   };
 }
 
-function buildFallbackResult(itineraryPayload, startedAt, errorCode, errorMessage) {
+function buildFallbackResult(itineraryPayload, startedAt, errorCode, errorMessage, liveMetadata) {
   const localOutput = localRiskCalculation(
     itineraryPayload,
     safeLoadHistoricalData(),
@@ -519,6 +667,13 @@ function buildFallbackResult(itineraryPayload, startedAt, errorCode, errorMessag
   result.riskResult.errorMessage = errorMessage;
   result.riskResult.fallbackUsed = true;
   result.usedFallback = true;
+  // Preserve live-submission metadata if available — this ensures that
+  // a failed live job (e.g. COST_CEILING_EXCEEDED) retains its evidence
+  // (jobId, creditsUsed, costUsd) instead of being lost.
+  if (liveMetadata) {
+    result.liveAttemptMetadata = liveMetadata;
+    result.riskResult.liveAttemptMetadata = liveMetadata;
+  }
   return result;
 }
 
@@ -547,7 +702,8 @@ function buildDryRunResult(itineraryPayload, jobDef, market, startedAt) {
   console.error("\n═══ DRY-RUN MODE ═══");
   console.error("The following job definition WOULD be submitted to Nosana:");
   console.error(`Market: ${market}`);
-  console.error(`Timeout: 120 seconds`);
+  console.error(`Timeout: 3600 seconds (platform minimum for credit-paid jobs)`);
+  console.error(`Local watchdog: ${LOCAL_WATCHDOG_TIMEOUT_MS}ms (bounded observation window)`);
   console.error(`Image: ${RISK_WORKLOAD_IMAGE}`);
   console.error(`Job definition (redacted):`);
   console.error(JSON.stringify(redactedDef, null, 2));
@@ -601,29 +757,6 @@ function safeLoadHistoricalData() {
   } catch {
     return { airports: {}, routes: [] };
   }
-}
-
-function validateNosanaOutput(output) {
-  const issues = [];
-  if (!output || typeof output !== "object") {
-    return { valid: false, issues: ["output must be an object"] };
-  }
-  if (typeof output.riskScore !== "number" || output.riskScore < 0 || output.riskScore > 1) {
-    issues.push("riskScore must be a number between 0 and 1");
-  }
-  if (!["low", "medium", "high"].includes(output.riskBand)) {
-    issues.push("riskBand must be low, medium, or high");
-  }
-  if (!Array.isArray(output.assumptions)) {
-    issues.push("assumptions must be an array");
-  }
-  if (typeof output.simulationCount !== "number" || output.simulationCount < 1) {
-    issues.push("simulationCount must be a positive number");
-  }
-  if (typeof output.explanation !== "string" || output.explanation.length < 10) {
-    issues.push("explanation must be a non-empty string");
-  }
-  return { valid: issues.length === 0, issues };
 }
 
 // ── CLI Entry Point ────────────────────────────────────────────────────────

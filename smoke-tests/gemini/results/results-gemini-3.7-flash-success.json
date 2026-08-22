@@ -5,33 +5,19 @@
   "provider": "gemini",
   "providerMode": "direct",
   "providerLabel": "Direct Gemini validation",
-  "modelIdentifier": "gemini-3.6-flash",
-  "keyStatus": "present-not-used",
-  "readinessErrorClass": null,
-  "executionRequested": true,
-  "executed": true,
-  "executionBlocker": null,
-  "onlyFilter": "GEM-01",
-  "retryPolicy": {
-    "initialAttempts": 1,
-    "maxRetriesAfterInitial": 1,
-    "preferRetryAfter": true,
-    "fallbackBackoff": "bounded exponential with jitter",
-    "concurrentRequests": 0,
-    "note": "At most one controlled retry. Never retries authentication or validation failures."
-  },
-  "networkCallsMade": 1,
-  "redactionApplied": true,
-  "syntheticDemo": true,
-  "validatorSelfCheck": {
-    "invalidInputRejected": true
-  },
-  "runAt": "2026-08-22T03:52:44.024Z",
+  "modelIdentifier": "gemini-3.7-flash",
+  "modelTestPurpose": "Verify gemini-3.7-flash via Interactions API (ai.interactions.create)",
+  "apiStyle": "interactions",
+  "sdkVersion": "@google/genai 2.18.0",
+  "runAt": "2026-08-22T03:52:48.955Z",
+  "outcome": "success",
   "tests": [
     {
       "provider": "gemini",
       "providerMode": "direct",
-      "modelIdentifier": "gemini-3.6-flash",
+      "modelIdentifier": "gemini-3.7-flash",
+      "apiStyle": "interactions",
+      "sdkMethod": "ai.interactions.create",
       "testId": "GEM-01",
       "fixtureId": "gem-01-two-leg-clean",
       "timestamp": "2026-08-22T03:52:48.955Z",
@@ -66,8 +52,29 @@
       "fixtureByteLength": 5917
     }
   ],
-  "providerStatus": {
-    "label": "Direct Gemini validation",
-    "status": "executed with 1 network call(s)"
+  "conclusion": {
+    "geminiGateStatus": "PASS",
+    "model": "gemini-3.7-flash",
+    "apiStyle": "interactions",
+    "sdkMethod": "ai.interactions.create",
+    "provider": "direct Google Gemini",
+    "extractionStatus": "success",
+    "schemaValidation": "valid",
+    "fallbackUsed": false,
+    "latencyMs": 4922,
+    "lastVerifiedModel": "gemini-3.7-flash",
+    "previousVerifiedModel": "gemini-3.6-flash",
+    "nextAction": "Gemini 3.7 gate passed. Separately approve the one Nosana live attempt; only after Nosana also passes may video creation begin."
+  },
+  "safetyCompliance": {
+    "onlyOneLiveRequestAttempted": true,
+    "noAutomaticRetry": true,
+    "noAlternativeModelTried": true,
+    "noVideoCreated": true,
+    "noNosanaRun": true,
+    "noAtlasWrite": true,
+    "noApiKeyExposed": true,
+    "previousEvidencePreserved": true,
+    "redactionApplied": true
   }
 }

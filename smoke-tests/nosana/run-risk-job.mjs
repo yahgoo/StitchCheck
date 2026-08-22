@@ -163,6 +163,17 @@ async function main() {
     console.error(`Job ID:           ${result.jobMetadata.jobId}`);
     console.error(`Market:           ${result.jobMetadata.market}`);
     console.error(`IPFS hash:        ${result.jobMetadata.ipfsHash}`);
+    console.error(`Platform timeout: ${result.jobMetadata.platformTimeoutSec ?? "N/A"}s`);
+    console.error(`Credits used:     ${result.jobMetadata.creditsUsed ?? "N/A"} (internal platform credits)`);
+    console.error(`Cost USD:         ${result.jobMetadata.costUsd ?? "N/A"}`);
+  }
+  if (result.liveAttemptMetadata) {
+    console.error(`── Live attempt metadata (fallback used, live data preserved) ──`);
+    console.error(`  Job ID:         ${result.liveAttemptMetadata.jobId || "N/A"}`);
+    console.error(`  Market:         ${result.liveAttemptMetadata.market || "N/A"}`);
+    console.error(`  Credits used:   ${result.liveAttemptMetadata.creditsUsed ?? "N/A"} (internal platform credits)`);
+    console.error(`  Cost USD:       ${result.liveAttemptMetadata.costUsd ?? "N/A"}`);
+    console.error(`  Platform timeout: ${result.liveAttemptMetadata.platformTimeoutSec ?? "N/A"}s`);
   }
   console.error(`Risk band:        ${result.riskResult.riskBand}`);
   console.error(`Risk score:       ${result.riskResult.riskScore}`);

@@ -23,6 +23,7 @@ import {
   normalizeJobStatus,
   isTerminalJobStatus,
   DEFAULT_TIMEOUT_SEC,
+  LOCAL_WATCHDOG_TIMEOUT_MS,
 } from "./nosana_run_job.mjs";
 import {
   PLACEHOLDER_LABEL,
@@ -126,10 +127,17 @@ assert(
 
 // ── C6: timeout below approved ceiling ────────────────────────────────────
 
-section("C6: timeout stays below the approved ceiling (120 s)");
-assert(DEFAULT_TIMEOUT_SEC === 120, `DEFAULT_TIMEOUT_SEC is 120 seconds (found: ${DEFAULT_TIMEOUT_SEC})`);
-assert(DEFAULT_TIMEOUT_SEC <= 120, "timeout is at or below the approved 120 s ceiling");
-assert(DEFAULT_TIMEOUT_SEC < 3600, "timeout is below the SDK schema default of 3600 s");
+section("C6: platform timeout is exactly 3600 seconds (Nosana minimum for credit-paid jobs)");
+assert(DEFAULT_TIMEOUT_SEC === 3600, `DEFAULT_TIMEOUT_SEC is 3600 seconds (found: ${DEFAULT_TIMEOUT_SEC})`);
+assert(DEFAULT_TIMEOUT_SEC >= 3600, "timeout meets the platform minimum of 3600 seconds for credit-paid jobs");
+
+// ── Local watchdog is bounded ───────────────────────────────────────────────
+
+section("Local watchdog timeout is bounded and documented");
+assert(typeof LOCAL_WATCHDOG_TIMEOUT_MS === "number", "LOCAL_WATCHDOG_TIMEOUT_MS is a number");
+assert(LOCAL_WATCHDOG_TIMEOUT_MS > 0, "LOCAL_WATCHDOG_TIMEOUT_MS is positive");
+assert(LOCAL_WATCHDOG_TIMEOUT_MS <= 300000, `LOCAL_WATCHDOG_TIMEOUT_MS is bounded ≤ 300s (found: ${LOCAL_WATCHDOG_TIMEOUT_MS}ms)`);
+assert(LOCAL_WATCHDOG_TIMEOUT_MS < DEFAULT_TIMEOUT_SEC * 1000, "local watchdog is shorter than the platform timeout");
 
 // ── D: validateJobDefinition (local mirror + official @nosana/kit) ────────
 

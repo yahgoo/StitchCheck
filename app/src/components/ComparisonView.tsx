@@ -1,4 +1,4 @@
-import { LABELS } from '../data/labels';
+import { NOSANA_UI_LABELS, ATLAS_UI_LABELS } from '../data/labels';
 import type { ComparisonData, RiskResult } from '../data/types';
 
 interface Props {
@@ -12,18 +12,18 @@ export function ComparisonView({ comparison, riskResult }: Props) {
   return (
     <section className="sc-comparison" aria-label="Compare itinerary with alternatives">
       <h2>Compare: Risky Self-Transfer vs Safer Alternatives</h2>
-      <p className="sc-source-label">{LABELS.atlasAlternatives}</p>
+      <p className="sc-source-label">{ATLAS_UI_LABELS.offlineFixture}</p>
       <p>
         Below is a side-by-side comparison of your current self-transfer plan
-        against available alternatives. All data is synthetic and local. Risk
-        data is a heuristic placeholder. Alternatives are sandbox placeholders.
+        against available alternatives. All data is from offline fixtures. Risk
+        data is a heuristic placeholder. Alternatives are offline fixtures.
         No booking or order is created by viewing this comparison.
       </p>
 
       <div className="sc-comparison-grid">
         <div className="sc-comparison-col sc-comparison-col--original">
           <h3>Your Current Plan</h3>
-          <p className="sc-source-label sc-source-label--small">{LABELS.nosanaRisk}</p>
+          <p className="sc-source-label sc-source-label--small">{NOSANA_UI_LABELS.localFallback}</p>
           <dl>
             <dt>Route:</dt><dd>{originalItinerary.routeSummary}</dd>
             <dt>Leg 1:</dt><dd>{originalItinerary.firstLeg}</dd>
@@ -40,7 +40,7 @@ export function ComparisonView({ comparison, riskResult }: Props) {
 
         <div className="sc-comparison-col sc-comparison-col--alternatives">
           <h3>Safer Alternatives</h3>
-          <p className="sc-source-label sc-source-label--small">{LABELS.atlasAlternatives}</p>
+          <p className="sc-source-label sc-source-label--small">{ATLAS_UI_LABELS.offlineFixture}</p>
 
           {alternatives.length === 0 ? (
             <p>No alternatives available for comparison.</p>

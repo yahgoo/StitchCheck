@@ -28,7 +28,8 @@ SEGMENTS = [
     {"id": "seg-04-risk",     "text_file": "seg-04-risk.txt",     "wav_file": "seg-04-risk.wav"},
     {"id": "seg-05-provider", "text_file": "seg-05-provider.txt", "wav_file": "seg-05-provider.wav"},
     {"id": "seg-06-decision", "text_file": "seg-06-decision.txt", "wav_file": "seg-06-decision.wav"},
-    {"id": "seg-07-close",    "text_file": "seg-07-close.txt",    "wav_file": "seg-07-close.wav"},
+    {"id": "seg-07-decision", "text_file": "seg-07-decision.txt", "wav_file": "seg-07-decision.wav"},
+    {"id": "seg-08-close",    "text_file": "seg-08-close.txt",    "wav_file": "seg-08-close.wav"},
 ]
 
 
@@ -58,7 +59,7 @@ def check_prerequisites():
 
 def main():
     print("=" * 60)
-    print("StitchCheck Hackathon Submission — Kokoro Voice (7 segments)")
+    print("StitchCheck Hackathon Submission — Kokoro Voice (8 segments)")
     print(f"Voice: {VOICE} | Speed: {SPEED} | Lang: {LANG}")
     print(f"Output: {VOICE_DIR}")
     print("=" * 60)

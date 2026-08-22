@@ -147,7 +147,7 @@ This document defines the six-scene video pipeline for the StitchCheck demo walk
 - None (final statement serves as closing boundary)
 
 ### Narration
-"The user makes a local decision — Keep the current plan or Switch to an alternative. This is a UI-only selection. No booking, payment, reservation, ticket, order, verification, or other external action occurs. The final screen states explicitly that no external action has been created. Direct Gemini remains unexecuted. Nosana remains unexecuted and not deployed. Atlas remains unexecuted and not authenticated. This local demo ends here, having demonstrated the review-first flow with synthetic data and zero external calls."
+"The user makes a local decision — Keep the current plan or Switch to an alternative. This is a UI-only selection. No booking, payment, reservation, ticket, order, verification, or other external action occurs. The final screen states explicitly that no external action has been created. Direct Gemini 3.7 was live-verified separately. Atlas Sandbox Search/Verify was verified separately. Nosana uses local fallback in this walkthrough. This local demo ends here, having demonstrated the review-first flow with synthetic data — the demo UI itself makes no live service calls."
 
 ### Screenshot Capture Points
 - Decision buttons visible

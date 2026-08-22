@@ -99,7 +99,21 @@ export function getDecisionData(): DecisionData {
   return demoData.uiStates.comparisonAndDecision.decision as unknown as DecisionData;
 }
 
-/* ── Default extraction (unconfirmed itinerary) ── */
+/* ── Default extraction (unconfirmed itinerary) ──
+ * The GEM-01 fixture data is fictional (AAA/BBB/CCC, SC-101, etc.).
+ * Direct Gemini 3.7 live extraction was verified separately via
+ * ai.interactions.create (evidence: smoke-tests/gemini/results/results-gemini-3.7-flash-success.json),
+ * but the browser walkthrough itself uses this local fixture and makes no provider call.
+ * Provenance is labelled accordingly: local-fixture, not gemini-live. */
 export function getDefaultExtraction(): ExtractionResult {
-  return demoData.uiStates.itineraryUnconfirmed.extractionResult as unknown as ExtractionResult;
+  const base = demoData.uiStates.itineraryUnconfirmed.extractionResult as unknown as ExtractionResult;
+  return {
+    ...base,
+    evidenceSource: 'local-fixture',
+    provider: 'local',
+    executed: false,
+    fallbackUsed: true,
+    validationOutcome: 'valid',
+    provenanceMode: 'fictional-local',
+  };
 }

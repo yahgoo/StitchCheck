@@ -119,17 +119,19 @@ Every narration claim was checked against the evidence index and live-demo resul
 
 | Claim | Evidence | Status |
 |-------|----------|--------|
-| "Direct Gemini integration is implemented and offline-tested" | 165 offline tests pass | **Verified** |
-| "Historical/temporary OpenRouter smoke-test result; not evidence of direct Google Gemini execution" | GEM-LIVE-01 evidence | **Verified** |
+| "Direct Gemini — live validated" | `results-gemini-3.7-flash-success.json` | **Verified** |
+| "Historical temporary OpenRouter test path — not the active provider" | GEM-LIVE-01 evidence | **Verified** |
 | "Atlas Sandbox Search and Verify completed, all read-only" | ATL-SBX-SV-01 evidence | **Verified** |
 | "Atlas ticketing is activation-gated" | TICKETING_ACTIVATION_REQUIRED | **Verified** |
-| "Nosana workload validated offline. Local fallback used." | NOS-LIVE-01 blocked | **Verified** |
+| "Nosana live job completed; result validated offline" | Reconciled evidence artifact | **Verified** — job BNZTHNoARu98EdaqPU5WiCaFWZAyU1e9NYCZJj2h1afY completed; riskScore 0.2895; costUsd 0.044. Browser walkthrough uses local fixture. |
 | "No booking or external write was performed" | App code, labels, specs | **Verified** |
 
 ### Prohibited claims not present
-- No "live Gemini" claim (correct: direct Gemini not live-executed)
+- No "Synthetic Gemini" claim (correct: direct Gemini 3.7 live validated)
 - No "OpenRouter(Gemini)" naming (correct: OpenRouter labelled as historical temporary path)
-- No Nosana live execution claimed (correct: "workload validated offline; live unverified")
+- No "Nosana not submitted" claim (correct: live job completed and reconciled)
+- No "Nosana cost unknown" claim (correct: costUsd 0.044, creditsUsed 44)
+- No "creditsUsed is USD" claim (correct: creditsUsed is internal credit metadata; costUsd is USD)
 - No Atlas ticketing claimed as completed (correct: "activation-gated")
 - No booking/payment/write claimed (correct: explicitly denied)
 
@@ -194,7 +196,7 @@ cd app && npm run build
 - [x] No upload performed
 - [x] No git push performed
 - [x] No live Gemini request made
-- [x] No live Nosana job submitted
+- [x] No live Nosana job resubmitted (one job previously completed; evidence reconciled offline)
 - [x] No Atlas ticketing called
 - [x] No credentials exposed or printed
 - [x] Fallback videos preserved

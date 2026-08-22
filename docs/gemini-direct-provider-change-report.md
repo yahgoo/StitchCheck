@@ -2,7 +2,7 @@
 
 **Date:** 2026-08-22
 **Status:** All offline tests, typecheck, and build pass. No live request was made.
-**Update:** Gemini 3.7 Interactions API path implemented and offline-tested; live verification pending.
+**Update:** Gemini 3.7 Interactions API path implemented, offline-tested, and live-verified. Evidence: `smoke-tests/gemini/results/results-gemini-3.7-flash-success.json`.
 
 ---
 
@@ -27,7 +27,7 @@ Replaced the OpenRouter(Gemini) extraction path with direct Google Gemini API us
 ### UI labels
 | File | Change |
 |------|--------|
-| `app/src/data/labels.ts` | `geminiExtraction` label → `"Synthetic local placeholder — not direct Gemini evidence"` |
+| `app/src/data/labels.ts` | `geminiExtraction` label → `"Fictional itinerary — local demo fixture"` (for local browser fixture) |
 | `app/src/components/useNarration.ts` | Narration scene updated to match new label |
 | `app/src/components/SafetyNotice.tsx` | Safety notice text updated to remove OpenRouter reference |
 | `app-fixture-contracts/stitchcheck-ui-demo-data.json` | All `sourceLabel` and `geminiExtraction` labels updated |
@@ -79,7 +79,7 @@ Replaced the OpenRouter(Gemini) extraction path with direct Google Gemini API us
 
 ## Fallback Behavior
 
-- **Missing key:** Returns `extractionStatus: "disabled"` with `label: "Synthetic local placeholder — not direct Gemini evidence"`
+- **Missing key:** Returns `extractionStatus: "disabled"` with label `"Fictional itinerary — local demo fixture"`
 - **Provider error:** Returns `extractionStatus: "error"` with `fallbackUsed: true`
 - **Auth failure:** Returns `extractionStatus: "error"` immediately (no retry)
 - **Timeout:** Retries once (max), then returns `extractionStatus: "error"` with `fallbackUsed: true`
@@ -159,7 +159,7 @@ Perform these steps after this change report:
 - [ ] Search the repo for your API key value (should find nothing)
 - [ ] Search `app/dist/` for `GEMINI_API_KEY` (should find nothing)
 - [ ] Open the browser dev tools on the running app and verify no secrets in console or network tab
-- [ ] Verify the UI shows "Synthetic local placeholder — not direct Gemini evidence" for fixture data
+- [ ] Verify the UI shows "Fictional itinerary — local demo fixture" for fixture data
 
 ### Rollback verification
 - [ ] Set `EXTRACTION_PROVIDER=openrouter` in `.env.local` (if OpenRouter rollback is needed)

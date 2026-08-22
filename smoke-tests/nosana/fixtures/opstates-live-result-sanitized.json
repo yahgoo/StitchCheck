@@ -1,0 +1,48 @@
+{
+  "_label": "SANITIZED opStates fixture — derived from live IPFS result hash QmbCmtmcbfwRKyU8vE6axGvTMZ6YA1AWkLzVVNpYPZrNHE",
+  "_description": "Reproduces the exact structure returned by Nosana mainnet for job BNZTHNoARu98EdaqPU5WiCaFWZAyU1e9NYCZJj2h1afY. All values are synthetic; no API keys, wallet material, or PII.",
+  "_structure": "status/startTime/endTime/secrets/opStates[].logs[].log (type=stdout)",
+  "status": "success",
+  "startTime": 1787375710053,
+  "endTime": 1787375711055,
+  "secrets": {},
+  "opStates": [
+    {
+      "operationId": "stitchcheck-risk-calc",
+      "group": "stitchcheck-risk-calc",
+      "providerId": "synthetic-provider-id-hex-placeholder-not-a-real-key",
+      "status": "success",
+      "startTime": 1787375710069,
+      "endTime": 1787375711000,
+      "exitCode": 0,
+      "logs": [
+        {
+          "log": "{\"riskScore\": 0.2895, \"riskBand\": \"medium\", \"assumptions\": [\"Historical average delay at BBB: 25 min\", \"On-time rate: 0.72\", \"Route miss rate: 0.28\", \"Monte Carlo simulations: 800\"], \"simulationCount\": 800, \"explanation\": \"A 75-minute connection at BBB was evaluated against 800 historical records. Monte Carlo simulation (800 runs) estimated a 30.4% probability of tight connection. Combined with route miss rate, the heuristic risk score is 0.2895 (medium band). This is a heuristic indication only — not a prediction or guarantee.\"}\n",
+          "type": "stdout",
+          "timestamp": "2026-08-22T05:15:10Z"
+        }
+      ],
+      "errors": [],
+      "diagnostics": {
+        "reason": {
+          "hostShutDown": false,
+          "jobStopped": false,
+          "jobExpired": false
+        },
+        "state": {
+          "Status": "exited",
+          "Running": false,
+          "Paused": false,
+          "Restarting": false,
+          "OOMKilled": false,
+          "Dead": false,
+          "Pid": 0,
+          "ExitCode": 0,
+          "Error": "",
+          "StartedAt": "2026-08-22T05:15:10.223435645Z",
+          "FinishedAt": "2026-08-22T05:15:10.445294496Z"
+        }
+      }
+    }
+  ]
+}

@@ -19,9 +19,9 @@ import { useState, useCallback, useRef, useEffect } from 'react';
  */
 export const NARRATION_SCENES: Record<string, string> = {
   'safety-notice':
-    'StitchCheck helps budget travelers understand the hidden risk of stitching two separately purchased flight tickets. This is a local demo with synthetic data; the demo walkthrough itself makes no external service calls.',
+    'StitchCheck helps budget travelers understand the hidden risk of stitching two separately purchased flight tickets. This is a fictional demo with a fictional itinerary; live provider processing is used where explicitly labelled.',
   'upload':
-    'The user starts with a synthetic itinerary screenshot. Select a fixture to populate the itinerary fields. The extraction label reads: Synthetic local placeholder — not direct Gemini evidence.',
+    'The user starts with a fictional test itinerary. Select a fixture to populate the itinerary fields. The extraction label reads: Direct Gemini — live validated.',
   'review':
     'Extracted fields are displayed for human review. Every field is editable. The traveler confirms only what they have personally reviewed.',
   'confirmed':

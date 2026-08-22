@@ -62,7 +62,7 @@ Every screen that displays extraction, risk, or alternative content must show th
 - No offer reuse after an environment switch; a new search is required.
 
 ### Gemini constraints
-- Direct Gemini remains unexecuted. The extraction data shown in the UI comes from the OpenRouter temporary-path result or a local fixture, clearly labelled as such.
+- Direct Gemini 3.7 live extraction succeeded via the Interactions API. The browser walkthrough uses a fictional local fixture, clearly labelled as such.
 
 ## Proposed File Layout
 

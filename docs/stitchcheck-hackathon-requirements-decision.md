@@ -120,13 +120,13 @@ If any service cannot be demonstrated live, the following claims must appear:
 
 - **For Atlas (Sandbox unavailable):** "Atlas authentication succeeded. One production search returned five reference-price offers. Sandbox rehearsal was not attempted. Ticketing activation is pending. No booking, payment, ticket, or order was created."
 - **For Nosana (not executed):** "Nosana has not been executed, deployed, or authenticated. A smoke-test attempt was intentionally blocked before any network request due to missing infrastructure. All risk data shown is a synthetic local placeholder labelled accordingly."
-- **For Gemini (direct not executed):** "GEM-01 was executed via an OpenRouter temporary path. Direct Gemini remains unexecuted. This is not direct Gemini validation."
+- **For Gemini (direct verified, browser uses fixture):** "Direct Gemini 3.7 live extraction succeeded via the Interactions API; schema-valid, no fallback. The browser walkthrough uses a fictional local fixture and makes no provider call. Historical OpenRouter path is labelled accordingly."
 
 ### 4.4 What minimum evidence is needed to avoid a zero or major score loss?
 
 | Service | Minimum Evidence to Avoid Zero | Current Status |
 |---------|-------------------------------|----------------|
-| Gemini | Direct Gemini API call producing structured itinerary output consumed by the app. | **Not met.** Only OpenRouter temporary path exists. |
+| Gemini | Direct Gemini API call producing structured itinerary output consumed by the app. | **Met.** Direct Gemini 3.7 live extraction succeeded via the Interactions API; schema-valid, no fallback. Browser walkthrough uses a local fixture. |
 | Atlas Sandbox | One Sandbox-environment search returning labelled alternative results consumed by the comparison view. | **Not met.** Production search exists; Sandbox not used. |
 | Nosana | One workload execution returning a structured risk result consumed by the risk panel, with visible workload status. | **Not met.** Blocked before any network request. |
 
