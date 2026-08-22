@@ -1,0 +1,16 @@
+{
+  "fixtureId": "result-atl-empty",
+  "testCases": ["ATL-05"],
+  "scenarioNote": "Expected labelled empty outcome: understandable message with retry/replay path; nothing fabricated.",
+  "disclaimer": "Synthetic local placeholder — not Atlas Sandbox evidence",
+  "searchResult": {
+    "correlationId": "synthetic-atl-empty-result",
+    "searchStatus": "empty",
+    "sourceEnvironment": "sandbox-placeholder",
+    "alternatives": [],
+    "errorCode": null,
+    "errorMessage": null,
+    "fallbackUsed": false
+  },
+  "expectedUiBehavior": "Show a labelled empty state with a retry/replay path; never fabricate alternatives."
+}

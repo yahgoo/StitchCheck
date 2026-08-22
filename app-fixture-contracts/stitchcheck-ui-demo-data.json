@@ -1,0 +1,475 @@
+{
+  "meta": {
+    "filePurpose": "Synthetic local demo data for the future React/Vite StitchCheck UI. Not live service evidence.",
+    "syntheticDemo": true,
+    "externalCallsMade": false,
+    "isLiveServiceEvidence": false,
+    "atlasSearchOnly": true,
+    "piiReview": "All data is synthetic by construction: invented airport codes (AAA/BBB/CCC), fictional correlation identifiers, invented dates and placeholder prices. No real passenger, booking reference, payment data, airline record, PII, or credential appears anywhere in this file.",
+    "forbiddenActions": [
+      "verify",
+      "book",
+      "pay",
+      "ticket",
+      "reserve",
+      "order",
+      "write"
+    ],
+    "sourceFixtures": {
+      "gemini": "smoke-tests/gemini/results/results.json",
+      "nosana": "smoke-tests/nosana/fixtures/res-nos-*.json",
+      "atlas": "smoke-tests/atlas/fixtures/result-atl-*.json"
+    }
+  },
+
+  "labels": {
+    "geminiExtraction": "Synthetic local placeholder — not direct Gemini evidence",
+    "nosanaRisk": "Synthetic local placeholder — not Nosana evidence",
+    "atlasAlternatives": "Synthetic local placeholder — not Atlas Sandbox evidence"
+  },
+
+  "uiStates": {
+
+    "itineraryUnconfirmed": {
+      "stateId": "itinerary-unconfirmed",
+      "description": "Clean editable itinerary extracted from the GEM-01 synthetic fixture. User has not yet confirmed. Risk and alternatives panels remain disabled.",
+      "sourceLabel": "Synthetic local placeholder — not direct Gemini evidence",
+      "requiresUserConfirmation": true,
+      "confirmationStatus": "unconfirmed",
+      "externalCallsMade": false,
+      "isLiveServiceEvidence": false,
+      "atlasSearchOnly": true,
+      "forbiddenActions": ["verify", "book", "pay", "ticket", "reserve", "order", "write"],
+      "extractionResult": {
+        "extractionStatus": "success",
+        "firstLeg": {
+          "origin": "AAA",
+          "destination": "BBB",
+          "departureDate": "2026-09-15",
+          "airline": "Synthetic Carrier",
+          "flightNumber": "SC-101",
+          "departureTime": "08:00",
+          "arrivalTime": "10:30"
+        },
+        "secondLeg": {
+          "origin": "BBB",
+          "destination": "CCC",
+          "departureDate": "2026-09-15",
+          "airline": "Synthetic Carrier",
+          "flightNumber": "SC-202",
+          "departureTime": "13:00",
+          "arrivalTime": "15:45"
+        },
+        "connectionDurationMinutes": 150,
+        "missingFields": [],
+        "fieldConfidence": {
+          "overall": "high",
+          "note": "All core fields populated from the GEM-01 clean synthetic fixture"
+        },
+        "validationMessages": [],
+        "requiresUserConfirmation": true,
+        "syntheticDemo": true
+      },
+      "screenshotFixtures": [
+        "smoke-tests/gemini/fixtures/gem-01-two-leg-clean.png"
+      ],
+      "downstreamGate": {
+        "riskPanelEnabled": false,
+        "alternativesPanelEnabled": false,
+        "disabledMessage": "Confirm itinerary first"
+      }
+    },
+
+    "itineraryCorrected": {
+      "stateId": "itinerary-corrected",
+      "description": "User corrected one extracted field (flight number on the second leg) before confirming. Demonstrates the edit-and-correct flow.",
+      "sourceLabel": "Synthetic local placeholder — not direct Gemini evidence",
+      "requiresUserConfirmation": true,
+      "confirmationStatus": "unconfirmed",
+      "externalCallsMade": false,
+      "isLiveServiceEvidence": false,
+      "atlasSearchOnly": true,
+      "forbiddenActions": ["verify", "book", "pay", "ticket", "reserve", "order", "write"],
+      "extractionResult": {
+        "extractionStatus": "success",
+        "firstLeg": {
+          "origin": "AAA",
+          "destination": "BBB",
+          "departureDate": "2026-09-15",
+          "airline": "Synthetic Carrier",
+          "flightNumber": "SC-101",
+          "departureTime": "08:00",
+          "arrivalTime": "10:30"
+        },
+        "secondLeg": {
+          "origin": "BBB",
+          "destination": "CCC",
+          "departureDate": "2026-09-15",
+          "airline": "Synthetic Carrier",
+          "flightNumber": "SC-299",
+          "departureTime": "13:00",
+          "arrivalTime": "15:45"
+        },
+        "connectionDurationMinutes": 150,
+        "missingFields": [],
+        "fieldConfidence": {
+          "overall": "high",
+          "note": "Second-leg flight number was corrected by the user from SC-202 to SC-299"
+        },
+        "validationMessages": [],
+        "requiresUserConfirmation": true,
+        "syntheticDemo": true
+      },
+      "correctionNotes": [
+        "User corrected secondLeg.flightNumber from SC-202 to SC-299"
+      ],
+      "downstreamGate": {
+        "riskPanelEnabled": false,
+        "alternativesPanelEnabled": false,
+        "disabledMessage": "Confirm itinerary first"
+      }
+    },
+
+    "itineraryConfirmed": {
+      "stateId": "itinerary-confirmed",
+      "description": "User explicitly confirmed the corrected itinerary. Downstream panels may now activate with local placeholder data only.",
+      "sourceLabel": "Synthetic local placeholder — not direct Gemini evidence",
+      "requiresUserConfirmation": true,
+      "confirmationStatus": "confirmed",
+      "externalCallsMade": false,
+      "isLiveServiceEvidence": false,
+      "atlasSearchOnly": true,
+      "forbiddenActions": ["verify", "book", "pay", "ticket", "reserve", "order", "write"],
+      "extractionResult": {
+        "extractionStatus": "success",
+        "firstLeg": {
+          "origin": "AAA",
+          "destination": "BBB",
+          "departureDate": "2026-09-15",
+          "airline": "Synthetic Carrier",
+          "flightNumber": "SC-101",
+          "departureTime": "08:00",
+          "arrivalTime": "10:30"
+        },
+        "secondLeg": {
+          "origin": "BBB",
+          "destination": "CCC",
+          "departureDate": "2026-09-15",
+          "airline": "Synthetic Carrier",
+          "flightNumber": "SC-299",
+          "departureTime": "13:00",
+          "arrivalTime": "15:45"
+        },
+        "connectionDurationMinutes": 150,
+        "missingFields": [],
+        "fieldConfidence": {
+          "overall": "high",
+          "note": "User-reviewed and confirmed; second-leg flight number was corrected"
+        },
+        "validationMessages": [],
+        "requiresUserConfirmation": true,
+        "userConfirmed": true,
+        "syntheticDemo": true
+      },
+      "correctionNotes": [
+        "User corrected secondLeg.flightNumber from SC-202 to SC-299",
+        "User explicitly confirmed the itinerary"
+      ],
+      "downstreamGate": {
+        "riskPanelEnabled": true,
+        "alternativesPanelEnabled": true,
+        "disabledMessage": null
+      }
+    },
+
+    "riskSuccess": {
+      "stateId": "risk-success",
+      "description": "Local placeholder risk result after confirmation. Sourced from the Nosana success fixture shape. Not Nosana evidence.",
+      "sourceLabel": "Synthetic local placeholder — not Nosana evidence",
+      "requiresUserConfirmation": true,
+      "confirmationStatus": "confirmed",
+      "externalCallsMade": false,
+      "isLiveServiceEvidence": false,
+      "atlasSearchOnly": true,
+      "forbiddenActions": ["verify", "book", "pay", "ticket", "reserve", "order", "write"],
+      "riskResult": {
+        "correlationId": "synthetic-nos-01-clean",
+        "workloadStatus": "completed",
+        "jobOrServiceReference": "synthetic-local-ref-0001 (NOT a real Nosana job reference)",
+        "riskBand": "medium",
+        "riskScore": 0.42,
+        "heuristicDisclaimer": "Heuristic risk estimate only — derived from a static/historical synthetic dataset; not a live delay, weather, legal, or guaranteed-outcome prediction. Synthetic local placeholder — not Nosana evidence.",
+        "failureCascadeExplanation": "A 75-minute connection at this synthetic airport profile historically misses onward legs in roughly the medium band of the demo dataset. This is a heuristic indication, not a prediction or guarantee, and no booking, order, or payment is involved.",
+        "datasetVersion": "synthetic-demo-v0",
+        "fallbackUsed": false,
+        "errorCode": null,
+        "errorMessage": null
+      }
+    },
+
+    "riskUnavailable": {
+      "stateId": "risk-unavailable",
+      "description": "Local placeholder risk result where the risk band is unavailable. No score is invented.",
+      "sourceLabel": "Synthetic local placeholder — not Nosana evidence",
+      "requiresUserConfirmation": true,
+      "confirmationStatus": "confirmed",
+      "externalCallsMade": false,
+      "isLiveServiceEvidence": false,
+      "atlasSearchOnly": true,
+      "forbiddenActions": ["verify", "book", "pay", "ticket", "reserve", "order", "write"],
+      "riskResult": {
+        "correlationId": "synthetic-nos-09-degraded",
+        "workloadStatus": "completed",
+        "jobOrServiceReference": "synthetic-local-ref-0002 (NOT a real Nosana job reference)",
+        "riskBand": "unavailable",
+        "riskScore": null,
+        "heuristicDisclaimer": "Heuristic risk estimate only — derived from a static/historical synthetic dataset; not a live delay, weather, legal, or guaranteed-outcome prediction. Synthetic local placeholder — not Nosana evidence.",
+        "failureCascadeExplanation": "The connection airport is absent from the synthetic static dataset slice, so no risk band can be produced. No score is invented; a labelled fallback path (re-run or proceed without risk guidance) is offered.",
+        "datasetVersion": "synthetic-demo-v0",
+        "fallbackUsed": true,
+        "errorCode": null,
+        "errorMessage": null
+      }
+    },
+
+    "riskError": {
+      "stateId": "risk-error",
+      "description": "Local placeholder risk error state. Understandable feedback with error code; no invented score.",
+      "sourceLabel": "Synthetic local placeholder — not Nosana evidence",
+      "requiresUserConfirmation": true,
+      "confirmationStatus": "confirmed",
+      "externalCallsMade": false,
+      "isLiveServiceEvidence": false,
+      "atlasSearchOnly": true,
+      "forbiddenActions": ["verify", "book", "pay", "ticket", "reserve", "order", "write"],
+      "riskResult": {
+        "correlationId": "synthetic-nos-05-malformed",
+        "workloadStatus": "error",
+        "jobOrServiceReference": null,
+        "riskBand": "unavailable",
+        "riskScore": null,
+        "heuristicDisclaimer": "Heuristic risk estimate only — derived from a static/historical synthetic dataset; not a live delay, weather, legal, or guaranteed-outcome prediction. Synthetic local placeholder — not Nosana evidence.",
+        "failureCascadeExplanation": "The request failed local validation before any workload could start: required non-PII fields were missing or invalid. Understandable feedback is shown and the request can be corrected and replayed.",
+        "datasetVersion": "synthetic-demo-v0",
+        "fallbackUsed": false,
+        "errorCode": "SIMULATED_INVALID_REQUEST",
+        "errorMessage": "Simulated validation error: connectionAirport missing, nonPiiDeclaration missing, connectionDurationMinutes invalid (local placeholder scenario)."
+      }
+    },
+
+    "riskTimeout": {
+      "stateId": "risk-timeout",
+      "description": "Local placeholder risk timeout state. Labelled timeout outcome with replay path; no invented score.",
+      "sourceLabel": "Synthetic local placeholder — not Nosana evidence",
+      "requiresUserConfirmation": true,
+      "confirmationStatus": "confirmed",
+      "externalCallsMade": false,
+      "isLiveServiceEvidence": false,
+      "atlasSearchOnly": true,
+      "forbiddenActions": ["verify", "book", "pay", "ticket", "reserve", "order", "write"],
+      "riskResult": {
+        "correlationId": "synthetic-nos-06-timeout",
+        "workloadStatus": "timeout",
+        "jobOrServiceReference": "synthetic-local-ref-0004 (NOT a real Nosana job reference)",
+        "riskBand": "unavailable",
+        "riskScore": null,
+        "heuristicDisclaimer": "Heuristic risk estimate only — derived from a static/historical synthetic dataset; not a live delay, weather, legal, or guaranteed-outcome prediction. Synthetic local placeholder — not Nosana evidence.",
+        "failureCascadeExplanation": "The simulated workload exceeded the demo time budget and timed out, so no risk band or score exists and none is invented. A labelled replay/fallback path is offered to the user.",
+        "datasetVersion": "synthetic-demo-v0",
+        "fallbackUsed": true,
+        "errorCode": "SIMULATED_WORKLOAD_TIMEOUT",
+        "errorMessage": "Simulated workload timeout (local placeholder scenario; no real workload was executed)."
+      }
+    },
+
+    "riskFailure": {
+      "stateId": "risk-failure",
+      "description": "Local placeholder risk workload-failure state. Error status with replay path; no invented score.",
+      "sourceLabel": "Synthetic local placeholder — not Nosana evidence",
+      "requiresUserConfirmation": true,
+      "confirmationStatus": "confirmed",
+      "externalCallsMade": false,
+      "isLiveServiceEvidence": false,
+      "atlasSearchOnly": true,
+      "forbiddenActions": ["verify", "book", "pay", "ticket", "reserve", "order", "write"],
+      "riskResult": {
+        "correlationId": "synthetic-nos-07-failure",
+        "workloadStatus": "error",
+        "jobOrServiceReference": "synthetic-local-ref-0003 (NOT a real Nosana job reference)",
+        "riskBand": "unavailable",
+        "riskScore": null,
+        "heuristicDisclaimer": "Heuristic risk estimate only — derived from a static/historical synthetic dataset; not a live delay, weather, legal, or guaranteed-outcome prediction. Synthetic local placeholder — not Nosana evidence.",
+        "failureCascadeExplanation": "The simulated workload failed before producing a result, so no risk band or score exists and none is invented. A labelled replay/retry path is offered to the user.",
+        "datasetVersion": "synthetic-demo-v0",
+        "fallbackUsed": false,
+        "errorCode": "SIMULATED_WORKLOAD_FAILURE",
+        "errorMessage": "Simulated workload internal error (local placeholder scenario; no real workload was executed)."
+      }
+    },
+
+    "alternativesSuccess": {
+      "stateId": "alternatives-success",
+      "description": "Local placeholder alternatives result after confirmation. Sourced from the Atlas success fixture shape. Not Atlas Sandbox evidence.",
+      "sourceLabel": "Synthetic local placeholder — not Atlas Sandbox evidence",
+      "requiresUserConfirmation": true,
+      "confirmationStatus": "confirmed",
+      "externalCallsMade": false,
+      "isLiveServiceEvidence": false,
+      "atlasSearchOnly": true,
+      "forbiddenActions": ["verify", "book", "pay", "ticket", "reserve", "order", "write"],
+      "searchResult": {
+        "correlationId": "synthetic-atl-normal-two-leg",
+        "searchStatus": "completed",
+        "sourceEnvironment": "sandbox-placeholder",
+        "alternatives": [
+          {
+            "offerReference": "display-only-reference-a1",
+            "routeSummary": "AAA → BBB → CCC (synthetic)",
+            "departureTime": "08:30",
+            "arrivalTime": "16:10",
+            "duration": "7h 40m",
+            "connectionType": "one-stop",
+            "connectionDurationMinutes": 135,
+            "priceDisplay": "— placeholder —",
+            "currency": "USD",
+            "availabilityLabel": "placeholder-availability"
+          },
+          {
+            "offerReference": "display-only-reference-a2",
+            "routeSummary": "AAA → CCC direct (synthetic)",
+            "departureTime": "09:15",
+            "arrivalTime": "13:05",
+            "duration": "3h 50m",
+            "connectionType": "nonstop",
+            "connectionDurationMinutes": 0,
+            "priceDisplay": "— placeholder —",
+            "currency": "USD",
+            "availabilityLabel": "placeholder-availability"
+          }
+        ],
+        "errorCode": null,
+        "errorMessage": null,
+        "fallbackUsed": false
+      }
+    },
+
+    "alternativesEmpty": {
+      "stateId": "alternatives-empty",
+      "description": "Local placeholder empty alternatives state. No alternatives fabricated.",
+      "sourceLabel": "Synthetic local placeholder — not Atlas Sandbox evidence",
+      "requiresUserConfirmation": true,
+      "confirmationStatus": "confirmed",
+      "externalCallsMade": false,
+      "isLiveServiceEvidence": false,
+      "atlasSearchOnly": true,
+      "forbiddenActions": ["verify", "book", "pay", "ticket", "reserve", "order", "write"],
+      "searchResult": {
+        "correlationId": "synthetic-atl-empty-result",
+        "searchStatus": "empty",
+        "sourceEnvironment": "sandbox-placeholder",
+        "alternatives": [],
+        "errorCode": null,
+        "errorMessage": null,
+        "fallbackUsed": false
+      },
+      "expectedUiBehavior": "Show a labelled empty state with a retry/replay path; never fabricate alternatives."
+    },
+
+    "alternativesError": {
+      "stateId": "alternatives-error",
+      "description": "Local placeholder alternatives error state. Understandable error with retry/replay path.",
+      "sourceLabel": "Synthetic local placeholder — not Atlas Sandbox evidence",
+      "requiresUserConfirmation": true,
+      "confirmationStatus": "confirmed",
+      "externalCallsMade": false,
+      "isLiveServiceEvidence": false,
+      "atlasSearchOnly": true,
+      "forbiddenActions": ["verify", "book", "pay", "ticket", "reserve", "order", "write"],
+      "searchResult": {
+        "correlationId": "synthetic-atl-error",
+        "searchStatus": "error",
+        "sourceEnvironment": "sandbox-placeholder",
+        "alternatives": [],
+        "errorCode": "SYNTHETIC_SEARCH_FAILED",
+        "errorMessage": "Synthetic placeholder error: the search could not be completed. Retry or replay is available.",
+        "fallbackUsed": false
+      },
+      "expectedUiBehavior": "Show a labelled error state with a retry/replay path; never fabricate alternatives."
+    },
+
+    "alternativesTimeout": {
+      "stateId": "alternatives-timeout",
+      "description": "Local placeholder alternatives timeout state. Timeout message with retry/replay path.",
+      "sourceLabel": "Synthetic local placeholder — not Atlas Sandbox evidence",
+      "requiresUserConfirmation": true,
+      "confirmationStatus": "confirmed",
+      "externalCallsMade": false,
+      "isLiveServiceEvidence": false,
+      "atlasSearchOnly": true,
+      "forbiddenActions": ["verify", "book", "pay", "ticket", "reserve", "order", "write"],
+      "searchResult": {
+        "correlationId": "synthetic-atl-timeout",
+        "searchStatus": "timeout",
+        "sourceEnvironment": "sandbox-placeholder",
+        "alternatives": [],
+        "errorCode": "SYNTHETIC_SEARCH_TIMEOUT",
+        "errorMessage": "Synthetic placeholder timeout: the search did not finish in time. Retry or replay is available.",
+        "fallbackUsed": false
+      },
+      "expectedUiBehavior": "Show a labelled timeout state with a retry/replay path; never fabricate alternatives."
+    },
+
+    "comparisonAndDecision": {
+      "stateId": "comparison-and-decision",
+      "description": "Local placeholder comparison view and Keep/Switch decision. No booking, payment, reservation, ticket, order, verification, or write action occurs.",
+      "sourceLabel": "Synthetic local placeholder — not Atlas Sandbox evidence",
+      "requiresUserConfirmation": true,
+      "confirmationStatus": "confirmed",
+      "externalCallsMade": false,
+      "isLiveServiceEvidence": false,
+      "atlasSearchOnly": true,
+      "forbiddenActions": ["verify", "book", "pay", "ticket", "reserve", "order", "write"],
+      "comparison": {
+        "originalItinerary": {
+          "routeSummary": "AAA → BBB → CCC (self-transfer, synthetic)",
+          "firstLeg": "AAA → BBB, SC-101, 08:00–10:30",
+          "secondLeg": "BBB → CCC, SC-299, 13:00–15:45",
+          "connectionDurationMinutes": 150,
+          "riskBand": "medium",
+          "riskLabel": "Synthetic local placeholder — not Nosana evidence"
+        },
+        "alternatives": [
+          {
+            "offerReference": "display-only-reference-a1",
+            "routeSummary": "AAA → BBB → CCC (synthetic)",
+            "departureTime": "08:30",
+            "arrivalTime": "16:10",
+            "duration": "7h 40m",
+            "connectionType": "one-stop",
+            "connectionDurationMinutes": 135,
+            "priceDisplay": "— placeholder —",
+            "sourceLabel": "Synthetic local placeholder — not Atlas Sandbox evidence"
+          },
+          {
+            "offerReference": "display-only-reference-a2",
+            "routeSummary": "AAA → CCC direct (synthetic)",
+            "departureTime": "09:15",
+            "arrivalTime": "13:05",
+            "duration": "3h 50m",
+            "connectionType": "nonstop",
+            "connectionDurationMinutes": 0,
+            "priceDisplay": "— placeholder —",
+            "sourceLabel": "Synthetic local placeholder — not Atlas Sandbox evidence"
+          }
+        ]
+      },
+      "decision": {
+        "selectedDecision": null,
+        "options": ["Keep", "Switch"],
+        "noOrderCreated": true,
+        "syntheticDemo": true,
+        "finalStatement": "No booking, payment, reservation, ticket, order, verification, or other write action has been created. This is a synthetic demo only."
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "fixtureId": "query-atl-error",
+  "testCases": ["ATL-07"],
+  "scenarioNote": "Synthetic confirmed itinerary paired with an expected labelled search-error outcome with a retry/replay path. Illustrative input only, not a live request.",
+  "disclaimer": "Synthetic local placeholder — not Atlas Sandbox evidence",
+  "searchQuery": {
+    "correlationId": "synthetic-atl-error",
+    "origin": "AAA",
+    "destination": "CCC",
+    "departureDate": "2026-09-18",
+    "earliestDepartureTime": "09:00",
+    "latestArrivalTime": "22:00",
+    "searchIntent": "safer-alternative",
+    "sandboxOnly": true,
+    "syntheticDemo": true,
+    "confirmedItinerary": true
+  },
+  "syntheticContext": {
+    "legs": [
+      {
+        "origin": "AAA",
+        "destination": "BBB",
+        "date": "2026-09-18",
+        "departureTime": "10:10",
+        "arrivalTime": "12:35"
+      },
+      {
+        "origin": "BBB",
+        "destination": "CCC",
+        "date": "2026-09-18",
+        "departureTime": "15:20",
+        "arrivalTime": "17:50"
+      }
+    ],
+    "connectionDurationMinutes": 165
+  },
+  "expectedOutcomeFixture": "result-atl-error.json"
+}

@@ -1,0 +1,24 @@
+{
+  "name": "stitchcheck-demo",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "typecheck": "tsc --noEmit",
+    "preview": "vite preview",
+    "verify:offline": "node ../smoke-tests/cross-provider-invariant-tests.mjs && node ../smoke-tests/gemini/adapter-offline-tests.mjs && node ../smoke-tests/atlas/adapter-offline-tests.mjs && node ../smoke-tests/atlas/duplicate-booking-guard-offline-tests.mjs && node ../smoke-tests/atlas/schema-validator.mjs && node ../smoke-tests/nosana/nosana-client-offline-tests.mjs && node ../smoke-tests/nosana/schema-validator.mjs && npm run typecheck && npm run build",
+    "preflight": "node ../scripts/stitchcheck-preflight.mjs",
+    "capture": "node ../scripts/stitchcheck-demo-capture.mjs"
+  },
+  "dependencies": {
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.1.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.2"
+  }
+}

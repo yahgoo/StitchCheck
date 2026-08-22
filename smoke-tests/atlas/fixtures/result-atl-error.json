@@ -1,0 +1,16 @@
+{
+  "fixtureId": "result-atl-error",
+  "testCases": ["ATL-07"],
+  "scenarioNote": "Expected labelled search-error outcome: understandable error message with retry/replay path.",
+  "disclaimer": "Synthetic local placeholder — not Atlas Sandbox evidence",
+  "searchResult": {
+    "correlationId": "synthetic-atl-error",
+    "searchStatus": "error",
+    "sourceEnvironment": "sandbox-placeholder",
+    "alternatives": [],
+    "errorCode": "SYNTHETIC_SEARCH_FAILED",
+    "errorMessage": "Synthetic placeholder error: the search could not be completed. Retry or replay is available.",
+    "fallbackUsed": false
+  },
+  "expectedUiBehavior": "Show a labelled error state with a retry/replay path; never fabricate alternatives."
+}

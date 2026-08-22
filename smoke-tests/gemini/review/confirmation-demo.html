@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>StitchCheck Smoke Test: Extraction Review (Synthetic Demo)</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 720px; margin: 2rem auto; color: #1a1a1a; }
+  .banner { padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1.5rem; font-weight: 600; }
+  .unconfirmed { background: #fff3cd; border: 1px solid #e0c060; }
+  .confirmed { background: #d4edda; border: 1px solid #6cbf84; }
+  fieldset { border: 1px solid #ccc; border-radius: 6px; margin-bottom: 1rem; }
+  label { display: block; margin: 0.5rem 0 0.15rem; font-size: 0.85rem; color: #555; }
+  input { width: 100%; padding: 0.4rem; font-size: 1rem; box-sizing: border-box; }
+  .note { font-size: 0.85rem; color: #666; margin-top: 1.5rem; }
+  button { padding: 0.6rem 1.2rem; font-size: 1rem; margin-top: 0.5rem; }
+</style>
+</head>
+<body>
+<h1>Extraction Review — Synthetic Demo</h1>
+<p><strong>OpenRouter temporary path — not direct Gemini validation.</strong>
+Direct Gemini validation remains a separate hackathon-day path; results from
+the two paths are never merged.</p>
+<p>This local artifact demonstrates the user review and correction step required
+before any downstream action could ever be enabled. All values below are
+synthetic placeholders, not real travel data and not Gemini output.</p>
+
+<div id="status" class="banner unconfirmed">Status: Unconfirmed — review and correct the fields below.</div>
+
+<fieldset>
+  <legend>First leg (synthetic placeholder values)</legend>
+  <label for="f1-airline">Airline</label>
+  <input id="f1-airline" value="Demo Air">
+  <label for="f1-flight">Flight number</label>
+  <input id="f1-flight" value="DA 100">
+  <label for="f1-origin">Origin</label>
+  <input id="f1-origin" value="AAA">
+  <label for="f1-connection">Connection airport</label>
+  <input id="f1-connection" value="BBB">
+  <label for="f1-departure">Departure time</label>
+  <input id="f1-departure" value="2026-09-01 08:00">
+  <label for="f1-arrival">Arrival time</label>
+  <input id="f1-arrival" value="2026-09-01 10:30">
+</fieldset>
+
+<fieldset>
+  <legend>Second leg (synthetic placeholder values)</legend>
+  <label for="f2-airline">Airline</label>
+  <input id="f2-airline" value="Demo Air">
+  <label for="f2-flight">Flight number</label>
+  <input id="f2-flight" value="DA 200">
+  <label for="f2-origin">Origin</label>
+  <input id="f2-origin" value="BBB">
+  <label for="f2-destination">Destination</label>
+  <input id="f2-destination" value="CCC">
+  <label for="f2-departure">Departure time</label>
+  <input id="f2-departure" value="2026-09-01 11:45">
+  <label for="f2-arrival">Arrival time</label>
+  <input id="f2-arrival" value="2026-09-01 14:20">
+</fieldset>
+
+<label for="connection-minutes">Connection duration (minutes)</label>
+<input id="connection-minutes" value="75">
+
+<button id="confirm" type="button">Confirm extraction (demo only)</button>
+
+<p class="note">
+requiresUserConfirmation: true — syntheticDemo: true.<br>
+This artifact is fully offline and editable. Confirmation records a local
+demo state only. No downstream action exists or can be enabled in this
+smoke-test harness: no risk scoring, no flight search, no booking, payment,
+or order creation of any kind.
+</p>
+
+<script>
+  document.getElementById("confirm").addEventListener("click", function () {
+    var banner = document.getElementById("status");
+    banner.textContent = "Status: Confirmed (local demo state only) — no downstream action exists in this harness.";
+    banner.className = "banner confirmed";
+    document.querySelectorAll("input").forEach(function (el) { el.disabled = true; });
+    this.disabled = true;
+  });
+</script>
+</body>
+</html>

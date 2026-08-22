@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="260" font-family="monospace">
+  <rect width="100%" height="100%" fill="#f7f7f2"/>
+  <text x="20" y="26" font-size="12" fill="#b30000">SYNTHETIC FIXTURE — NOT REAL DATA — NO PII</text>
+  <text x="20" y="54" font-size="16" font-weight="bold">Demo Air — Fictional Itinerary (GEM-01)</text>
+  <text x="20" y="90" font-size="13">Leg 1: DA 100 | AAA to BBB | 2026-09-01 | 08:00 - 10:30</text>
+  <text x="20" y="114" font-size="13">Leg 2: DA 200 | BBB to CCC | 2026-09-01 | 11:45 - 14:20</text>
+  <text x="20" y="150" font-size="13">Passenger: SYNTHETIC TRAVELLER (fictional)</text>
+  <text x="20" y="174" font-size="13">Booking reference: XX0000 (fictional)</text>
+  <text x="20" y="198" font-size="13">Total: 123.00 DEM (fictional currency)</text>
+  <text x="20" y="234" font-size="11" fill="#666">Separately booked legs for the StitchCheck synthetic demo.</text>
+</svg>

@@ -1,0 +1,37 @@
+{
+  "fixtureId": "query-atl-normal-two-leg",
+  "testCases": ["ATL-01", "ATL-02", "ATL-03", "ATL-04"],
+  "scenarioNote": "Synthetic normal two-leg confirmed itinerary; search-only safer-alternative query. Illustrative input only, not a live request.",
+  "disclaimer": "Synthetic local placeholder — not Atlas Sandbox evidence",
+  "searchQuery": {
+    "correlationId": "synthetic-atl-normal-two-leg",
+    "origin": "AAA",
+    "destination": "CCC",
+    "departureDate": "2026-09-15",
+    "earliestDepartureTime": "07:00",
+    "latestArrivalTime": "21:00",
+    "searchIntent": "safer-alternative",
+    "sandboxOnly": true,
+    "syntheticDemo": true,
+    "confirmedItinerary": true
+  },
+  "syntheticContext": {
+    "legs": [
+      {
+        "origin": "AAA",
+        "destination": "BBB",
+        "date": "2026-09-15",
+        "departureTime": "08:00",
+        "arrivalTime": "10:30"
+      },
+      {
+        "origin": "BBB",
+        "destination": "CCC",
+        "date": "2026-09-15",
+        "departureTime": "13:00",
+        "arrivalTime": "15:45"
+      }
+    ],
+    "connectionDurationMinutes": 150
+  }
+}

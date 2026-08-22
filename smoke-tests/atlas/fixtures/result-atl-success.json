@@ -1,0 +1,40 @@
+{
+  "fixtureId": "result-atl-success",
+  "testCases": ["ATL-03", "ATL-04", "ATL-08", "ATL-11"],
+  "scenarioNote": "Expected completed-search outcome: structured alternatives renderable in the comparison view. Local placeholder data only.",
+  "disclaimer": "Synthetic local placeholder — not Atlas Sandbox evidence",
+  "searchResult": {
+    "correlationId": "synthetic-atl-normal-two-leg",
+    "searchStatus": "completed",
+    "sourceEnvironment": "sandbox-placeholder",
+    "alternatives": [
+      {
+        "offerReference": "display-only-reference-a1",
+        "routeSummary": "AAA → BBB → CCC (synthetic)",
+        "departureTime": "08:30",
+        "arrivalTime": "16:10",
+        "duration": "7h 40m",
+        "connectionType": "one-stop",
+        "connectionDurationMinutes": 135,
+        "priceDisplay": "— placeholder —",
+        "currency": "USD",
+        "availabilityLabel": "placeholder-availability"
+      },
+      {
+        "offerReference": "display-only-reference-a2",
+        "routeSummary": "AAA → CCC direct (synthetic)",
+        "departureTime": "09:15",
+        "arrivalTime": "13:05",
+        "duration": "3h 50m",
+        "connectionType": "nonstop",
+        "connectionDurationMinutes": 0,
+        "priceDisplay": "— placeholder —",
+        "currency": "USD",
+        "availabilityLabel": "placeholder-availability"
+      }
+    ],
+    "errorCode": null,
+    "errorMessage": null,
+    "fallbackUsed": false
+  }
+}

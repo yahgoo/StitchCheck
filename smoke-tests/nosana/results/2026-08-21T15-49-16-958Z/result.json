@@ -1,0 +1,46 @@
+{
+  "success": true,
+  "provider": "local-fallback",
+  "tierUsed": "local",
+  "usedFallback": true,
+  "evidenceSource": "local-fallback",
+  "evidenceLabel": "Nosana unavailable — local fallback used; not Nosana evidence.",
+  "latencyMs": 1,
+  "jobMetadata": null,
+  "riskResult": {
+    "correlationId": "nosana-risk-run-1787327356956",
+    "workloadStatus": "completed",
+    "jobOrServiceReference": null,
+    "riskBand": "medium",
+    "riskScore": 0.293,
+    "heuristicDisclaimer": "Heuristic risk estimate only — derived from a static/historical synthetic dataset; not a live delay, weather, legal, or guaranteed-outcome prediction. Synthetic local placeholder — not Nosana evidence",
+    "failureCascadeExplanation": "A 75-minute connection at BBB was evaluated against 800 historical records. Monte Carlo simulation (800 runs) estimated a 31.3% probability of tight connection. Combined with route miss rate, the heuristic risk score is 0.2930 (medium band). This is a heuristic indication only — not a prediction or guarantee.",
+    "datasetVersion": "hist-delay-v1",
+    "fallbackUsed": true,
+    "errorCode": null,
+    "errorMessage": null,
+    "evidenceSource": "local-fallback",
+    "evidenceLabel": "Nosana unavailable — local fallback used; not Nosana evidence.",
+    "simulationCount": 800,
+    "assumptions": [
+      "Historical average delay at BBB: 25 min",
+      "On-time rate: 0.72",
+      "Route miss rate: 0.28",
+      "Monte Carlo simulations: 800"
+    ],
+    "latencyMs": 1,
+    "fallbackReason": "NOSANA_SKIPPED"
+  },
+  "output": {
+    "riskScore": 0.293,
+    "riskBand": "medium",
+    "assumptions": [
+      "Historical average delay at BBB: 25 min",
+      "On-time rate: 0.72",
+      "Route miss rate: 0.28",
+      "Monte Carlo simulations: 800"
+    ],
+    "simulationCount": 800,
+    "explanation": "A 75-minute connection at BBB was evaluated against 800 historical records. Monte Carlo simulation (800 runs) estimated a 31.3% probability of tight connection. Combined with route miss rate, the heuristic risk score is 0.2930 (medium band). This is a heuristic indication only — not a prediction or guarantee."
+  }
+}

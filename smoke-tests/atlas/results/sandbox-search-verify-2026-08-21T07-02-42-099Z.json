@@ -1,0 +1,1604 @@
+{
+  "testId": "ATL-SBX-SV-01",
+  "startedAt": "2026-08-21T07:02:39.232Z",
+  "steps": [
+    {
+      "step": "environment_switch",
+      "command": "atlas-flight environment use sandbox --json",
+      "exitCode": 0,
+      "responseCode": "CONFIGURATION_UPDATED",
+      "sanitized": {
+        "schema_version": "1",
+        "status": "success",
+        "code": "CONFIGURATION_UPDATED",
+        "message": "Atlas configuration updated",
+        "retryable": false,
+        "data": {},
+        "details": {}
+      }
+    },
+    {
+      "step": "search",
+      "command": "atlas-flight search --origin KUL --destination SIN --depart 2026-09-15 --adults 1 --currency USD --json",
+      "exitCode": 0,
+      "responseCode": "FLIGHT_SEARCHED",
+      "sanitized": {
+        "schema_version": "1",
+        "status": "success",
+        "code": "FLIGHT_SEARCHED",
+        "message": "Flight search completed",
+        "retryable": false,
+        "data": {
+          "search_id": "srch_39e8f4825150183127c7854d",
+          "offer_count": 20,
+          "offers": [
+            {
+              "offer_id": "off_11db11bad81302c295da16f1",
+              "currency": "USD",
+              "total_price": 64.38,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 26.6,
+                  "tax_per_passenger": 37.78,
+                  "subtotal": 64.38
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609151500",
+                  "arrival_time": "202609151600",
+                  "carrier": "OD",
+                  "operating_carrier": "OD",
+                  "flight_number": "OD807",
+                  "duration_minutes": 60,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T06:32:35Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_719da28560c7a27a90eb634b",
+              "currency": "USD",
+              "total_price": 48.1,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 33.47,
+                  "tax_per_passenger": 14.63,
+                  "subtotal": 48.1
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609150710",
+                  "arrival_time": "202609150835",
+                  "carrier": "TR",
+                  "operating_carrier": null,
+                  "flight_number": "TR457",
+                  "duration_minutes": 85,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T07:00:31Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_23680b8b8fb89a54f95b42f9",
+              "currency": "USD",
+              "total_price": 85.28,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 70.65,
+                  "tax_per_passenger": 14.63,
+                  "subtotal": 85.28
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "SZB",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609151400",
+                  "arrival_time": "202609151525",
+                  "carrier": "TR",
+                  "operating_carrier": null,
+                  "flight_number": "TR475",
+                  "duration_minutes": 85,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T07:00:31Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_f5a00baf386bf9bafbc31992",
+              "currency": "USD",
+              "total_price": 56.7,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 37.56,
+                  "tax_per_passenger": 19.14,
+                  "subtotal": 56.7
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609151020",
+                  "arrival_time": "202609151135",
+                  "carrier": "AK",
+                  "operating_carrier": null,
+                  "flight_number": "AK707",
+                  "duration_minutes": 75,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T06:59:24Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_59899a98c74505953101e85d",
+              "currency": "USD",
+              "total_price": 56.7,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 37.56,
+                  "tax_per_passenger": 19.14,
+                  "subtotal": 56.7
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609151925",
+                  "arrival_time": "202609152045",
+                  "carrier": "AK",
+                  "operating_carrier": null,
+                  "flight_number": "AK721",
+                  "duration_minutes": 80,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T06:59:24Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_2a19f98b4474bcec250173ef",
+              "currency": "USD",
+              "total_price": 67.14,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 48,
+                  "tax_per_passenger": 19.14,
+                  "subtotal": 67.14
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609151425",
+                  "arrival_time": "202609151540",
+                  "carrier": "AK",
+                  "operating_carrier": null,
+                  "flight_number": "AK715",
+                  "duration_minutes": 75,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T06:59:24Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_792b5121f72ccf9ad99fe321",
+              "currency": "USD",
+              "total_price": 66.69,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 52.06,
+                  "tax_per_passenger": 14.63,
+                  "subtotal": 66.69
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609151825",
+                  "arrival_time": "202609151930",
+                  "carrier": "TR",
+                  "operating_carrier": null,
+                  "flight_number": "TR473",
+                  "duration_minutes": 65,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T07:00:31Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_7fddc000364ed218447c8d26",
+              "currency": "USD",
+              "total_price": 48.1,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 33.47,
+                  "tax_per_passenger": 14.63,
+                  "subtotal": 48.1
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609152245",
+                  "arrival_time": "202609160005",
+                  "carrier": "TR",
+                  "operating_carrier": null,
+                  "flight_number": "TR467",
+                  "duration_minutes": 80,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T07:00:31Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_499b72296a47b7993963f2df",
+              "currency": "USD",
+              "total_price": 56.92,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 19.14,
+                  "tax_per_passenger": 37.78,
+                  "subtotal": 56.92
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609151930",
+                  "arrival_time": "202609152030",
+                  "carrier": "OD",
+                  "operating_carrier": "OD",
+                  "flight_number": "OD805",
+                  "duration_minutes": 60,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T06:32:35Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_beab286515284d73487c5ad7",
+              "currency": "USD",
+              "total_price": 48.87,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 29.73,
+                  "tax_per_passenger": 19.14,
+                  "subtotal": 48.87
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609151240",
+                  "arrival_time": "202609151340",
+                  "carrier": "AK",
+                  "operating_carrier": null,
+                  "flight_number": "AK727",
+                  "duration_minutes": 60,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T06:59:24Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_0a1816175cca183e3a18e5a0",
+              "currency": "USD",
+              "total_price": 48.1,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 33.47,
+                  "tax_per_passenger": 14.63,
+                  "subtotal": 48.1
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609151135",
+                  "arrival_time": "202609151250",
+                  "carrier": "TR",
+                  "operating_carrier": null,
+                  "flight_number": "TR451",
+                  "duration_minutes": 75,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T07:00:31Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_c40664a66186272cd4ea9f39",
+              "currency": "USD",
+              "total_price": 48.87,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 29.73,
+                  "tax_per_passenger": 19.14,
+                  "subtotal": 48.87
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609150610",
+                  "arrival_time": "202609150715",
+                  "carrier": "AK",
+                  "operating_carrier": null,
+                  "flight_number": "AK701",
+                  "duration_minutes": 65,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T06:59:24Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_6a6007702660c8595256821a",
+              "currency": "USD",
+              "total_price": 67.14,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 48,
+                  "tax_per_passenger": 19.14,
+                  "subtotal": 67.14
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609151850",
+                  "arrival_time": "202609152000",
+                  "carrier": "AK",
+                  "operating_carrier": null,
+                  "flight_number": "AK719",
+                  "duration_minutes": 70,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T06:59:24Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_d29a9f810678891806b86299",
+              "currency": "USD",
+              "total_price": 48.87,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 29.73,
+                  "tax_per_passenger": 19.14,
+                  "subtotal": 48.87
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609150830",
+                  "arrival_time": "202609150940",
+                  "carrier": "AK",
+                  "operating_carrier": null,
+                  "flight_number": "AK705",
+                  "duration_minutes": 70,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T06:59:24Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_8da2475cdbffd52b11a8d2e3",
+              "currency": "USD",
+              "total_price": 56.92,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 19.14,
+                  "tax_per_passenger": 37.78,
+                  "subtotal": 56.92
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609151030",
+                  "arrival_time": "202609151130",
+                  "carrier": "OD",
+                  "operating_carrier": "OD",
+                  "flight_number": "OD803",
+                  "duration_minutes": 60,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T06:32:35Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_3d2bad374f11551dbdc61ec1",
+              "currency": "USD",
+              "total_price": 66.69,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 52.06,
+                  "tax_per_passenger": 14.63,
+                  "subtotal": 66.69
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609151915",
+                  "arrival_time": "202609152030",
+                  "carrier": "TR",
+                  "operating_carrier": null,
+                  "flight_number": "TR469",
+                  "duration_minutes": 75,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T07:00:31Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_cd7186bf60ddb792e050d07f",
+              "currency": "USD",
+              "total_price": 56.92,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 19.14,
+                  "tax_per_passenger": 37.78,
+                  "subtotal": 56.92
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609150815",
+                  "arrival_time": "202609150920",
+                  "carrier": "OD",
+                  "operating_carrier": "OD",
+                  "flight_number": "OD801",
+                  "duration_minutes": 65,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T06:32:35Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_ed98c1f293358f6ffe82a9c8",
+              "currency": "USD",
+              "total_price": 48.87,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 29.73,
+                  "tax_per_passenger": 19.14,
+                  "subtotal": 48.87
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609150720",
+                  "arrival_time": "202609150830",
+                  "carrier": "AK",
+                  "operating_carrier": null,
+                  "flight_number": "AK703",
+                  "duration_minutes": 70,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T06:59:24Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_abdefc19aa012e08770ea7ab",
+              "currency": "USD",
+              "total_price": 56.7,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 37.56,
+                  "tax_per_passenger": 19.14,
+                  "subtotal": 56.7
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609151155",
+                  "arrival_time": "202609151300",
+                  "carrier": "AK",
+                  "operating_carrier": null,
+                  "flight_number": "AK711",
+                  "duration_minutes": 65,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T06:59:24Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_99850a35335c7bec61181ea7",
+              "currency": "USD",
+              "total_price": 67.14,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 48,
+                  "tax_per_passenger": 19.14,
+                  "subtotal": 67.14
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609151645",
+                  "arrival_time": "202609151805",
+                  "carrier": "AK",
+                  "operating_carrier": null,
+                  "flight_number": "AK717",
+                  "duration_minutes": 80,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T06:59:24Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            }
+          ]
+        },
+        "details": {}
+      }
+    },
+    {
+      "step": "offer_list",
+      "command": "atlas-flight offer list --search-id srch_39e8f4825150183127c7854d --json",
+      "exitCode": 0,
+      "responseCode": "OFFERS_LISTED",
+      "sanitized": {
+        "schema_version": "1",
+        "status": "success",
+        "code": "OFFERS_LISTED",
+        "message": "Offers listed",
+        "retryable": false,
+        "data": {
+          "search_id": "srch_39e8f4825150183127c7854d",
+          "offer_count": 20,
+          "offers": [
+            {
+              "offer_id": "off_11db11bad81302c295da16f1",
+              "currency": "USD",
+              "total_price": 64.38,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 26.6,
+                  "tax_per_passenger": 37.78,
+                  "subtotal": 64.38
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609151500",
+                  "arrival_time": "202609151600",
+                  "carrier": "OD",
+                  "operating_carrier": "OD",
+                  "flight_number": "OD807",
+                  "duration_minutes": 60,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T06:32:35Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_719da28560c7a27a90eb634b",
+              "currency": "USD",
+              "total_price": 48.1,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 33.47,
+                  "tax_per_passenger": 14.63,
+                  "subtotal": 48.1
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609150710",
+                  "arrival_time": "202609150835",
+                  "carrier": "TR",
+                  "operating_carrier": null,
+                  "flight_number": "TR457",
+                  "duration_minutes": 85,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T07:00:31Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_23680b8b8fb89a54f95b42f9",
+              "currency": "USD",
+              "total_price": 85.28,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 70.65,
+                  "tax_per_passenger": 14.63,
+                  "subtotal": 85.28
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "SZB",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609151400",
+                  "arrival_time": "202609151525",
+                  "carrier": "TR",
+                  "operating_carrier": null,
+                  "flight_number": "TR475",
+                  "duration_minutes": 85,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T07:00:31Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_f5a00baf386bf9bafbc31992",
+              "currency": "USD",
+              "total_price": 56.7,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 37.56,
+                  "tax_per_passenger": 19.14,
+                  "subtotal": 56.7
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609151020",
+                  "arrival_time": "202609151135",
+                  "carrier": "AK",
+                  "operating_carrier": null,
+                  "flight_number": "AK707",
+                  "duration_minutes": 75,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T06:59:24Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_59899a98c74505953101e85d",
+              "currency": "USD",
+              "total_price": 56.7,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 37.56,
+                  "tax_per_passenger": 19.14,
+                  "subtotal": 56.7
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609151925",
+                  "arrival_time": "202609152045",
+                  "carrier": "AK",
+                  "operating_carrier": null,
+                  "flight_number": "AK721",
+                  "duration_minutes": 80,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T06:59:24Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_2a19f98b4474bcec250173ef",
+              "currency": "USD",
+              "total_price": 67.14,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 48,
+                  "tax_per_passenger": 19.14,
+                  "subtotal": 67.14
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609151425",
+                  "arrival_time": "202609151540",
+                  "carrier": "AK",
+                  "operating_carrier": null,
+                  "flight_number": "AK715",
+                  "duration_minutes": 75,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T06:59:24Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_792b5121f72ccf9ad99fe321",
+              "currency": "USD",
+              "total_price": 66.69,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 52.06,
+                  "tax_per_passenger": 14.63,
+                  "subtotal": 66.69
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609151825",
+                  "arrival_time": "202609151930",
+                  "carrier": "TR",
+                  "operating_carrier": null,
+                  "flight_number": "TR473",
+                  "duration_minutes": 65,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T07:00:31Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_7fddc000364ed218447c8d26",
+              "currency": "USD",
+              "total_price": 48.1,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 33.47,
+                  "tax_per_passenger": 14.63,
+                  "subtotal": 48.1
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609152245",
+                  "arrival_time": "202609160005",
+                  "carrier": "TR",
+                  "operating_carrier": null,
+                  "flight_number": "TR467",
+                  "duration_minutes": 80,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T07:00:31Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_499b72296a47b7993963f2df",
+              "currency": "USD",
+              "total_price": 56.92,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 19.14,
+                  "tax_per_passenger": 37.78,
+                  "subtotal": 56.92
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609151930",
+                  "arrival_time": "202609152030",
+                  "carrier": "OD",
+                  "operating_carrier": "OD",
+                  "flight_number": "OD805",
+                  "duration_minutes": 60,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T06:32:35Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_beab286515284d73487c5ad7",
+              "currency": "USD",
+              "total_price": 48.87,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 29.73,
+                  "tax_per_passenger": 19.14,
+                  "subtotal": 48.87
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609151240",
+                  "arrival_time": "202609151340",
+                  "carrier": "AK",
+                  "operating_carrier": null,
+                  "flight_number": "AK727",
+                  "duration_minutes": 60,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T06:59:24Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_0a1816175cca183e3a18e5a0",
+              "currency": "USD",
+              "total_price": 48.1,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 33.47,
+                  "tax_per_passenger": 14.63,
+                  "subtotal": 48.1
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609151135",
+                  "arrival_time": "202609151250",
+                  "carrier": "TR",
+                  "operating_carrier": null,
+                  "flight_number": "TR451",
+                  "duration_minutes": 75,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T07:00:31Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_c40664a66186272cd4ea9f39",
+              "currency": "USD",
+              "total_price": 48.87,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 29.73,
+                  "tax_per_passenger": 19.14,
+                  "subtotal": 48.87
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609150610",
+                  "arrival_time": "202609150715",
+                  "carrier": "AK",
+                  "operating_carrier": null,
+                  "flight_number": "AK701",
+                  "duration_minutes": 65,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T06:59:24Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_6a6007702660c8595256821a",
+              "currency": "USD",
+              "total_price": 67.14,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 48,
+                  "tax_per_passenger": 19.14,
+                  "subtotal": 67.14
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609151850",
+                  "arrival_time": "202609152000",
+                  "carrier": "AK",
+                  "operating_carrier": null,
+                  "flight_number": "AK719",
+                  "duration_minutes": 70,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T06:59:24Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_d29a9f810678891806b86299",
+              "currency": "USD",
+              "total_price": 48.87,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 29.73,
+                  "tax_per_passenger": 19.14,
+                  "subtotal": 48.87
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609150830",
+                  "arrival_time": "202609150940",
+                  "carrier": "AK",
+                  "operating_carrier": null,
+                  "flight_number": "AK705",
+                  "duration_minutes": 70,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T06:59:24Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_8da2475cdbffd52b11a8d2e3",
+              "currency": "USD",
+              "total_price": 56.92,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 19.14,
+                  "tax_per_passenger": 37.78,
+                  "subtotal": 56.92
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609151030",
+                  "arrival_time": "202609151130",
+                  "carrier": "OD",
+                  "operating_carrier": "OD",
+                  "flight_number": "OD803",
+                  "duration_minutes": 60,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T06:32:35Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_3d2bad374f11551dbdc61ec1",
+              "currency": "USD",
+              "total_price": 66.69,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 52.06,
+                  "tax_per_passenger": 14.63,
+                  "subtotal": 66.69
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609151915",
+                  "arrival_time": "202609152030",
+                  "carrier": "TR",
+                  "operating_carrier": null,
+                  "flight_number": "TR469",
+                  "duration_minutes": 75,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T07:00:31Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_cd7186bf60ddb792e050d07f",
+              "currency": "USD",
+              "total_price": 56.92,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 19.14,
+                  "tax_per_passenger": 37.78,
+                  "subtotal": 56.92
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609150815",
+                  "arrival_time": "202609150920",
+                  "carrier": "OD",
+                  "operating_carrier": "OD",
+                  "flight_number": "OD801",
+                  "duration_minutes": 65,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T06:32:35Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_ed98c1f293358f6ffe82a9c8",
+              "currency": "USD",
+              "total_price": 48.87,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 29.73,
+                  "tax_per_passenger": 19.14,
+                  "subtotal": 48.87
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609150720",
+                  "arrival_time": "202609150830",
+                  "carrier": "AK",
+                  "operating_carrier": null,
+                  "flight_number": "AK703",
+                  "duration_minutes": 70,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T06:59:24Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_abdefc19aa012e08770ea7ab",
+              "currency": "USD",
+              "total_price": 56.7,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 37.56,
+                  "tax_per_passenger": 19.14,
+                  "subtotal": 56.7
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609151155",
+                  "arrival_time": "202609151300",
+                  "carrier": "AK",
+                  "operating_carrier": null,
+                  "flight_number": "AK711",
+                  "duration_minutes": 65,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T06:59:24Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            },
+            {
+              "offer_id": "off_99850a35335c7bec61181ea7",
+              "currency": "USD",
+              "total_price": 67.14,
+              "transaction_fee_total": 0,
+              "passenger_prices": [
+                {
+                  "passenger_type": "adult",
+                  "count": 1,
+                  "base_fare_per_passenger": 48,
+                  "tax_per_passenger": 19.14,
+                  "subtotal": 67.14
+                }
+              ],
+              "segments": [
+                {
+                  "departure_airport": "KUL",
+                  "arrival_airport": "SIN",
+                  "departure_time": "202609151645",
+                  "arrival_time": "202609151805",
+                  "carrier": "AK",
+                  "operating_carrier": null,
+                  "flight_number": "AK717",
+                  "duration_minutes": 80,
+                  "cabin_class": 1,
+                  "direction": "outbound"
+                }
+              ],
+              "ancillary_supported": [
+                "baggage",
+                "seat"
+              ],
+              "bookable": true,
+              "price_status": "current",
+              "refresh_time": "2026-08-21T06:59:24Z",
+              "expire_time": "2026-08-21T07:03:40Z"
+            }
+          ]
+        },
+        "details": {}
+      }
+    },
+    {
+      "step": "verify",
+      "command": "atlas-flight offer verify --offer-id off_11db11bad81302c295da16f1 --json",
+      "exitCode": 0,
+      "responseCode": "PRICE_CONFIRMATION_REQUIRED",
+      "sanitized": {
+        "schema_version": "1",
+        "status": "action_required",
+        "code": "PRICE_CONFIRMATION_REQUIRED",
+        "message": "Price confirmation required",
+        "retryable": false,
+        "data": {
+          "booking_id": "book_5868bbfe05117315debbdb95",
+          "previous_price": 64.38,
+          "current_price": 203.99,
+          "currency": "USD",
+          "price_change": "increased",
+          "requirements": {
+            "required_fields": [
+              "name",
+              "passenger_type",
+              "gender",
+              "birthday"
+            ]
+          },
+          "travelers": [
+            {
+              "traveler_id": "trav_436bdd281752d4ca5b3d399d",
+              "passenger_type": "adult"
+            }
+          ],
+          "segments": [
+            {
+              "segment_id": "seg_b7d70a3087b04c6867ecbad1",
+              "segment_index": 1,
+              "departure_airport": "KUL",
+              "arrival_airport": "SIN",
+              "departure_time": "202609151500",
+              "arrival_time": "202609151600",
+              "carrier": "OD",
+              "operating_carrier": null,
+              "flight_number": "OD807",
+              "duration_minutes": 60,
+              "cabin_class": 1,
+              "direction": "outbound"
+            }
+          ],
+          "baggage_supported": true,
+          "seat_supported": true
+        },
+        "details": {}
+      }
+    }
+  ],
+  "evidenceLabel": "Atlas Sandbox evidence — search + verify completed, price change or offer expired",
+  "hardStop": "AFTER_VERIFY — no Order, Payment, Ticketing, or any write",
+  "result": "PARTIAL_SUCCESS",
+  "capturedIdentifiers": {
+    "search_id": "srch_39e8f4825150183127c7854d",
+    "offer_id": "off_11db11bad81302c295da16f1",
+    "offer_count": 20
+  },
+  "hardStopReached": true,
+  "completedAt": "2026-08-21T07:02:42.099Z"
+}

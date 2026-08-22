@@ -1,0 +1,57 @@
+{
+  "syntheticOnly": true,
+  "piiReview": "Synthetic by construction: fictional carrier, invented airport codes, invented dates and prices, fictional traveller and booking reference. No real passenger, booking reference, payment data, airline record, or copied itinerary image.",
+  "imageInputFormat": "png",
+  "svgPolicy": "SVG files in this directory are source templates only and are NOT used as OpenRouter image inputs.",
+  "fixtures": [
+    {
+      "fixtureId": "gem-01-two-leg-clean",
+      "file": "gem-01-two-leg-clean.png",
+      "format": "png",
+      "testIds": ["GEM-01", "GEM-08"],
+      "description": "Clear fictional two-leg itinerary"
+    },
+    {
+      "fixtureId": "gem-02-missing-optional",
+      "file": "gem-02-two-leg-missing-optional.png",
+      "format": "png",
+      "testIds": ["GEM-02"],
+      "description": "Fictional itinerary with one optional field absent"
+    },
+    {
+      "fixtureId": "gem-03-fragmented",
+      "file": "gem-03-two-leg-fragmented.png",
+      "format": "png",
+      "testIds": ["GEM-03"],
+      "description": "Fragmented fictional layout"
+    },
+    {
+      "fixtureId": "gem-04-non-itinerary",
+      "file": "gem-04-non-itinerary.png",
+      "format": "png",
+      "testIds": ["GEM-04"],
+      "description": "Fictional image that is not a flight itinerary"
+    },
+    {
+      "fixtureId": "gem-05-unreadable-field",
+      "file": "gem-05-unreadable-field.png",
+      "format": "png",
+      "testIds": ["GEM-05"],
+      "description": "Fictional itinerary with one unreadable required field"
+    }
+  ],
+  "serviceSideCases": [
+    {
+      "testId": "GEM-06",
+      "fixtureId": null,
+      "description": "Malformed or unavailable structured output (service-side condition); no image fixture"
+    },
+    {
+      "testId": "GEM-07",
+      "fixtureId": null,
+      "description": "Timeout or service error (service-side condition); no image fixture"
+    }
+  ],
+  "watermark": "SYNTHETIC FIXTURE — NOT REAL DATA — NO PII",
+  "generatedBy": "generate-fixtures.mjs (offline, zero-dependency PNG renderer)"
+}

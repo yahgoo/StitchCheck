@@ -1,0 +1,41 @@
+{
+  "contractId": "atlas-local-search-only-contract",
+  "version": "1.0.0",
+  "status": "local-preparation-only",
+  "description": "Declares the strictly search-only semantics of the local Atlas smoke-test preparation. All fixtures are synthetic placeholders; Atlas has not been authenticated, configured, called, or proven to work. Later execution requires separate human authorization.",
+  "disclaimerLabel": "Synthetic local placeholder — not Atlas Sandbox evidence",
+  "semantics": {
+    "mode": "search-only",
+    "searchIntent": "safer-alternative",
+    "allowedActions": ["search", "display", "compare"],
+    "writeActionsAllowed": false,
+    "requiresConfirmedItineraryBeforeSearch": true,
+    "environmentSwitchInvalidatesResults": true
+  },
+  "environment": {
+    "expectedMarker": "sandbox-placeholder",
+    "sourceLabel": "Atlas Sandbox (placeholder)",
+    "mustBeVisibleInUi": true
+  },
+  "forbiddenActions": ["verify", "book", "pay", "ticket", "reserve", "order", "write"],
+  "forbiddenActionsNote": "Whole-word, case-insensitive enforcement by schema-validator.mjs across fixture and label text; validation FAILS when any of the seven forbidden action tokens is found. P0 must never use a search result to perform any of these actions.",
+  "testCaseCoverage": {
+    "ATL-01": "fixtures/query-atl-normal-two-leg.json",
+    "ATL-02": "fixtures/query-atl-normal-two-leg.json",
+    "ATL-03": "fixtures/result-atl-success.json",
+    "ATL-04": "fixtures/result-atl-success.json",
+    "ATL-05": "fixtures/result-atl-empty.json",
+    "ATL-06": "fixtures/result-atl-timeout.json",
+    "ATL-07": "fixtures/result-atl-error.json",
+    "ATL-08": "fixtures/result-atl-success.json",
+    "ATL-09": "enforced by schema-validator.mjs forbidden-action scan",
+    "ATL-11": "comparison-adapter.mjs buildSearchComparison",
+    "ATL-12": "schema-validator.mjs confirmedItinerary rule"
+  },
+  "executionPolicy": {
+    "networkCalls": "none",
+    "credentials": "none",
+    "sdkUsage": "none",
+    "humanAuthorizationRequiredForFutureExecution": true
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "fixtureId": "query-atl-empty-result",
+  "testCases": ["ATL-05"],
+  "scenarioNote": "Synthetic confirmed itinerary paired with an expected labelled empty outcome; nothing must be fabricated. Illustrative input only, not a live request.",
+  "disclaimer": "Synthetic local placeholder — not Atlas Sandbox evidence",
+  "searchQuery": {
+    "correlationId": "synthetic-atl-empty-result",
+    "origin": "AAA",
+    "destination": "CCC",
+    "departureDate": "2026-09-17",
+    "earliestDepartureTime": "14:00",
+    "latestArrivalTime": "18:00",
+    "searchIntent": "safer-alternative",
+    "sandboxOnly": true,
+    "syntheticDemo": true,
+    "confirmedItinerary": true
+  },
+  "syntheticContext": {
+    "legs": [
+      {
+        "origin": "AAA",
+        "destination": "BBB",
+        "date": "2026-09-17",
+        "departureTime": "15:00",
+        "arrivalTime": "16:20"
+      },
+      {
+        "origin": "BBB",
+        "destination": "CCC",
+        "date": "2026-09-17",
+        "departureTime": "17:40",
+        "arrivalTime": "19:55"
+      }
+    ],
+    "connectionDurationMinutes": 80
+  },
+  "expectedOutcomeFixture": "result-atl-empty.json"
+}

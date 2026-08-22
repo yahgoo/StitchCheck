@@ -1,0 +1,427 @@
+{
+  "meta": {
+    "filePurpose": "Static, non-secret UI copy and state-to-display map for the future local React/Vite StitchCheck demo. No credentials, no live service data, no external content.",
+    "syntheticDemo": true,
+    "externalCallsMade": false,
+    "isLiveServiceEvidence": false,
+    "atlasSearchOnly": true,
+    "allDataSynthetic": "All displayed data is synthetic and local unless specifically labelled as the existing temporary OpenRouter extraction evidence. OpenRouter evidence is not direct Gemini validation. Local risk and alternatives placeholders are not live service data.",
+    "forbiddenActions": ["verify", "book", "pay", "ticket", "reserve", "order", "write"],
+    "labels": {
+      "geminiExtraction": "OpenRouter temporary path — not direct Gemini validation",
+      "nosanaRisk": "Synthetic local placeholder — not Nosana evidence",
+      "atlasAlternatives": "Synthetic local placeholder — not Atlas Sandbox evidence"
+    }
+  },
+
+  "states": [
+
+    {
+      "stateId": "safety-notice",
+      "component": "SafetyNotice",
+      "heading": "StitchCheck — Synthetic Demo",
+      "body": "This is a synthetic demo application. All data displayed is fictional and local. No real personal data, booking references, payment information, or live service evidence is used. Do not upload real documents. All screenshots must be synthetic and unbooked.",
+      "primaryAction": {
+        "label": "I understand — continue with synthetic data",
+        "enabled": true
+      },
+      "secondaryAction": null,
+      "isEnabled": true,
+      "sourceLabel": null,
+      "accessibilityHint": "Landing screen with synthetic-demo safety notice. User must acknowledge before proceeding.",
+      "safetyConstraint": "No real PII accepted. No external calls. No service claims. This notice must remain visible until acknowledged."
+    },
+
+    {
+      "stateId": "upload-ready",
+      "component": "UploadPanel",
+      "heading": "Upload Synthetic Screenshots",
+      "body": "Select or upload exactly two synthetic, unbooked flight-ticket or checkout screenshots. These must be fictional images only — no real bookings, no real passenger data. Existing extraction evidence was produced via a temporary OpenRouter path, not direct Gemini validation.",
+      "primaryAction": {
+        "label": "Select two synthetic screenshots",
+        "enabled": true
+      },
+      "secondaryAction": {
+        "label": "Restart demo",
+        "enabled": true
+      },
+      "isEnabled": true,
+      "sourceLabel": "OpenRouter temporary path — not direct Gemini validation",
+      "accessibilityHint": "Two upload slots for synthetic screenshots. Both must be filled before extraction begins.",
+      "safetyConstraint": "Synthetic images only. No real PII. No external upload to any service. The OpenRouter temporary-path label must be visible."
+    },
+
+    {
+      "stateId": "upload-invalid",
+      "component": "UploadPanel",
+      "heading": "Upload Validation Error",
+      "body": "The uploaded images could not be accepted. Please ensure both files are readable, describe a valid two-leg self-transfer itinerary, and contain no real personal data. You can re-upload or restart the demo.",
+      "primaryAction": {
+        "label": "Re-upload screenshots",
+        "enabled": true
+      },
+      "secondaryAction": {
+        "label": "Restart demo",
+        "enabled": true
+      },
+      "isEnabled": true,
+      "sourceLabel": "OpenRouter temporary path — not direct Gemini validation",
+      "accessibilityHint": "Error state after invalid upload. Clear feedback with recovery path.",
+      "safetyConstraint": "No silent acceptance of invalid input. Synthetic-demo context retained. No external calls."
+    },
+
+    {
+      "stateId": "itinerary-review-unconfirmed",
+      "component": "ItineraryReview",
+      "heading": "Review Extracted Itinerary",
+      "body": "The following itinerary fields were extracted from your synthetic screenshots. All fields are editable. Please review and correct any errors before confirming. This extraction was produced via a temporary OpenRouter path and is not direct Gemini validation.",
+      "primaryAction": {
+        "label": "Confirm itinerary",
+        "enabled": true
+      },
+      "secondaryAction": {
+        "label": "Cancel and re-upload",
+        "enabled": true
+      },
+      "isEnabled": true,
+      "sourceLabel": "OpenRouter temporary path — not direct Gemini validation",
+      "accessibilityHint": "Editable form showing extracted itinerary fields beside source screenshots. All fields can be corrected.",
+      "safetyConstraint": "No downstream risk calculation or Atlas search may start before explicit confirmation. The OpenRouter temporary-path label must be visible. Fields are unconfirmed until the user acts."
+    },
+
+    {
+      "stateId": "itinerary-review-corrected",
+      "component": "ItineraryReview",
+      "heading": "Review Corrected Itinerary",
+      "body": "You have corrected one or more extracted fields. Please review all fields and confirm when satisfied. Correction notes are recorded locally. This extraction was produced via a temporary OpenRouter path and is not direct Gemini validation.",
+      "primaryAction": {
+        "label": "Confirm itinerary",
+        "enabled": true
+      },
+      "secondaryAction": {
+        "label": "Cancel and re-upload",
+        "enabled": true
+      },
+      "isEnabled": true,
+      "sourceLabel": "OpenRouter temporary path — not direct Gemini validation",
+      "accessibilityHint": "Editable form with corrected fields highlighted. Correction notes visible.",
+      "safetyConstraint": "No downstream action before explicit confirmation. Corrections are local only. The OpenRouter temporary-path label must remain visible."
+    },
+
+    {
+      "stateId": "itinerary-confirmed",
+      "component": "ItineraryReview",
+      "heading": "Itinerary Confirmed",
+      "body": "The itinerary has been confirmed. Risk and alternatives panels are now available. No external service call was made. All downstream data is local synthetic placeholder content.",
+      "primaryAction": null,
+      "secondaryAction": {
+        "label": "Restart demo",
+        "enabled": true
+      },
+      "isEnabled": true,
+      "sourceLabel": "OpenRouter temporary path — not direct Gemini validation",
+      "accessibilityHint": "Confirmation state visible. Downstream panels unlocked.",
+      "safetyConstraint": "Confirmation is the single gate. No external calls triggered by confirmation. No booking or write action. The OpenRouter temporary-path label remains visible."
+    },
+
+    {
+      "stateId": "risk-disabled",
+      "component": "RiskPanel",
+      "heading": "Connection Risk",
+      "body": "Confirm itinerary first",
+      "primaryAction": null,
+      "secondaryAction": null,
+      "isEnabled": false,
+      "sourceLabel": "Synthetic local placeholder — not Nosana evidence",
+      "accessibilityHint": "Risk panel is disabled. It will activate after the itinerary is confirmed.",
+      "safetyConstraint": "Panel is non-interactive until confirmation. Exact disabled text: Confirm itinerary first. No risk data shown."
+    },
+
+    {
+      "stateId": "alternatives-disabled",
+      "component": "AlternativesPanel",
+      "heading": "Safer Alternatives",
+      "body": "Confirm itinerary first",
+      "primaryAction": null,
+      "secondaryAction": null,
+      "isEnabled": false,
+      "sourceLabel": "Synthetic local placeholder — not Atlas Sandbox evidence",
+      "accessibilityHint": "Alternatives panel is disabled. It will activate after the itinerary is confirmed.",
+      "safetyConstraint": "Panel is non-interactive until confirmation. Exact disabled text: Confirm itinerary first. No alternatives data shown."
+    },
+
+    {
+      "stateId": "risk-success",
+      "component": "RiskPanel",
+      "heading": "Connection Risk — Heuristic Result",
+      "body": "Risk band: medium. This is a heuristic risk estimate only, derived from a static/historical synthetic dataset. It is not a live delay prediction, weather model, legal assessment, or guaranteed outcome. The connection duration at this synthetic airport profile falls in the medium band of the demo dataset.",
+      "primaryAction": null,
+      "secondaryAction": {
+        "label": "View alternatives",
+        "enabled": true
+      },
+      "isEnabled": true,
+      "sourceLabel": "Synthetic local placeholder — not Nosana evidence",
+      "accessibilityHint": "Risk result panel showing heuristic band and plain-language explanation. Disclaimer visible.",
+      "safetyConstraint": "Labelled as heuristic, not a guarantee. Labelled as synthetic local placeholder, not Nosana evidence. No booking or write action."
+    },
+
+    {
+      "stateId": "risk-unavailable",
+      "component": "RiskPanel",
+      "heading": "Connection Risk — Unavailable",
+      "body": "No risk band could be produced for this itinerary. The connection airport is absent from the synthetic static dataset slice, so no score is available. No score has been invented. You may re-run the risk assessment or proceed without risk guidance.",
+      "primaryAction": {
+        "label": "Re-run risk assessment",
+        "enabled": true
+      },
+      "secondaryAction": {
+        "label": "Proceed without risk guidance",
+        "enabled": true
+      },
+      "isEnabled": true,
+      "sourceLabel": "Synthetic local placeholder — not Nosana evidence",
+      "accessibilityHint": "Risk unavailable state. No score shown. Replay and proceed options available.",
+      "safetyConstraint": "No score invented. Clearly labelled as unavailable. Synthetic local placeholder label visible."
+    },
+
+    {
+      "stateId": "risk-error",
+      "component": "RiskPanel",
+      "heading": "Connection Risk — Error",
+      "body": "The risk assessment could not be completed. A validation error occurred before any workload could start. You can retry the assessment or replay a previous result if available.",
+      "primaryAction": {
+        "label": "Retry risk assessment",
+        "enabled": true
+      },
+      "secondaryAction": {
+        "label": "Replay previous result",
+        "enabled": false
+      },
+      "isEnabled": true,
+      "sourceLabel": "Synthetic local placeholder — not Nosana evidence",
+      "accessibilityHint": "Risk error state with retry path. No score shown.",
+      "safetyConstraint": "No silent failure. No invented score. Synthetic local placeholder label visible. Error is understandable."
+    },
+
+    {
+      "stateId": "risk-timeout",
+      "component": "RiskPanel",
+      "heading": "Connection Risk — Timeout",
+      "body": "The risk assessment did not complete within the expected time. No risk band or score is available and none has been invented. You can retry the assessment or use a labelled replay of a previous result if available.",
+      "primaryAction": {
+        "label": "Retry risk assessment",
+        "enabled": true
+      },
+      "secondaryAction": {
+        "label": "Replay previous result",
+        "enabled": false
+      },
+      "isEnabled": true,
+      "sourceLabel": "Synthetic local placeholder — not Nosana evidence",
+      "accessibilityHint": "Risk timeout state with retry and replay paths. No score shown.",
+      "safetyConstraint": "No score invented on timeout. Clearly labelled timeout state. Synthetic local placeholder label visible."
+    },
+
+    {
+      "stateId": "risk-failure",
+      "component": "RiskPanel",
+      "heading": "Connection Risk — Workload Failure",
+      "body": "The risk assessment workload failed before producing a result. No risk band or score is available and none has been invented. You can retry the assessment or use a labelled replay of a previous result if available.",
+      "primaryAction": {
+        "label": "Retry risk assessment",
+        "enabled": true
+      },
+      "secondaryAction": {
+        "label": "Replay previous result",
+        "enabled": false
+      },
+      "isEnabled": true,
+      "sourceLabel": "Synthetic local placeholder — not Nosana evidence",
+      "accessibilityHint": "Risk workload failure state with retry and replay paths. No score shown.",
+      "safetyConstraint": "No score invented on failure. Clearly labelled failure state. Synthetic local placeholder label visible."
+    },
+
+    {
+      "stateId": "alternatives-success",
+      "component": "AlternativesPanel",
+      "heading": "Safer Alternatives — Sandbox Results",
+      "body": "The following alternatives were returned from a local synthetic placeholder search. These are not Atlas Sandbox evidence. All results are fictional and for demo display only. Atlas content is search-only; no booking, payment, or order is created.",
+      "primaryAction": null,
+      "secondaryAction": {
+        "label": "Compare with current plan",
+        "enabled": true
+      },
+      "isEnabled": true,
+      "sourceLabel": "Synthetic local placeholder — not Atlas Sandbox evidence",
+      "accessibilityHint": "Alternatives panel showing synthetic placeholder results. Each alternative labelled as sandbox data.",
+      "safetyConstraint": "Labelled as synthetic local placeholder, not Atlas Sandbox evidence. Search-only. No write actions. offerReference is display-only."
+    },
+
+    {
+      "stateId": "alternatives-empty",
+      "component": "AlternativesPanel",
+      "heading": "Safer Alternatives — No Results",
+      "body": "No safer alternatives were found for this itinerary. This is a local synthetic placeholder result and is not Atlas Sandbox evidence. You can retry the search or proceed with the Keep decision using your current plan.",
+      "primaryAction": {
+        "label": "Retry alternative search",
+        "enabled": true
+      },
+      "secondaryAction": null,
+      "isEnabled": true,
+      "sourceLabel": "Synthetic local placeholder — not Atlas Sandbox evidence",
+      "accessibilityHint": "Empty alternatives state. No results fabricated. Retry option available.",
+      "safetyConstraint": "No alternatives fabricated. Clearly labelled empty state. Synthetic local placeholder label visible. Keep remains available."
+    },
+
+    {
+      "stateId": "alternatives-error",
+      "component": "AlternativesPanel",
+      "heading": "Safer Alternatives — Search Error",
+      "body": "The alternative search could not be completed. This is a local synthetic placeholder error and is not Atlas Sandbox evidence. You can retry the search or replay a previous result if available.",
+      "primaryAction": {
+        "label": "Retry alternative search",
+        "enabled": true
+      },
+      "secondaryAction": {
+        "label": "Replay previous results",
+        "enabled": false
+      },
+      "isEnabled": true,
+      "sourceLabel": "Synthetic local placeholder — not Atlas Sandbox evidence",
+      "accessibilityHint": "Alternatives error state with retry path. No results fabricated.",
+      "safetyConstraint": "No alternatives fabricated on error. Clearly labelled error state. Synthetic local placeholder label visible."
+    },
+
+    {
+      "stateId": "alternatives-timeout",
+      "component": "AlternativesPanel",
+      "heading": "Safer Alternatives — Search Timeout",
+      "body": "The alternative search did not complete within the expected time. This is a local synthetic placeholder timeout and is not Atlas Sandbox evidence. You can retry the search or replay a previous result if available.",
+      "primaryAction": {
+        "label": "Retry alternative search",
+        "enabled": true
+      },
+      "secondaryAction": {
+        "label": "Replay previous results",
+        "enabled": false
+      },
+      "isEnabled": true,
+      "sourceLabel": "Synthetic local placeholder — not Atlas Sandbox evidence",
+      "accessibilityHint": "Alternatives timeout state with retry and replay paths. No results fabricated.",
+      "safetyConstraint": "No alternatives fabricated on timeout. Clearly labelled timeout state. Synthetic local placeholder label visible."
+    },
+
+    {
+      "stateId": "comparison-ready",
+      "component": "ComparisonView",
+      "heading": "Compare: Risky Self-Transfer vs Safer Alternatives",
+      "body": "Below is a side-by-side comparison of your current self-transfer plan against available alternatives. All data is synthetic and local. Risk data is a heuristic placeholder. Alternatives are sandbox placeholders. No booking or order is created by viewing this comparison.",
+      "primaryAction": null,
+      "secondaryAction": null,
+      "isEnabled": true,
+      "sourceLabel": "Synthetic local placeholder — not Atlas Sandbox evidence",
+      "accessibilityHint": "Side-by-side comparison table. Original plan on the left, alternatives on the right. All source labels visible.",
+      "safetyConstraint": "Both risk and alternatives labels visible. No booking or write action. Comparison uses only labelled synthetic data."
+    },
+
+    {
+      "stateId": "decision-keep",
+      "component": "DecisionPanel",
+      "heading": "Your Decision: Keep",
+      "body": "You have chosen to Keep your current self-transfer plan. This is a local demo decision only. No booking, payment, reservation, ticket, order, verification, or any other external action has been created or will be created.",
+      "primaryAction": {
+        "label": "Confirm decision",
+        "enabled": true
+      },
+      "secondaryAction": {
+        "label": "Change to Switch",
+        "enabled": true
+      },
+      "isEnabled": true,
+      "sourceLabel": null,
+      "accessibilityHint": "Keep decision selected. Final confirmation states no external action occurs.",
+      "safetyConstraint": "No booking, payment, reservation, ticket, order, verification, or write action. Decision is local only. Final statement must explicitly deny any external action."
+    },
+
+    {
+      "stateId": "decision-switch",
+      "component": "DecisionPanel",
+      "heading": "Your Decision: Switch",
+      "body": "You have chosen to Switch to a safer alternative. This is a local demo decision only. No booking, payment, reservation, ticket, order, verification, or any other external action has been created or will be created. The selected alternative is a synthetic placeholder only.",
+      "primaryAction": {
+        "label": "Confirm decision",
+        "enabled": true
+      },
+      "secondaryAction": {
+        "label": "Change to Keep",
+        "enabled": true
+      },
+      "isEnabled": true,
+      "sourceLabel": null,
+      "accessibilityHint": "Switch decision selected with a synthetic alternative reference. Final confirmation states no external action occurs.",
+      "safetyConstraint": "No booking, payment, reservation, ticket, order, verification, or write action. Decision is local only. Selected alternative is display-only."
+    },
+
+    {
+      "stateId": "final-confirmation",
+      "component": "DecisionPanel",
+      "heading": "Demo Complete — No Action Created",
+      "body": "Your decision has been recorded. This is the end of the StitchCheck synthetic demo. Explicitly: no booking, payment, reservation, ticket, order, verification, or any other write action has been created. All data displayed was synthetic and local. No live service was called.",
+      "primaryAction": {
+        "label": "Restart demo",
+        "enabled": true
+      },
+      "secondaryAction": null,
+      "isEnabled": true,
+      "sourceLabel": null,
+      "accessibilityHint": "Final confirmation screen. States clearly that no external action was created. Restart option available.",
+      "safetyConstraint": "Must explicitly state no booking, payment, reservation, ticket, order, verification, or write action. noOrderCreated: true. syntheticDemo: true."
+    },
+
+    {
+      "stateId": "banner-loading",
+      "component": "StatusBanner",
+      "heading": "Loading",
+      "body": "Processing your request. Please wait.",
+      "primaryAction": null,
+      "secondaryAction": null,
+      "isEnabled": true,
+      "sourceLabel": null,
+      "accessibilityHint": "Generic loading banner. Visible during data processing or state transitions.",
+      "safetyConstraint": "No external calls implied. Loading is local state only."
+    },
+
+    {
+      "stateId": "banner-status",
+      "component": "StatusBanner",
+      "heading": "Status",
+      "body": "Operation in progress. All data is synthetic and local.",
+      "primaryAction": null,
+      "secondaryAction": null,
+      "isEnabled": true,
+      "sourceLabel": null,
+      "accessibilityHint": "Generic status banner for informational messages during the demo flow.",
+      "safetyConstraint": "No service claims. Status is local state only."
+    },
+
+    {
+      "stateId": "banner-error",
+      "component": "StatusBanner",
+      "heading": "Error",
+      "body": "An error occurred. No external service was called. You can retry the operation or restart the demo.",
+      "primaryAction": {
+        "label": "Retry",
+        "enabled": true
+      },
+      "secondaryAction": {
+        "label": "Restart demo",
+        "enabled": true
+      },
+      "isEnabled": true,
+      "sourceLabel": null,
+      "accessibilityHint": "Generic error banner with retry and restart options. Understandable without color alone.",
+      "safetyConstraint": "No silent failure. No external calls implied. Error is understandable and recoverable."
+    }
+  ]
+}

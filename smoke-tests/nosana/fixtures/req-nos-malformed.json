@@ -1,0 +1,16 @@
+{
+  "fixtureId": "nos-req-malformed",
+  "placeholderLabel": "Synthetic local placeholder — not Nosana evidence",
+  "heuristicRiskDisclaimer": "Heuristic risk estimate only — derived from a static/historical synthetic dataset; not a live delay, weather, legal, or guaranteed-outcome prediction.",
+  "testIds": ["NOS-05"],
+  "simulatedScenario": "rejected",
+  "description": "Deliberately malformed request: missing connectionAirport, missing nonPiiDeclaration, negative connectionDurationMinutes, syntheticDemo false. Expected outcome is a clear local validation error — understandable feedback, no silent failure.",
+  "riskRequest": {
+    "correlationId": "synthetic-nos-05-malformed",
+    "origin": "AAA",
+    "destination": "CCC",
+    "connectionDurationMinutes": -10,
+    "staticHistoricalDatasetVersion": "synthetic-demo-v0",
+    "syntheticDemo": false
+  }
+}

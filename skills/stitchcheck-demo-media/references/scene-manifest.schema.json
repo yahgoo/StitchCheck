@@ -1,0 +1,138 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://stitchcheck.local/schemas/scene-manifest.json",
+  "title": "StitchCheck Demo Media Scene Manifest",
+  "description": "Configuration for the six-scene StitchCheck demo video pipeline",
+  "type": "object",
+  "required": ["version", "scenes", "evidenceLabels", "privacyConstraints"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Manifest schema version"
+    },
+    "scenes": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "durationSeconds", "visualElements", "narration"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 6,
+            "description": "Scene number (1-6)"
+          },
+          "title": {
+            "type": "string",
+            "description": "Scene title"
+          },
+          "durationSeconds": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Scene duration in seconds"
+          },
+          "visualElements": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of required visual elements"
+          },
+          "requiredLabels": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "OpenRouter temporary path — not direct Gemini validation",
+                "Synthetic local placeholder — not Nosana evidence",
+                "Synthetic local placeholder — not Atlas Sandbox evidence"
+              ]
+            },
+            "description": "Evidence labels that must be visible in this scene"
+          },
+          "narration": {
+            "type": "string",
+            "description": "Narration script for this scene"
+          },
+          "screenshotCapturePoints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Key moments to capture screenshots"
+          }
+        }
+      }
+    },
+    "evidenceLabels": {
+      "type": "object",
+      "required": ["geminiExtraction", "nosanaRisk", "atlasAlternatives"],
+      "additionalProperties": false,
+      "properties": {
+        "geminiExtraction": {
+          "type": "string",
+          "const": "OpenRouter temporary path — not direct Gemini validation"
+        },
+        "nosanaRisk": {
+          "type": "string",
+          "const": "Synthetic local placeholder — not Nosana evidence"
+        },
+        "atlasAlternatives": {
+          "type": "string",
+          "const": "Synthetic local placeholder — not Atlas Sandbox evidence"
+        }
+      }
+    },
+    "privacyConstraints": {
+      "type": "object",
+      "required": ["noPII", "noCredentials", "noLiveProviderCalls", "noWriteActions"],
+      "additionalProperties": false,
+      "properties": {
+        "noPII": {
+          "type": "boolean",
+          "const": true,
+          "description": "No personally identifiable information"
+        },
+        "noCredentials": {
+          "type": "boolean",
+          "const": true,
+          "description": "No API keys or secrets"
+        },
+        "noLiveProviderCalls": {
+          "type": "boolean",
+          "const": true,
+          "description": "No live Gemini, Nosana, or Atlas calls"
+        },
+        "noWriteActions": {
+          "type": "boolean",
+          "const": true,
+          "description": "No booking, payment, or order creation"
+        }
+      }
+    },
+    "outputStructure": {
+      "type": "object",
+      "required": ["scenesDir", "narrationDir", "finalDir"],
+      "additionalProperties": false,
+      "properties": {
+        "scenesDir": {
+          "type": "string",
+          "const": "output/stitchcheck-demo-media/scenes"
+        },
+        "narrationDir": {
+          "type": "string",
+          "const": "output/stitchcheck-demo-media/narration"
+        },
+        "finalDir": {
+          "type": "string",
+          "const": "output/stitchcheck-demo-media/final"
+        }
+      }
+    }
+  }
+}
