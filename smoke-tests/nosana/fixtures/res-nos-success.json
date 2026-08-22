@@ -1,0 +1,19 @@
+{
+  "fixtureId": "nos-res-success",
+  "placeholderLabel": "Synthetic local placeholder — not Nosana evidence",
+  "testIds": ["NOS-03", "NOS-04", "NOS-10"],
+  "description": "Sample completed-workload success shape. Hand-authored local placeholder; never produced by Nosana.",
+  "riskResult": {
+    "correlationId": "synthetic-nos-01-clean",
+    "workloadStatus": "completed",
+    "jobOrServiceReference": "synthetic-local-ref-0001 (NOT a real Nosana job reference)",
+    "riskBand": "medium",
+    "riskScore": 0.42,
+    "heuristicDisclaimer": "Heuristic risk estimate only — derived from a static/historical synthetic dataset; not a live delay, weather, legal, or guaranteed-outcome prediction. Synthetic local placeholder — not Nosana evidence.",
+    "failureCascadeExplanation": "A 75-minute connection at this synthetic airport profile historically misses onward legs in roughly the medium band of the demo dataset. This is a heuristic indication, not a prediction or guarantee, and no booking, order, or payment is involved.",
+    "datasetVersion": "synthetic-demo-v0",
+    "fallbackUsed": false,
+    "errorCode": null,
+    "errorMessage": null
+  }
+}

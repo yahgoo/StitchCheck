@@ -1,0 +1,19 @@
+{
+  "fixtureId": "nos-res-timeout",
+  "placeholderLabel": "Synthetic local placeholder — not Nosana evidence",
+  "testIds": ["NOS-06"],
+  "description": "Sample timeout shape: labelled timeout outcome, null score, labelled replay/fallback path.",
+  "riskResult": {
+    "correlationId": "synthetic-nos-06-timeout",
+    "workloadStatus": "timeout",
+    "jobOrServiceReference": "synthetic-local-ref-0004 (NOT a real Nosana job reference)",
+    "riskBand": "unavailable",
+    "riskScore": null,
+    "heuristicDisclaimer": "Heuristic risk estimate only — derived from a static/historical synthetic dataset; not a live delay, weather, legal, or guaranteed-outcome prediction. Synthetic local placeholder — not Nosana evidence.",
+    "failureCascadeExplanation": "The simulated workload exceeded the demo time budget and timed out, so no risk band or score exists and none is invented. A labelled replay/fallback path is offered to the user.",
+    "datasetVersion": "synthetic-demo-v0",
+    "fallbackUsed": true,
+    "errorCode": "SIMULATED_WORKLOAD_TIMEOUT",
+    "errorMessage": "Simulated workload timeout (local placeholder scenario; no real workload was executed)."
+  }
+}

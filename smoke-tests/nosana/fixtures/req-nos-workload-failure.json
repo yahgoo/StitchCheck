@@ -1,0 +1,21 @@
+{
+  "fixtureId": "nos-req-workload-failure",
+  "placeholderLabel": "Synthetic local placeholder — not Nosana evidence",
+  "heuristicRiskDisclaimer": "Heuristic risk estimate only — derived from a static/historical synthetic dataset; not a live delay, weather, legal, or guaranteed-outcome prediction.",
+  "syntheticDemo": true,
+  "nonPiiDeclaration": true,
+  "testIds": ["NOS-07"],
+  "simulatedScenario": "failure",
+  "description": "Valid synthetic request modelling a workload failure (simulated internal workload error). Expected clear error outcome with replay path and no invented score.",
+  "riskRequest": {
+    "correlationId": "synthetic-nos-07-failure",
+    "origin": "AAA",
+    "connectionAirport": "BBB",
+    "destination": "EEE",
+    "connectionDurationMinutes": 95,
+    "staticHistoricalDatasetVersion": "synthetic-demo-v0",
+    "simulatedFailureMode": "workload-internal-error",
+    "syntheticDemo": true,
+    "nonPiiDeclaration": true
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "fixtureId": "nos-req-degraded-confidence",
+  "placeholderLabel": "Synthetic local placeholder — not Nosana evidence",
+  "heuristicRiskDisclaimer": "Heuristic risk estimate only — derived from a static/historical synthetic dataset; not a live delay, weather, legal, or guaranteed-outcome prediction.",
+  "syntheticDemo": true,
+  "nonPiiDeclaration": true,
+  "testIds": ["NOS-08", "NOS-09"],
+  "simulatedScenario": "unavailable",
+  "description": "Degraded/low-confidence synthetic input: connection airport absent from the static dataset slice, so the risk result must be unavailable with riskScore null and fallback labelled. No score may be invented.",
+  "riskRequest": {
+    "correlationId": "synthetic-nos-09-degraded",
+    "origin": "AAA",
+    "connectionAirport": "ZZZ",
+    "destination": "CCC",
+    "connectionDurationMinutes": 40,
+    "staticHistoricalDatasetVersion": "synthetic-demo-v0",
+    "inputConfidence": "low",
+    "degradationReason": "connection airport absent from synthetic static dataset slice",
+    "syntheticDemo": true,
+    "nonPiiDeclaration": true
+  }
+}

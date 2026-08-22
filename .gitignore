@@ -1,0 +1,54 @@
+# ── Local secrets — never commit ──
+.env
+.env.*
+!.env.example
+
+# ── Node ──
+node_modules/
+.npm-cache/
+
+# ── Build output ──
+dist/
+build/
+coverage/
+
+# ── Logs ──
+logs/
+*.log
+
+# ── OS / editor files ──
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.code-workspace
+
+# ── Python virtual environments ──
+.tts-venv/
+.video-toolchain-venv/
+__pycache__/
+*.pyc
+
+# ── Generated / local evidence containing secrets or personal data ──
+app/public/nosana-risk-result.json
+smoke-tests/nosana/results/nosana-risk-result.json
+
+# ── Temporary files ──
+*.tmp
+*.temp
+.cache/
+
+# ── Output artifacts (captures, demo builds, personal paths) ──
+output/
+
+# ── IDE / tool local state ──
+.cursor/
+.workbuddy-ai/
+.qoder/
+
+# ── Presentation / large binary assets (not required to reproduce demo) ──
+*.key
+*.pptx

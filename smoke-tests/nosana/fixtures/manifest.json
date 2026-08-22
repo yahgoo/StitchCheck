@@ -1,0 +1,88 @@
+{
+  "syntheticOnly": true,
+  "placeholderLabel": "Synthetic local placeholder — not Nosana evidence",
+  "heuristicRiskDisclaimer": "Heuristic risk estimate only — derived from a static/historical synthetic dataset; not a live delay, weather, legal, or guaranteed-outcome prediction. All local artifacts are synthetic placeholders and are NOT Nosana evidence.",
+  "piiReview": "Synthetic by construction: invented airport codes (AAA/BBB/CCC), fictional correlation identifiers, invented dataset version. No names, email addresses, booking references, payment data, passports, screenshots, or any other PII anywhere in these fixtures.",
+  "nosanaStatus": "NOT EXECUTED — no Nosana call, job submission, deployment, credential, or configuration exists. Nothing here has been run against Nosana.",
+  "requestFixtures": [
+    {
+      "fixtureId": "nos-req-clean-two-leg",
+      "file": "req-nos-clean-two-leg.json",
+      "testIds": ["NOS-01", "NOS-02", "NOS-03", "NOS-04", "NOS-08", "NOS-10"],
+      "expectedValid": true,
+      "simulatedScenario": "success",
+      "description": "Valid minimal synthetic non-PII risk request for a clean two-leg itinerary"
+    },
+    {
+      "fixtureId": "nos-req-degraded-confidence",
+      "file": "req-nos-degraded-confidence.json",
+      "testIds": ["NOS-08", "NOS-09"],
+      "expectedValid": true,
+      "simulatedScenario": "unavailable",
+      "description": "Degraded/low-confidence synthetic input where the risk result is unavailable; no score may be invented"
+    },
+    {
+      "fixtureId": "nos-req-timeout-prone",
+      "file": "req-nos-timeout-prone.json",
+      "testIds": ["NOS-06"],
+      "expectedValid": true,
+      "simulatedScenario": "timeout",
+      "description": "Valid synthetic request modelling a timeout-prone workload; labelled timeout outcome expected"
+    },
+    {
+      "fixtureId": "nos-req-workload-failure",
+      "file": "req-nos-workload-failure.json",
+      "testIds": ["NOS-07"],
+      "expectedValid": true,
+      "simulatedScenario": "failure",
+      "description": "Valid synthetic request modelling a workload failure; error outcome with replay path, no invented score"
+    },
+    {
+      "fixtureId": "nos-req-malformed",
+      "file": "req-nos-malformed.json",
+      "testIds": ["NOS-05"],
+      "expectedValid": false,
+      "simulatedScenario": "rejected",
+      "description": "Deliberately malformed request (missing required fields, invalid duration) expecting a clear local validation error"
+    }
+  ],
+  "resultFixtures": [
+    {
+      "fixtureId": "nos-res-success",
+      "file": "res-nos-success.json",
+      "testIds": ["NOS-03", "NOS-04", "NOS-10"],
+      "expectedValid": true,
+      "description": "Completed-workload success shape with risk band, score, disclaimer, and job reference"
+    },
+    {
+      "fixtureId": "nos-res-unavailable",
+      "file": "res-nos-unavailable.json",
+      "testIds": ["NOS-09"],
+      "expectedValid": true,
+      "description": "Completed workload whose risk result is unavailable: riskBand unavailable, riskScore null, fallback labelled"
+    },
+    {
+      "fixtureId": "nos-res-failure",
+      "file": "res-nos-failure.json",
+      "testIds": ["NOS-07"],
+      "expectedValid": true,
+      "description": "Workload failure shape: error status, null score, replay path, no invented score"
+    },
+    {
+      "fixtureId": "nos-res-error",
+      "file": "res-nos-error.json",
+      "testIds": ["NOS-05"],
+      "expectedValid": true,
+      "description": "Submission/validation error shape with errorCode and understandable message"
+    },
+    {
+      "fixtureId": "nos-res-timeout",
+      "file": "res-nos-timeout.json",
+      "testIds": ["NOS-06"],
+      "expectedValid": true,
+      "description": "Timeout shape: labelled timeout outcome with fallback/replay path, null score"
+    }
+  ],
+  "watermark": "SYNTHETIC FIXTURE — NOT REAL DATA — NO PII — NOT NOSANA EVIDENCE",
+  "generatedBy": "hand-authored local preparation artifacts; zero network access, zero dependencies"
+}

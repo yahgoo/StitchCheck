@@ -1,0 +1,19 @@
+{
+  "fixtureId": "nos-res-error",
+  "placeholderLabel": "Synthetic local placeholder — not Nosana evidence",
+  "testIds": ["NOS-05"],
+  "description": "Sample submission/validation error shape: understandable feedback with errorCode, null score, no silent failure.",
+  "riskResult": {
+    "correlationId": "synthetic-nos-05-malformed",
+    "workloadStatus": "error",
+    "jobOrServiceReference": null,
+    "riskBand": "unavailable",
+    "riskScore": null,
+    "heuristicDisclaimer": "Heuristic risk estimate only — derived from a static/historical synthetic dataset; not a live delay, weather, legal, or guaranteed-outcome prediction. Synthetic local placeholder — not Nosana evidence.",
+    "failureCascadeExplanation": "The request failed local validation before any workload could start: required non-PII fields were missing or invalid. Understandable feedback is shown and the request can be corrected and replayed.",
+    "datasetVersion": "synthetic-demo-v0",
+    "fallbackUsed": false,
+    "errorCode": "SIMULATED_INVALID_REQUEST",
+    "errorMessage": "Simulated validation error: connectionAirport missing, nonPiiDeclaration missing, connectionDurationMinutes invalid (local placeholder scenario)."
+  }
+}

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="260" font-family="monospace">
+  <rect width="100%" height="100%" fill="#f7f7f2"/>
+  <text x="20" y="26" font-size="12" fill="#b30000">SYNTHETIC FIXTURE — NOT REAL DATA — NO PII</text>
+  <text x="20" y="54" font-size="16" font-weight="bold">Demo Air — Fictional Itinerary (GEM-05, unreadable field)</text>
+  <text x="20" y="90" font-size="13">Leg 1: DA 100 | AAA to BBB | 2026-09-01</text>
+  <text x="20" y="110" font-size="13">Departure: </text>
+  <rect x="120" y="98" width="130" height="16" fill="#999" opacity="0.85"/>
+  <text x="126" y="110" font-size="13" fill="#999">##:## illegible</text>
+  <text x="20" y="138" font-size="13">Arrival: 10:30</text>
+  <text x="20" y="166" font-size="13">Leg 2: DA 200 | BBB to CCC | 2026-09-01 | 11:45 - 14:20</text>
+  <text x="20" y="198" font-size="13">Booking reference: XX0000 (fictional)</text>
+  <text x="20" y="234" font-size="11" fill="#666">Required departure time intentionally unreadable for GEM-05.</text>
+</svg>

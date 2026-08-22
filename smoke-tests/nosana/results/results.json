@@ -1,0 +1,249 @@
+{
+  "harness": "stitchcheck-nosana-workload-skeleton",
+  "harnessVersion": "0.1.0-local",
+  "phase": "preparation",
+  "executedAgainstNosana": false,
+  "nosanaCallOrJobOrDeploymentExists": false,
+  "networkCallsMade": 0,
+  "credentialsRead": 0,
+  "syntheticDemo": true,
+  "disclaimer": "Heuristic risk estimate only — derived from a static/historical synthetic dataset; not a live delay, weather, legal, or guaranteed-outcome prediction. Local results are heuristic placeholders only, not Nosana evidence.",
+  "placeholderLabel": "Synthetic local placeholder — not Nosana evidence",
+  "simulatedStatesObserved": [
+    "completed",
+    "failed",
+    "pending",
+    "rejected",
+    "running",
+    "timed_out"
+  ],
+  "runAt": "2026-08-21T15:58:34.907Z",
+  "runs": [
+    {
+      "fixtureId": "nos-req-clean-two-leg",
+      "testIds": [
+        "NOS-01",
+        "NOS-02",
+        "NOS-03",
+        "NOS-04",
+        "NOS-08",
+        "NOS-10"
+      ],
+      "simulatedScenario": "success",
+      "startedAt": "2026-08-21T15:58:34.906Z",
+      "endedAt": "2026-08-21T15:58:34.907Z",
+      "stateTransitions": [
+        {
+          "state": "pending",
+          "at": "2026-08-21T15:58:34.906Z"
+        },
+        {
+          "state": "running",
+          "at": "2026-08-21T15:58:34.907Z"
+        },
+        {
+          "state": "completed",
+          "at": "2026-08-21T15:58:34.907Z"
+        }
+      ],
+      "simulatedStatesObserved": [
+        "pending",
+        "running",
+        "completed"
+      ],
+      "validationIssues": [],
+      "riskResult": {
+        "correlationId": "synthetic-nos-01-clean",
+        "workloadStatus": "completed",
+        "jobOrServiceReference": "synthetic-local-ref-nos-req-clean-two-leg (NOT a real Nosana job reference)",
+        "riskBand": "medium",
+        "riskScore": 0.42,
+        "heuristicDisclaimer": "Heuristic risk estimate only — derived from a static/historical synthetic dataset; not a live delay, weather, legal, or guaranteed-outcome prediction. Synthetic local placeholder — not Nosana evidence",
+        "failureCascadeExplanation": "A 75-minute connection at BBB falls in the \"medium\" band of the synthetic static dataset. This is a heuristic indication only, not a prediction or guarantee, and no booking, order, or payment is involved.",
+        "datasetVersion": "synthetic-demo-v0",
+        "fallbackUsed": false,
+        "errorCode": null,
+        "errorMessage": null
+      },
+      "resultSchemaValid": true,
+      "resultSchemaIssues": []
+    },
+    {
+      "fixtureId": "nos-req-degraded-confidence",
+      "testIds": [
+        "NOS-08",
+        "NOS-09"
+      ],
+      "simulatedScenario": "unavailable",
+      "startedAt": "2026-08-21T15:58:34.907Z",
+      "endedAt": "2026-08-21T15:58:34.907Z",
+      "stateTransitions": [
+        {
+          "state": "pending",
+          "at": "2026-08-21T15:58:34.907Z"
+        },
+        {
+          "state": "running",
+          "at": "2026-08-21T15:58:34.907Z"
+        },
+        {
+          "state": "completed",
+          "at": "2026-08-21T15:58:34.907Z"
+        }
+      ],
+      "simulatedStatesObserved": [
+        "pending",
+        "running",
+        "completed"
+      ],
+      "validationIssues": [],
+      "riskResult": {
+        "correlationId": "synthetic-nos-09-degraded",
+        "workloadStatus": "completed",
+        "jobOrServiceReference": "synthetic-local-ref-nos-req-degraded-confidence (NOT a real Nosana job reference)",
+        "riskBand": "unavailable",
+        "riskScore": null,
+        "heuristicDisclaimer": "Heuristic risk estimate only — derived from a static/historical synthetic dataset; not a live delay, weather, legal, or guaranteed-outcome prediction. Synthetic local placeholder — not Nosana evidence",
+        "failureCascadeExplanation": "The simulated dataset slice has no record for this connection airport, so no risk band can be produced. No score is invented; a labelled fallback path (re-run or proceed without risk guidance) is offered.",
+        "datasetVersion": "synthetic-demo-v0",
+        "fallbackUsed": true,
+        "errorCode": null,
+        "errorMessage": null
+      },
+      "resultSchemaValid": true,
+      "resultSchemaIssues": []
+    },
+    {
+      "fixtureId": "nos-req-timeout-prone",
+      "testIds": [
+        "NOS-06"
+      ],
+      "simulatedScenario": "timeout",
+      "startedAt": "2026-08-21T15:58:34.907Z",
+      "endedAt": "2026-08-21T15:58:34.907Z",
+      "stateTransitions": [
+        {
+          "state": "pending",
+          "at": "2026-08-21T15:58:34.907Z"
+        },
+        {
+          "state": "running",
+          "at": "2026-08-21T15:58:34.907Z"
+        },
+        {
+          "state": "timed_out",
+          "at": "2026-08-21T15:58:34.907Z"
+        }
+      ],
+      "simulatedStatesObserved": [
+        "pending",
+        "running",
+        "timed_out"
+      ],
+      "validationIssues": [],
+      "riskResult": {
+        "correlationId": "synthetic-nos-06-timeout",
+        "workloadStatus": "timeout",
+        "jobOrServiceReference": "synthetic-local-ref-nos-req-timeout-prone (NOT a real Nosana job reference)",
+        "riskBand": "unavailable",
+        "riskScore": null,
+        "heuristicDisclaimer": "Heuristic risk estimate only — derived from a static/historical synthetic dataset; not a live delay, weather, legal, or guaranteed-outcome prediction. Synthetic local placeholder — not Nosana evidence",
+        "failureCascadeExplanation": "The simulated workload exceeded the demo time budget (5000 ms), so no risk band or score exists and none is invented. A labelled replay/fallback path is offered.",
+        "datasetVersion": "synthetic-demo-v0",
+        "fallbackUsed": true,
+        "errorCode": "SIMULATED_WORKLOAD_TIMEOUT",
+        "errorMessage": "Simulated workload timeout (local placeholder scenario; no real workload was executed)."
+      },
+      "resultSchemaValid": true,
+      "resultSchemaIssues": []
+    },
+    {
+      "fixtureId": "nos-req-workload-failure",
+      "testIds": [
+        "NOS-07"
+      ],
+      "simulatedScenario": "failure",
+      "startedAt": "2026-08-21T15:58:34.907Z",
+      "endedAt": "2026-08-21T15:58:34.907Z",
+      "stateTransitions": [
+        {
+          "state": "pending",
+          "at": "2026-08-21T15:58:34.907Z"
+        },
+        {
+          "state": "running",
+          "at": "2026-08-21T15:58:34.907Z"
+        },
+        {
+          "state": "failed",
+          "at": "2026-08-21T15:58:34.907Z"
+        }
+      ],
+      "simulatedStatesObserved": [
+        "pending",
+        "running",
+        "failed"
+      ],
+      "validationIssues": [],
+      "riskResult": {
+        "correlationId": "synthetic-nos-07-failure",
+        "workloadStatus": "error",
+        "jobOrServiceReference": "synthetic-local-ref-nos-req-workload-failure (NOT a real Nosana job reference)",
+        "riskBand": "unavailable",
+        "riskScore": null,
+        "heuristicDisclaimer": "Heuristic risk estimate only — derived from a static/historical synthetic dataset; not a live delay, weather, legal, or guaranteed-outcome prediction. Synthetic local placeholder — not Nosana evidence",
+        "failureCascadeExplanation": "The simulated workload failed before producing a result, so no risk band or score exists and none is invented. A labelled replay/retry path is offered to the user.",
+        "datasetVersion": "synthetic-demo-v0",
+        "fallbackUsed": false,
+        "errorCode": "SIMULATED_WORKLOAD_FAILURE",
+        "errorMessage": "Simulated workload internal error (local placeholder scenario; no real workload was executed)."
+      },
+      "resultSchemaValid": true,
+      "resultSchemaIssues": []
+    },
+    {
+      "fixtureId": "nos-req-malformed",
+      "testIds": [
+        "NOS-05"
+      ],
+      "simulatedScenario": "rejected",
+      "startedAt": "2026-08-21T15:58:34.907Z",
+      "endedAt": "2026-08-21T15:58:34.907Z",
+      "stateTransitions": [
+        {
+          "state": "pending",
+          "at": "2026-08-21T15:58:34.907Z"
+        },
+        {
+          "state": "rejected",
+          "at": "2026-08-21T15:58:34.907Z"
+        }
+      ],
+      "simulatedStatesObserved": [
+        "pending",
+        "rejected"
+      ],
+      "validationIssues": [
+        "connectionAirport must be a non-empty string",
+        "connectionDurationMinutes must be a non-negative finite number",
+        "syntheticDemo must be true",
+        "nonPiiDeclaration must be true"
+      ],
+      "riskResult": {
+        "correlationId": "synthetic-nos-05-malformed",
+        "workloadStatus": "error",
+        "jobOrServiceReference": null,
+        "riskBand": "unavailable",
+        "riskScore": null,
+        "heuristicDisclaimer": "Heuristic risk estimate only — derived from a static/historical synthetic dataset; not a live delay, weather, legal, or guaranteed-outcome prediction. Synthetic local placeholder — not Nosana evidence",
+        "failureCascadeExplanation": "The request failed local validation before any workload could start: connectionAirport must be a non-empty string; connectionDurationMinutes must be a non-negative finite number; syntheticDemo must be true; nonPiiDeclaration must be true. Understandable feedback is surfaced and the request can be corrected and replayed.",
+        "datasetVersion": "synthetic-demo-v0",
+        "fallbackUsed": false,
+        "errorCode": "SIMULATED_INVALID_REQUEST",
+        "errorMessage": "Simulated local validation error (placeholder scenario; nothing was executed against Nosana)."
+      },
+      "resultSchemaValid": true,
+      "resultSchemaIssues": []
+    }
+  ]
+}

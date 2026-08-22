@@ -1,0 +1,16 @@
+{
+  "fixtureId": "result-atl-timeout",
+  "testCases": ["ATL-06"],
+  "scenarioNote": "Expected labelled timeout outcome: timeout message with retry/replay path.",
+  "disclaimer": "Synthetic local placeholder — not Atlas Sandbox evidence",
+  "searchResult": {
+    "correlationId": "synthetic-atl-timeout",
+    "searchStatus": "timeout",
+    "sourceEnvironment": "sandbox-placeholder",
+    "alternatives": [],
+    "errorCode": "SYNTHETIC_SEARCH_TIMEOUT",
+    "errorMessage": "Synthetic placeholder timeout: the search did not finish in time. Retry or replay is available.",
+    "fallbackUsed": false
+  },
+  "expectedUiBehavior": "Show a labelled timeout state with a retry/replay path; never fabricate alternatives."
+}

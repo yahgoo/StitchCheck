@@ -1,0 +1,143 @@
+{
+  "version": "1.0.0",
+  "scenes": [
+    {
+      "id": 1,
+      "title": "Locked Confirm itinerary first",
+      "durationSeconds": 12,
+      "visualElements": [
+        "App loads with safety notice visible",
+        "Header shows StitchCheck — Synthetic Demo — No Live Services",
+        "Navigate to itinerary review screen",
+        "Risk panel displays Confirm itinerary first with lock icon",
+        "Alternatives panel displays Confirm itinerary first with lock icon",
+        "aria-disabled=true state visible on both panels"
+      ],
+      "requiredLabels": [],
+      "narration": "StitchCheck helps budget travelers understand the hidden risk of stitching two separately purchased flight tickets. When flights are booked as separate tickets, each is an independent contract. If the first flight is delayed and you miss the second, the second airline has no obligation to rebook or refund. This local demo shows a review-first approach to understanding itinerary risk before making decisions.",
+      "screenshotCapturePoints": [
+        "Initial locked state with both panels disabled",
+        "Lock icons and Confirm itinerary first message clearly visible"
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Editable field and correction",
+      "durationSeconds": 16,
+      "visualElements": [
+        "Upload panel with five fixture slots GEM-01 through GEM-05",
+        "Select GEM-01 fixture",
+        "Extraction result appears with itinerary fields",
+        "Source label visible beside extracted fields",
+        "All fields are editable text inputs",
+        "Edit second-leg flight number from SC-202 to SC-299",
+        "Correction note appears"
+      ],
+      "requiredLabels": [
+        "OpenRouter temporary path — not direct Gemini validation"
+      ],
+      "narration": "The demo begins with synthetic itinerary screenshots — fictional images containing no real passenger data, booking references, or payment information. The user selects GEM-01, a clear two-leg itinerary. The extraction label reads: OpenRouter temporary path — not direct Gemini validation. This is structured-extraction functionality only; direct Gemini remains unexecuted. Extracted itinerary fields are displayed for review. All fields are editable — the user can correct any value before confirming. In this demo, the second-leg flight number is corrected from SC-202 to SC-299. The correction is recorded locally. This editable extraction and user correction step ensures the traveler has full control over the itinerary data before any downstream processing.",
+      "screenshotCapturePoints": [
+        "Upload panel with GEM-01 selected",
+        "Editable fields with source label visible",
+        "Correction note after field edit"
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Confirmation and unlocked panels",
+      "durationSeconds": 17,
+      "visualElements": [
+        "Scroll to show Risk and Alternatives panels in disabled state",
+        "Click Confirm itinerary button",
+        "Status banner appears",
+        "Panels unlock with local placeholder data",
+        "Transition from locked to unlocked state visible"
+      ],
+      "requiredLabels": [],
+      "narration": "Before confirmation, the risk and alternatives panels are disabled. They display: Confirm itinerary first. This is the confirmation gate — downstream decision-support panels unlock only after the user explicitly confirms the reviewed itinerary. No risk calculation or alternative search begins before this step. The user clicks Confirm, and the panels activate with local placeholder data.",
+      "screenshotCapturePoints": [
+        "Before: disabled panels with lock icons",
+        "After: unlocked panels with placeholder data",
+        "Status banner visible"
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Sanitized provider status",
+      "durationSeconds": 15,
+      "visualElements": [
+        "Risk panel displays medium risk band with score 0.42",
+        "Heuristic disclaimer visible",
+        "Risk panel source label visible",
+        "Alternatives panel shows two synthetic options",
+        "Alternatives panel source label visible"
+      ],
+      "requiredLabels": [
+        "Synthetic local placeholder — not Nosana evidence",
+        "Synthetic local placeholder — not Atlas Sandbox evidence"
+      ],
+      "narration": "The risk panel displays a heuristic risk estimate — medium risk with a score of 0.42. The disclaimer states this is a synthetic local placeholder — not Nosana evidence. Nosana is a planned role whose smoke test was intentionally blocked before any network request due to missing infrastructure; it has not been deployed or executed. The alternatives panel shows two synthetic options labeled as Atlas Sandbox placeholders. Atlas is a planned, read-only role represented by local fixtures only and has not been authenticated or executed.",
+      "screenshotCapturePoints": [
+        "Risk panel with label visible",
+        "Alternatives panel with label visible",
+        "Heuristic disclaimer text visible"
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Comparison",
+      "durationSeconds": 20,
+      "visualElements": [
+        "Comparison view displays original itinerary alongside alternative",
+        "Table format with route summary, times, duration, connection type, price",
+        "Original plan shows self-transfer with tight connection",
+        "Alternative shows safer option with longer connection",
+        "Source labels visible for both panels"
+      ],
+      "requiredLabels": [],
+      "narration": "The comparison view displays the original itinerary alongside a placeholder alternative. The side-by-side table shows route details, connection times, and pricing. All data is synthetic and local. The original plan carries the medium-risk label from the risk panel. The alternative is labeled as a sandbox placeholder. This comparison helps the traveler understand the trade-offs before making a local decision.",
+      "screenshotCapturePoints": [
+        "Full comparison table visible",
+        "Original and alternative columns clearly labeled",
+        "Risk band visible for original plan"
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Local Keep/Switch ending",
+      "durationSeconds": 20,
+      "visualElements": [
+        "Decision panel shows Keep current plan and Switch to alternative",
+        "Select Keep current plan",
+        "Confirm decision",
+        "Final screen appears with no-external-action statement",
+        "Metadata visible: noOrderCreated: true, syntheticDemo: true, externalCallsMade: false",
+        "Final statement visible"
+      ],
+      "requiredLabels": [],
+      "narration": "The user makes a local decision — Keep the current plan or Switch to an alternative. This is a UI-only selection. No booking, payment, reservation, ticket, order, verification, or other external action occurs. The final screen states explicitly that no external action has been created. Direct Gemini remains unexecuted. Nosana remains unexecuted and not deployed. Atlas remains unexecuted and not authenticated. This local demo ends here, having demonstrated the review-first flow with synthetic data and zero external calls.",
+      "screenshotCapturePoints": [
+        "Decision buttons visible",
+        "Final statement clearly visible",
+        "Metadata showing no external actions"
+      ]
+    }
+  ],
+  "evidenceLabels": {
+    "geminiExtraction": "OpenRouter temporary path — not direct Gemini validation",
+    "nosanaRisk": "Synthetic local placeholder — not Nosana evidence",
+    "atlasAlternatives": "Synthetic local placeholder — not Atlas Sandbox evidence"
+  },
+  "privacyConstraints": {
+    "noPII": true,
+    "noCredentials": true,
+    "noLiveProviderCalls": true,
+    "noWriteActions": true
+  },
+  "outputStructure": {
+    "scenesDir": "output/stitchcheck-demo-media/scenes",
+    "narrationDir": "output/stitchcheck-demo-media/narration",
+    "finalDir": "output/stitchcheck-demo-media/final"
+  }
+}

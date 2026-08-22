@@ -1,0 +1,19 @@
+{
+  "fixtureId": "nos-res-unavailable",
+  "placeholderLabel": "Synthetic local placeholder — not Nosana evidence",
+  "testIds": ["NOS-09"],
+  "description": "Sample shape for a completed workload whose risk result is unavailable: riskBand unavailable, riskScore null, fallback labelled, no invented score.",
+  "riskResult": {
+    "correlationId": "synthetic-nos-09-degraded",
+    "workloadStatus": "completed",
+    "jobOrServiceReference": "synthetic-local-ref-0002 (NOT a real Nosana job reference)",
+    "riskBand": "unavailable",
+    "riskScore": null,
+    "heuristicDisclaimer": "Heuristic risk estimate only — derived from a static/historical synthetic dataset; not a live delay, weather, legal, or guaranteed-outcome prediction. Synthetic local placeholder — not Nosana evidence.",
+    "failureCascadeExplanation": "The connection airport is absent from the synthetic static dataset slice, so no risk band can be produced. No score is invented; a labelled fallback path (re-run or proceed without risk guidance) is offered.",
+    "datasetVersion": "synthetic-demo-v0",
+    "fallbackUsed": true,
+    "errorCode": null,
+    "errorMessage": null
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "fixtureId": "query-atl-tight-connection",
+  "testCases": ["ATL-01", "ATL-03", "ATL-04", "ATL-11"],
+  "scenarioNote": "Synthetic two-leg itinerary with a tight connection (50 minutes); search-only safer-alternative query. Illustrative input only, not a live request.",
+  "disclaimer": "Synthetic local placeholder — not Atlas Sandbox evidence",
+  "searchQuery": {
+    "correlationId": "synthetic-atl-tight-connection",
+    "origin": "AAA",
+    "destination": "CCC",
+    "departureDate": "2026-09-16",
+    "earliestDepartureTime": "06:30",
+    "latestArrivalTime": "19:30",
+    "searchIntent": "safer-alternative",
+    "sandboxOnly": true,
+    "syntheticDemo": true,
+    "confirmedItinerary": true
+  },
+  "syntheticContext": {
+    "legs": [
+      {
+        "origin": "AAA",
+        "destination": "BBB",
+        "date": "2026-09-16",
+        "departureTime": "07:15",
+        "arrivalTime": "09:40"
+      },
+      {
+        "origin": "BBB",
+        "destination": "CCC",
+        "date": "2026-09-16",
+        "departureTime": "10:30",
+        "arrivalTime": "13:05"
+      }
+    ],
+    "connectionDurationMinutes": 50
+  }
+}

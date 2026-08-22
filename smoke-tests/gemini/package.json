@@ -1,0 +1,16 @@
+{
+  "name": "stitchcheck-gemini-smoke-test",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Isolated Gemini smoke-test harness foundation for StitchCheck P0 (GEM-01 through GEM-08). Separate from the future P0 application. No production app code and no downstream-service dependencies.",
+  "scripts": {
+    "smoke": "node run-smoke-test.mjs"
+  },
+  "dependencies": {
+    "@google/genai": "^2.18.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

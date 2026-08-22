@@ -1,0 +1,50 @@
+{
+  "harness": "stitchcheck-gemini-smoke-test",
+  "harnessVersion": "0.4.0-direct-gemini",
+  "phase": "gemini-direct",
+  "provider": "gemini",
+  "providerMode": "direct",
+  "providerLabel": "Direct Gemini validation",
+  "modelIdentifier": "gemini-3.7-flash",
+  "modelTestPurpose": "Verify gemini-3.7-flash as potential upgrade from gemini-3.6-flash",
+  "runAt": "2026-08-22T05:20:00.000Z",
+  "outcome": "failure",
+  "errorClass": "model_not_found",
+  "errorMessage": "Gemini API returned 404: models/gemini-3.7-flash is not found",
+  "tests": [
+    {
+      "provider": "gemini",
+      "providerMode": "direct",
+      "modelIdentifier": "gemini-3.7-flash",
+      "testId": "GEM-01",
+      "fixtureId": "gem-01-two-leg-clean",
+      "timestamp": "2026-08-22T05:20:00.000Z",
+      "outcome": "failure",
+      "errorClass": "model_not_found",
+      "errorMessage": "API returned 404 — model identifier not recognized",
+      "latencyMs": null,
+      "extractionStatus": "not_attempted",
+      "schemaValidation": "not_run",
+      "fallbackUsed": false,
+      "fixtureBasename": "gem-01-two-leg-clean.png",
+      "fixtureMimeType": "image/png",
+      "fixtureSyntheticNonPii": true
+    }
+  ],
+  "conclusion": {
+    "geminiGateStatus": "FAIL",
+    "reason": "The model identifier gemini-3.7-flash is not recognized by the Google Gemini API. The API returned a 404 error indicating the model does not exist or is not available.",
+    "lastVerifiedModel": "gemini-3.6-flash",
+    "lastVerifiedModelEvidence": "results-gemini-3.6-flash-success.json",
+    "nextAction": "Do not retry Gemini with alternative model names. Keep gemini-3.6-flash as the verified live model. Separately review Nosana Gate 2 timeout requirement."
+  },
+  "safetyCompliance": {
+    "onlyOneLiveRequestAttempted": true,
+    "noAlternativeModelsTried": true,
+    "noVideoCreated": true,
+    "noNosanaRun": true,
+    "noAtlasWrite": true,
+    "noApiKeyExposed": true,
+    "previousEvidencePreserved": true
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "timestamp_utc": "2026-08-20T15:53:43Z",
+  "test_id": "NOS-ATTEMPT-001",
+  "status": "blocked",
+  "network_attempted": false,
+  "workload_identifier": "req-nos-clean-two-leg",
+  "sanitized_result": {
+    "blocker_category": "missing_infrastructure",
+    "blocker_details": [
+      "No deployed workload exists — workload-skeleton.mjs has zero network code",
+      "No Nosana SDK, CLI, API client, or endpoint URL is present in the harness or system PATH",
+      "No target environment (testnet/mainnet/API URL) is configured or documented",
+      "No deployment method is recorded from official Nosana documentation"
+    ],
+    "credential_status": "reported_configured_but_no_submission_target",
+    "harness_phase": "preparation",
+    "executed_against_nosana": false,
+    "nosana_call_or_job_or_deployment_exists": false,
+    "network_calls_made": 0,
+    "credentials_read": 0,
+    "synthetic_demo": true,
+    "placeholder_label": "Synthetic local placeholder — not Nosana evidence",
+    "test_cases_covered": [],
+    "test_cases_blocked": ["NOS-01", "NOS-02", "NOS-03", "NOS-04", "NOS-05", "NOS-06", "NOS-07", "NOS-08", "NOS-09", "NOS-10"]
+  },
+  "next_safe_action": "Human must: (1) confirm official Nosana documentation and submission method, (2) identify target environment, (3) design and deploy the risk workload, (4) implement a submission adapter, (5) provide explicit human authorization for first submission, (6) verify wallet/compute prerequisites if required"
+}

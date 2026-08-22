@@ -1,0 +1,25 @@
+{
+  "phase": "gemini-direct",
+  "providerSelection": "gemini",
+  "selectionSource": "direct-gemini-default",
+  "directGeminiEnabled": true,
+  "geminiExplicitSelection": true,
+  "pinnedModelIdentifier": "gemini-3.7-flash",
+  "fallbackModelIdentifier": "gemini-3.6-flash",
+  "directGeminiApiStyle": "auto",
+  "allowModelFallback": false,
+  "allowProviderFallback": false,
+  "requireStructuredOutputParameters": true,
+  "labels": {
+    "openrouter": "OpenRouter temporary path — not direct Gemini validation",
+    "gemini": "Direct Gemini validation"
+  },
+  "retryPolicy": {
+    "initialAttempts": 1,
+    "maxRetriesAfterInitial": 1,
+    "preferRetryAfter": true,
+    "fallbackBackoff": "bounded exponential with jitter",
+    "concurrentRequests": 0,
+    "note": "At most one controlled retry. Never retries authentication or validation failures."
+  }
+}

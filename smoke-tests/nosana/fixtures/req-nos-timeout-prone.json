@@ -1,0 +1,21 @@
+{
+  "fixtureId": "nos-req-timeout-prone",
+  "placeholderLabel": "Synthetic local placeholder — not Nosana evidence",
+  "heuristicRiskDisclaimer": "Heuristic risk estimate only — derived from a static/historical synthetic dataset; not a live delay, weather, legal, or guaranteed-outcome prediction.",
+  "syntheticDemo": true,
+  "nonPiiDeclaration": true,
+  "testIds": ["NOS-06"],
+  "simulatedScenario": "timeout",
+  "description": "Valid synthetic request modelling a timeout-prone workload (simulated budget exceeded). Expected labelled timeout outcome with fallback/replay path and riskScore null.",
+  "riskRequest": {
+    "correlationId": "synthetic-nos-06-timeout",
+    "origin": "AAA",
+    "connectionAirport": "BBB",
+    "destination": "DDD",
+    "connectionDurationMinutes": 55,
+    "staticHistoricalDatasetVersion": "synthetic-demo-v0",
+    "simulatedLatencyProfile": "exceeds-demo-budget",
+    "syntheticDemo": true,
+    "nonPiiDeclaration": true
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "stitchcheck-nosana-smoke-test",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Isolated Nosana smoke-test harness for StitchCheck risk workload. Offline-compatible; live submission requires explicit human approval.",
+  "scripts": {
+    "risk": "node run-risk-job.mjs"
+  },
+  "dependencies": {
+    "@nosana/kit": "^2.7.5"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

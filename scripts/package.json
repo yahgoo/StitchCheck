@@ -1,0 +1,15 @@
+{
+  "name": "stitchcheck-scripts",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Build and capture scripts for the StitchCheck demo",
+  "scripts": {
+    "capture": "node stitchcheck-demo-capture.mjs",
+    "capture:headed": "node stitchcheck-demo-capture.mjs --headed",
+    "preflight": "node stitchcheck-preflight.mjs"
+  },
+  "dependencies": {
+    "playwright": "^1.62.1"
+  }
+}

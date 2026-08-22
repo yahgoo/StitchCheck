@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="260" font-family="monospace">
+  <rect width="100%" height="100%" fill="#eef3f7"/>
+  <text x="20" y="26" font-size="12" fill="#b30000">SYNTHETIC FIXTURE — NOT REAL DATA — NO PII</text>
+  <text x="20" y="54" font-size="16" font-weight="bold">Fictional Recipe Card (GEM-04, not an itinerary)</text>
+  <text x="20" y="90" font-size="13">Demo Soup — serves 4 (fictional)</text>
+  <text x="20" y="114" font-size="13">Ingredients: 2 cups fictional broth</text>
+  <text x="20" y="138" font-size="13">1 diced imaginary carrot, salt to taste</text>
+  <text x="20" y="162" font-size="13">Method: simmer for 20 minutes, stir gently</text>
+  <text x="20" y="234" font-size="11" fill="#666">Deliberately not a flight itinerary for the GEM-04 scenario.</text>
+</svg>

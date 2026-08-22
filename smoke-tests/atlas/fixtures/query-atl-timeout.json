@@ -1,0 +1,38 @@
+{
+  "fixtureId": "query-atl-timeout",
+  "testCases": ["ATL-06"],
+  "scenarioNote": "Synthetic confirmed itinerary paired with an expected labelled timeout outcome with a retry/replay path. Illustrative input only, not a live request.",
+  "disclaimer": "Synthetic local placeholder — not Atlas Sandbox evidence",
+  "searchQuery": {
+    "correlationId": "synthetic-atl-timeout",
+    "origin": "AAA",
+    "destination": "CCC",
+    "departureDate": "2026-09-19",
+    "earliestDepartureTime": "05:30",
+    "latestArrivalTime": "23:00",
+    "searchIntent": "safer-alternative",
+    "sandboxOnly": true,
+    "syntheticDemo": true,
+    "confirmedItinerary": true
+  },
+  "syntheticContext": {
+    "legs": [
+      {
+        "origin": "AAA",
+        "destination": "BBB",
+        "date": "2026-09-19",
+        "departureTime": "06:45",
+        "arrivalTime": "09:10"
+      },
+      {
+        "origin": "BBB",
+        "destination": "CCC",
+        "date": "2026-09-19",
+        "departureTime": "12:05",
+        "arrivalTime": "14:40"
+      }
+    ],
+    "connectionDurationMinutes": 175
+  },
+  "expectedOutcomeFixture": "result-atl-timeout.json"
+}
