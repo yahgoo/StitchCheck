@@ -1281,10 +1281,10 @@ section("Test 25 — Secret redaction in error messages");
 const sanitizeError = _testHooks.sanitizeError;
 
 // Test API key patterns are redacted
-const errorWithApiKey = new Error("Failed with key AIzaSyA1234567890abcdefghijklmnopqrstuv");
+const errorWithApiKey = new Error("Failed with key AIzaFakeTestKeyDoNotUse0000");
 const sanitized1 = sanitizeError(errorWithApiKey);
 assert(
-  !sanitized1.includes("AIzaSyA1234567890"),
+  !sanitized1.includes("AIzaFakeTestKeyDoNotUse"),
   "Gemini API key pattern is redacted from error",
 );
 assert(

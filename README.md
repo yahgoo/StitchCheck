@@ -133,6 +133,23 @@ node smoke-tests/provenance-label-offline-tests.mjs
 
 All tests make zero network requests and use no credentials.
 
+### Secret scanning
+
+A lightweight pre-commit secret scanner is available at `scripts/secret-scan.mjs`. It checks staged files for credential-shaped patterns (Google API keys, sk- tokens, Bearer tokens, etc.) and refuses the commit if any match.
+
+```bash
+# Scan staged changes (default)
+node scripts/secret-scan.mjs
+
+# Scan all tracked files (slower)
+node scripts/secret-scan.mjs --all
+
+# Install as a pre-commit hook
+cp scripts/secret-scan.mjs .git/hooks/pre-commit
+```
+
+No external dependencies required.
+
 ## Known Limitations
 
 - **Gemini 3.7 live path** is implemented and offline-tested; the most recent live attempt was inconclusive due to a transient error. The previously captured successful evidence artifact is preserved in `smoke-tests/gemini/results/`.
