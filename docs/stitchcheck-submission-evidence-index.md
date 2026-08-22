@@ -22,7 +22,7 @@ categories:
   GEM-LIVE-01 (OpenRouter extraction success), ATL-LIVE-01 (Atlas production
   search, 8 offers), ATL-SBX-SV-01 (Atlas Sandbox search + verify, partial
   success), and NOS-LIVE-01 (blocked before any network request).
-  Direct Gemini and Nosana live execution remain unexecuted.
+  Direct Gemini 3.7 live extraction succeeded. Nosana live job completed and reconciled offline.
 
 Local and offline evidence must not be presented as live provider evidence.
 Offline test results demonstrate that contracts and safeguards are correctly
@@ -44,33 +44,50 @@ evidence and must not be presented as such.
 | Gemini extraction contract is schema-validated offline. | Offline contract verification | `smoke-tests/gemini/extraction-contract.mjs`, `smoke-tests/gemini/extraction-validator.mjs`, `smoke-tests/gemini/schema-validator.mjs` | Contract, extraction validator, and schema validator are aligned. | Offline validation only; no provider call. |
 | Gemini offline regression suite passes. | Offline contract verification | `smoke-tests/gemini/adapter-offline-tests.mjs` | 92 passed, 0 failed. | Deterministic offline tests with fake clients; no provider invoked. |
 | Atlas offline fixtures and adapter are present. | Offline contract verification | `smoke-tests/atlas/alternatives-contract.mjs`, `smoke-tests/atlas/read-only-atlas-adapter.mjs`, `smoke-tests/atlas/adapter-offline-tests.mjs`, `smoke-tests/atlas/schema-validator.mjs` | 89 passed, 0 failed. | Offline tests with fake clients; distinct from live Atlas production search (ATL-LIVE-01). |
-| Nosana local workload and fixtures are present. | Offline contract verification | `smoke-tests/nosana/workload-skeleton.mjs`, `smoke-tests/nosana/schema-validator.mjs`, `smoke-tests/nosana/fixtures/` | Schema-validator fixtures all passed. | Local simulation only; Nosana not executed or deployed. |
+| Nosana local workload and fixtures are present. | Offline contract verification | `smoke-tests/nosana/workload-skeleton.mjs`, `smoke-tests/nosana/schema-validator.mjs`, `smoke-tests/nosana/fixtures/` | Schema-validator fixtures all passed. | Local simulation only; distinct from the live Nosana job that was completed. |
 | Nosana has a credential-free, offline-only integration boundary with read-only operation validation and sanitization. | Offline contract/test verification | `smoke-tests/nosana/nosana-client.mjs`, `smoke-tests/nosana/nosana-client-offline-tests.mjs`, `docs/nosana-integration-boundary.md` | 75 passed, 0 failed. | No network request, credential use, authentication, deployment, funding, submission, polling, cancellation, or live provider evidence. |
 | Atlas duplicate-booking protection enforces query-before-retry for synthetic 318 scenarios. | Offline contract/test verification | `smoke-tests/atlas/duplicate-booking-guard.mjs`, `smoke-tests/atlas/duplicate-booking-guard-offline-tests.mjs`, `docs/atlas-duplicate-booking-protection.md` | 48 passed, 0 failed. | Offline-only state machine; no Atlas authentication, network request, booking, payment, polling, ticketing, cancellation, or live provider evidence. |
-| GEM-01 used the temporary OpenRouter path. | Provider execution status | `smoke-tests/gemini/results/results.json`, `smoke-tests/gemini/results/evidence-stub.md` | GEM-01 executed via OpenRouter with synthetic fixture; labelled as temporary path. | OpenRouter temporary path only; not direct Gemini validation. |
-| Direct Gemini was not executed. | Provider execution status | `smoke-tests/gemini/results/results.json`, `docs/stitchcheck-demo-readiness-report.md`, `README.md` | Direct Gemini validation status recorded as not executed. | Pass/fail for direct Gemini is intentionally blank. |
-| Nosana was not executed or deployed. | Provider execution status | `smoke-tests/nosana/README.md`, `docs/stitchcheck-demo-readiness-report.md`, `README.md`, `docs/stitchcheck-nosana-live-image-resolution.md`, `docs/stitchcheck-nosana-sdk-contract-resolution.md`, `docs/stitchcheck-nosana-live-approval-update.md` | `@nosana/kit@2.7.5` installed; read-only preflight executed (`markets.list` / `credits.balance`); market `7AtiXMSH6R1jjBxrcYjehCkkSF7zvYWte63gwEDBcGHq` verified; job definition corrected to allowlisted image `docker.io/tensorflow/tensorflow:2.17.0-gpu-jupyter`. Live execution not performed. | No live job submitted, no credits spent, no IPFS pin. |
+| GEM-01 used the temporary OpenRouter path. | Provider execution status | `smoke-tests/gemini/results/results.json`, `smoke-tests/gemini/results/evidence-stub.md` | GEM-01 executed via OpenRouter with synthetic fixture; labelled as temporary path. | Historical temporary OpenRouter path; not the active provider. |
+| Direct Gemini 3.7 live extraction succeeded via the Interactions API. | Provider execution status | `smoke-tests/gemini/results/results-gemini-3.7-flash-success.json` | Gemini 3.7 (`gemini-3.7-flash`) via `ai.interactions.create`; outcome: success; schema-valid; `fallbackUsed: false`; latency ~4922 ms. | Live extraction validated. The browser walkthrough itself uses a local fixture and makes no provider call. |
+| Nosana live job accepted and completed; result reconciled offline. | Provider execution status | `smoke-tests/nosana/results/evidence/2026-08-22T05-15-31-529Z-output_invalid.json` (original live evidence), `smoke-tests/nosana/results/evidence/*-completed_success-reconciled.json` (reconciled), `smoke-tests/nosana/fixtures/opstates-live-result-sanitized.json` (sanitized fixture) | Job `BNZTHNoARu98EdaqPU5WiCaFWZAyU1e9NYCZJj2h1afY` accepted and completed on market `7AtiXMSH6R1jjBxrcYjehCkkSF7zvYWte63gwEDBcGHq`. Result recovered from `opStates.logs.log` after parser fix. `riskScore: 0.2895`, `riskBand: medium`, `simulationCount: 800`. `creditsUsed: 44` (internal credit metadata), `costUsd: 0.044`. IPFS definition: `QmVtywQCBsMokSSnpjDDNAgGJR6dDa8rAHffpMwqmnq5Jg`, IPFS result: `QmbCmtmcbfwRKyU8vE6axGvTMZ6YA1AWkLzVVNpYPZrNHE`. Platform timeout: 3600s. | Live job completed and reconciled offline. No new submission made. The browser walkthrough uses a local fallback fixture, not this live evidence. |
+| Nosana workload validated offline; live execution was not verified. | Historical provider status (superseded by reconciled evidence above) | `smoke-tests/nosana/README.md`, prior audit docs | Prior to the parser fix, the live job output could not be parsed. This entry is preserved for historical record. The reconciled evidence above supersedes this status. | Reliable live execution before the parser fix. After the fix, the result was successfully recovered. |
 | Atlas Sandbox Search + Verify executed (read-only). | Provider execution status | `smoke-tests/atlas/results/sandbox-search-verify-2026-08-21T07-02-42-099Z.json` (ATL-SBX-SV-01) | PARTIAL_SUCCESS: environment switch ✅, search (20 offers KUL→SIN) ✅, offer list ✅, verify (PRICE_CONFIRMATION_REQUIRED) ✅. Hard stop after Verify. No write call made. Environment restored to Production afterward. | Atlas Sandbox evidence — search + verify completed, price change or offer expired. No order, payment, ticketing, cancellation, or refund. Environment restored to Production. |
 | Full voiceover video rendered and validated. | Verified local behavior | `output/demo-artifacts/stitchcheck-video/stitchcheck-full-voiceover-proof.mp4`, `docs/stitchcheck-final-video-validation.md` | Duration: 131s. H.264 1920×1080 @ 30fps, AAC 24kHz mono, ~4.0MB. Caption-overlay fix applied (semi-transparent RGBA band, 96px). All 6 scenes validated. | No provider was called during rendering. All audio synthesis performed locally by Kokoro ONNX v0.4.7 (`externalTtsCalls: false`). No Atlas, Nosana, Gemini, or OpenRouter call. No package install, credit spend, or wallet operation. |
 | No booking, payment, reservation, ticket, order, verification, or other external action exists. | Verified local behavior | `app/src/App.tsx`, `app/src/data/labels.ts`, `docs/SPECS.md`, `docs/react-ui-acceptance-checklist.md` | No UI handler, route, or button enables any write action. Final statement explicitly denies all external actions. | Applies to the entire local demo; no provider can create write actions through this application. |
 
 ## Exact Labels
 
-- `OpenRouter temporary path — not direct Gemini validation` — used in
-  `app/src/data/labels.ts`, `smoke-tests/gemini/results/results.json`,
-  `smoke-tests/gemini/results/evidence-stub.md`, and
-  `docs/react-ui-acceptance-checklist.md`.
+- `Direct Gemini 3.7 — live validated` — used in `app/src/data/labels.ts` when
+  `evidenceSource === 'gemini-live'`, `fallbackUsed === false`, `validationOutcome === 'valid'`.
+  Only displayed when actual live evidence is presented, not for local fixtures.
 
-- `Synthetic local placeholder — not Nosana evidence` — used in
-  `app/src/data/labels.ts`, `smoke-tests/nosana/schema-validator.mjs`,
-  `smoke-tests/nosana/README.md`, `smoke-tests/nosana/fixtures/`,
-  and `docs/react-ui-acceptance-checklist.md`.
+- `Fictional itinerary — local demo fixture` — used in `app/src/data/labels.ts`
+  when `evidenceSource === 'local-fixture'`. The browser walkthrough uses this label
+  for the default extraction fixture.
 
-- `Synthetic local placeholder — not Atlas Sandbox evidence` — used in
-  `app/src/data/labels.ts`, `smoke-tests/atlas/alternatives-contract.mjs`,
-  `smoke-tests/atlas/comparison-adapter.mjs`, `smoke-tests/atlas/schema-validator.mjs`,
-  `smoke-tests/atlas/README.md`, `smoke-tests/atlas/fixtures/`,
-  and `docs/react-ui-acceptance-checklist.md`.
+- `Historical temporary OpenRouter test path — not the active provider` — used in
+  `app/src/data/labels.ts`. GEM-01 was executed via OpenRouter as a historical
+  smoke-test; not evidence of direct Google Gemini execution.
+
+- `Nosana evidence — remote job succeeded; result from decentralized GPU workload.` — used in `app/src/data/labels.ts`, `app/src/components/RiskPanel.tsx` when `evidenceSource === 'nosana-evidence'` and `fallbackUsed === false`. Shown for reconciled live evidence. The browser walkthrough does not currently consume this artifact.
+
+- `Local fallback — not Nosana evidence` — used in `app/src/data/labels.ts`,
+  `app/src/components/RiskPanel.tsx`. The browser demo uses a local fallback fixture.
+
+- `Nosana workload validated offline — local fallback used; not Nosana evidence` — used
+  in `app/src/data/labels.ts` when Nosana evidence metadata is present but fallback
+  was used (`evidenceSource === 'nosana-evidence'` but `fallbackUsed === true`).
+
+- `Fictional alternatives — local demo fixture` — used in `app/src/data/labels.ts`
+  when `evidenceSource === 'local-fixture'` for alternatives data.
+
+- `Offline fixture — not Atlas Sandbox evidence` — used in `app/src/data/labels.ts`
+  as the conservative default for Atlas alternatives.
+
+- `Atlas Sandbox — live Search/Verify` — only when `evidenceSource === 'atlas-sandbox'`
+  and `fallbackUsed === false`.
+
+No offline fixture is ever labelled as live provider evidence. This invariant is enforced by the cross-provider offline test suite.
 
 ## Test and Build Record
 
@@ -95,8 +112,8 @@ record.
 
 | Provider | Current Status | What Is Proven | What Is Not Proven |
 |---|---|---|---|
-| Gemini | Direct Gemini remains unexecuted. OpenRouter temporary path executed for GEM-01 and GEM-LIVE-01. | The extraction contract, validator, and offline regression suite pass offline. GEM-LIVE-01 (OpenRouter) succeeded with valid schema extraction from a synthetic screenshot. | Direct Gemini has not been called; no structured-output evidence from the Gemini API exists. |
-| Nosana | Offline boundary implemented; job definition corrected to match official Nosana schema (v0.1) and to the allowlisted image `docker.io/tensorflow/tensorflow:2.17.0-gpu-jupyter`; live execution not performed. | Credential-free read-only validation, request-envelope construction, fixture normalization, sanitization, mutation rejection, offline tests (75 passed), workload portability tests (37 passed), and corrected job definition (`version: "0.1"`, `type: "container"`, `ops[]`, `createNosanaClient()` SDK init, official-schema `validateJobDefinition()`). `@nosana/kit@2.7.5` installed; read-only preflight executed (`markets.list` / `credits.balance`); market `7AtiXMSH6R1jjBxrcYjehCkkSF7zvYWte63gwEDBcGHq` verified. See `docs/stitchcheck-nosana-live-image-resolution.md`, `docs/stitchcheck-nosana-sdk-contract-resolution.md`, `docs/stitchcheck-nosana-live-approval-update.md`. | Authentication, deployment, funding, submission, polling, cancellation, network execution, or live provider behavior. NO live job submitted, no credits spent, no IPFS pin. |
+| Gemini | Direct Gemini 3.7 live extraction succeeded via the Interactions API; schema-valid, no fallback. Evidence: `smoke-tests/gemini/results/results-gemini-3.7-flash-success.json`. Historical temporary OpenRouter path preserved. | The extraction contract, validator, and offline regression suite pass offline. Direct Gemini 3.7 live extraction succeeded via `ai.interactions.create`. | The browser walkthrough itself uses a local fixture and makes no provider call. |
+| Nosana | Nosana live job accepted and completed; result reconciled offline. `riskScore: 0.2895`, `riskBand: medium`, `costUsd: 0.044`. Browser demo uses local fallback fixture. | Credential-free read-only validation, request-envelope construction, fixture normalization, sanitization, mutation rejection, offline tests (75 passed), workload portability tests (37 passed), corrected job definition. `@nosana/kit@2.7.5` installed; read-only preflight executed; market verified. Live job submitted, completed, and reconciled through `opStates.logs.log` parser fix. Evidence preserved in `smoke-tests/nosana/results/evidence/`. | No new submission was made during reconciliation. The browser walkthrough uses a local fallback fixture, not the live evidence. Reliable live execution, deployment, funding, polling, cancellation, or live provider behaviour beyond the single completed job. |
 | Atlas | Authentication succeeded via official Atlas Flight Booking Skill (browser ATRIP authorization). Two live production searches: (1) PVG→NRT/HND returned 5 real offers, (2) SIN→BKK returned 8 real offers (ATL-LIVE-01). All offers are reference prices (`price_status: reference`, `bookable: false`) due to `TICKETING_ACTIVATION_REQUIRED`. Atlas Sandbox Search + Verify (ATL-SBX-SV-01): environment switch ✅, search returned 20 offers (KUL→SIN, 2026-09-15), offer list ✅, verify returned PRICE_CONFIRMATION_REQUIRED (price changed $64.38→$203.99). Hard stop after Verify — no write call. Evidence: `smoke-tests/atlas/results/sandbox-search-verify-2026-08-21T07-02-42-099Z.json`. No booking, payment, ticket, or order was created. Ticketing activation pending human action at ATRIP workspace. | Authentication via official Skill and CLI, live production searches returning real flight offers, and Atlas Sandbox read-only Search + Verify with sanitized evidence record. | No booking, payment, ticket, order, verification, or any write action was created. Ticketing activation is pending. Production booking, payment, ticketing, and reliability remain unproven. |
 | OpenRouter | Temporary path only; not direct Gemini validation. | GEM-01 was executed via the OpenRouter temporary path with a synthetic fixture and is labelled accordingly. | The OpenRouter path is not direct Gemini validation; results are not transferable to the Gemini API. |
 

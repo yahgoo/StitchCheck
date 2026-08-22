@@ -57,12 +57,12 @@ No source code, deck, video, provider integration, `.env.local`, credential, or 
 **Say:**
 > "Budget travelers face a hidden trap. When you stitch two separately purchased flights to save money, each ticket is an independent contract. If the first flight is delayed and you miss the second, the second airline has no obligation to rebook, protect, or refund you. The savings are visible at checkout — the exposure is not. StitchCheck gives travelers a review-first way to understand itinerary risk before committing. This is a local demo with synthetic data."
 
-### Segment 2 — Extraction via OpenRouter (0:18–0:36)
+### Segment 2 — Extraction (0:18–0:36)
 
 **Screen:** Upload panel with five fixture slots. Select GEM-01. Extraction result populates.
 
 **Say:**
-> "The user starts with a synthetic itinerary screenshot — fictional image, no real passenger data. We select GEM-01, a clear two-leg itinerary. Structured extraction was tested through an OpenRouter temporary path. The label on screen reads: OpenRouter temporary path — not direct Gemini validation. This is interface-level evidence only. Direct Gemini remains unexecuted."
+> "The user starts with a synthetic itinerary screenshot — fictional image, no real passenger data. We select GEM-01, a clear two-leg itinerary. The label on screen reads: Fictional itinerary — local demo fixture. Direct Gemini 3.7 live extraction was verified separately via the Interactions API."
 
 ### Segment 3 — Human Correction (0:36–0:52)
 
@@ -112,12 +112,12 @@ No source code, deck, video, provider integration, `.env.local`, credential, or 
 **Say:**
 > "Budget travelers face a hidden trap. When you stitch two separately purchased flights to save money, each ticket is an independent contract. If the first flight is delayed and you miss the second, the second airline has no obligation to rebook, protect, or refund you. The savings are visible at checkout — the exposure is not. StitchCheck gives travelers a review-first way to understand itinerary risk before committing. This is a local demo with synthetic data; the walkthrough itself makes no external service calls."
 
-### Segment 2 — Extraction via OpenRouter Temporary Path (0:20–0:45)
+### Segment 2 — Extraction (0:20–0:45)
 
 **Screen:** Upload panel. Select GEM-01. Extraction populates fields.
 
 **Say:**
-> "The user starts with a synthetic itinerary screenshot — fictional image, no real passenger data. We select GEM-01, a clear two-leg itinerary. Structured extraction was tested through an OpenRouter temporary path. The label on screen reads: OpenRouter temporary path — not direct Gemini validation. This is interface-level evidence only — it demonstrates that the extraction interface can process a synthetic screenshot through a vision-capable model. Direct Gemini remains unexecuted: the SDK is not installed and no model has been approved. Offline, the extraction contract and validators pass 92 deterministic tests with zero failures."
+> "The user starts with a synthetic itinerary screenshot — fictional image, no real passenger data. We select GEM-01, a clear two-leg itinerary. The label on screen reads: Fictional itinerary — local demo fixture. Direct Gemini 3.7 live extraction was verified separately via the Interactions API; schema-valid, no fallback. Offline, the extraction contract and validators pass 92 deterministic tests with zero failures."
 
 ### Segment 3 — Human Correction (0:45–1:02)
 
@@ -152,7 +152,7 @@ No source code, deck, video, provider integration, `.env.local`, credential, or 
 **Screen:** Decision panel. Select "Keep current plan." Final screen.
 
 **Say:**
-> "The traveler makes a local decision — Keep the current plan or Switch to an alternative. This is a UI-only selection. No booking, payment, reservation, ticket, order, verification, or other external action occurs. The final screen states it explicitly: no external action has been created. Direct Gemini remains unexecuted. Nosana remains unexecuted and not deployed. Atlas has shown reference-price search results only — no write action of any kind. StitchCheck demonstrates a review-first flow that keeps the traveler in control at every step. The next steps require separate human authorization for each provider: install the Nosana SDK and execute one risk workload, approve a Gemini model and execute one direct extraction, and wire real Atlas Sandbox evidence into the UI. Each step has its own approval gate, its own credential review, and its own cost review. An honest demo, ready for validated live-service execution when each provider is authorized and evidence is collected."
+> "The traveler makes a local decision — Keep the current plan or Switch to an alternative. This is a UI-only selection. No booking, payment, reservation, ticket, order, verification, or other external action occurs. The final screen states it explicitly: no external action has been created. Direct Gemini 3.7 was live-verified separately. Nosana uses local fallback in this walkthrough. Atlas has shown reference-price search results only — no write action of any kind. StitchCheck demonstrates a review-first flow that keeps the traveler in control at every step — the demo UI itself makes no live service calls."
 
 ---
 
@@ -189,19 +189,18 @@ Perform these in order. Do not skip any step.
 
 **Verified facts only:**
 
-- GEM-01 and GEM-LIVE-01 were executed via an OpenRouter temporary path using synthetic fixtures.
-- The on-screen label reads: **OpenRouter temporary path — not direct Gemini validation.**
-- This demonstrates that the extraction interface can process a synthetic screenshot through a vision-capable model.
-- This is **not** direct Gemini validation. Results are **not** transferable to the Gemini API.
-- Direct Gemini remains unexecuted: the `@google/genai` SDK is not installed, no model identifier has been approved, and no direct call has been made.
+- Direct Gemini 3.7 live extraction succeeded via the Interactions API; schema-valid, no fallback.
+- The browser walkthrough uses a fictional local fixture labelled: **Fictional itinerary — local demo fixture.**
+- GEM-01 was also executed via a historical OpenRouter temporary path; that path is not the active provider.
+- The `@google/genai` SDK was used for the direct Gemini verification.
 
 **Safe sentence:**
-> "Structured extraction was tested through an OpenRouter temporary path, labelled on screen. This is interface-level evidence only — not direct Gemini validation. Direct Gemini remains unexecuted."
+> "Direct Gemini 3.7 live extraction was verified separately via the Interactions API. The browser walkthrough uses a fictional local fixture."
 
 **Never say:**
-- "Gemini validated" or "Gemini works."
+- "Gemini validated" without specifying it was the Interactions API verification.
 - "OpenRouter is Gemini."
-- "We used Gemini" (without the OpenRouter qualifier).
+- "The browser called Gemini" (it uses local fixtures).
 
 ---
 
@@ -353,7 +352,7 @@ Perform these in order. Do not skip any step.
 
 | Provider | Fallback Statement |
 |----------|-------------------|
-| OpenRouter / Gemini | "Direct Gemini remains unexecuted. The OpenRouter temporary path executed GEM-01 with a synthetic fixture and is labelled accordingly. That is interface-level evidence only." |
+| OpenRouter / Gemini | "Direct Gemini 3.7 live extraction succeeded via the Interactions API; schema-valid, no fallback. The browser walkthrough uses a fictional local fixture and makes no provider call. Historical OpenRouter path is labelled accordingly." |
 | Atlas | "Atlas authentication succeeded. Two live production searches returned real offers — all reference-price only. Sandbox Search plus Verify was completed with a hard stop. Ticketing activation is pending." |
 | Nosana | "Nosana has not been executed. The smoke test was intentionally blocked before any network request. Offline, 75 tests validate the contract and safety boundaries. An approval packet is ready." |
 

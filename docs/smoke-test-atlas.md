@@ -8,6 +8,8 @@ results that can be displayed in the comparison view.
 This is a plan only. Atlas has not been authenticated, configured, called, or
 proven to work.
 
+**Update:** Atlas Sandbox Search/Verify was subsequently verified read-only. Atlas production Search returned read-only reference-price results; no booking or payment occurred. Evidence files exist in this directory.
+
 ## P0 Requirement Coverage
 Relevant requirements and tests:
 - US-09, US-10, US-11, US-12, US-13

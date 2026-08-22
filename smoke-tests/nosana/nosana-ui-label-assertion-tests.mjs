@@ -40,9 +40,11 @@ function section(name) {
 
 function getSourceLabel(riskResult) {
   const isNosanaEvidence = riskResult.evidenceSource === "nosana-evidence";
+  const isNosanaLive = isNosanaEvidence && !riskResult.fallbackUsed;
   const isLocalFallback = riskResult.evidenceSource === "local-fallback" || riskResult.fallbackUsed;
 
-  if (isNosanaEvidence) return LABELS.nosanaRiskEvidence;
+  if (isNosanaLive) return LABELS.nosanaRiskEvidence;
+  if (isNosanaEvidence) return LABELS.nosanaRiskFallback;
   if (isLocalFallback) return LABELS.nosanaRiskFallback;
   return LABELS.nosanaRisk;
 }
@@ -131,18 +133,18 @@ assert(
 
 section("Test 4: invariant — fallbackUsed=true NEVER produces a live label");
 
-// Note: The UI logic checks evidenceSource === "nosana-evidence" first.
-// If evidenceSource is "nosana-evidence", the live label is shown regardless
-// of fallbackUsed. This is correct because in practice, if evidenceSource is
-// "nosana-evidence", fallbackUsed should always be false (the job succeeded).
-// The contradictory case { evidenceSource: "nosana-evidence", fallbackUsed: true }
-// should never occur in real data.
+// Note: The updated UI logic checks evidenceSource === "nosana-evidence"
+// AND fallbackUsed === false for the live label. If evidenceSource is
+// "nosana-evidence" but fallbackUsed is true, the offline-validated label
+// is shown instead. The contradictory case should not occur in real data
+// but is handled defensively.
 const allCombinations = [
   { evidenceSource: "local-fallback", fallbackUsed: true },
   { evidenceSource: "dry-run", fallbackUsed: true },
   { evidenceSource: "local-fallback", fallbackUsed: false },
   { evidenceSource: "dry-run", fallbackUsed: false },
   { evidenceSource: undefined, fallbackUsed: true },
+  { evidenceSource: "nosana-evidence", fallbackUsed: true },
 ];
 
 for (const combo of allCombinations) {

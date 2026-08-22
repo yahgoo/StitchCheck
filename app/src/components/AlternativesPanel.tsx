@@ -1,4 +1,4 @@
-import { LABELS, DISABLED_MESSAGE } from '../data/labels';
+import { LABELS, DISABLED_MESSAGE, getAtlasLabel } from '../data/labels';
 import type { SearchResult, AlternativesScenario } from '../data/types';
 
 interface Props {
@@ -47,7 +47,7 @@ export function AlternativesPanel({ enabled, searchResult, scenario, onScenarioC
         {isError && ' — Search Error'}
         {isTimeout && ' — Search Timeout'}
       </h2>
-      <p className="sc-source-label">{LABELS.atlasAlternatives}</p>
+      <p className="sc-source-label">{getAtlasLabel(searchResult)}</p>
       <p className="sc-panel__env-label">
         Source environment: <strong>{searchResult.sourceEnvironment}</strong>
       </p>
@@ -69,10 +69,9 @@ export function AlternativesPanel({ enabled, searchResult, scenario, onScenarioC
       {isSuccess && (
         <>
           <p>
-            The following alternatives were returned from a local synthetic
-            placeholder search. All results are fictional and for demo display
-            only. Atlas content is search-only; no booking, payment, or order is
-            created.
+            The following alternatives were returned from a local offline fixture
+            search. All results are fictional and for demo display only. Atlas
+            content is search-only; no booking, payment, or order is created.
           </p>
           <div className="sc-alternatives-list">
             {searchResult.alternatives.map((alt) => (
@@ -100,14 +99,14 @@ export function AlternativesPanel({ enabled, searchResult, scenario, onScenarioC
         <>
           <div className="sc-banner sc-banner--empty" role="status">
             <strong>No results:</strong> No safer alternatives were found for
-            this itinerary. This is a local synthetic placeholder result.
+            this itinerary. This is a local offline fixture result.
           </div>
           <div className="sc-panel-actions">
-            <button className="sc-btn sc-btn--primary" disabled type="button" aria-label="Retry alternative search — disabled in synthetic demo">
+            <button className="sc-btn sc-btn--primary" disabled type="button" aria-label="Retry alternative search — disabled in fictional demo">
               Retry alternative search
             </button>
           </div>
-          <p className="sc-panel__demo-note">Retry is unavailable in this synthetic demo. No live provider is connected.</p>
+          <p className="sc-panel__demo-note">Retry is unavailable in this fictional demo. No live provider is connected.</p>
         </>
       )}
 
@@ -118,11 +117,11 @@ export function AlternativesPanel({ enabled, searchResult, scenario, onScenarioC
             {searchResult.errorMessage ?? 'The alternative search could not be completed.'}
           </div>
           <div className="sc-panel-actions">
-            <button className="sc-btn sc-btn--primary" disabled type="button" aria-label="Retry alternative search — disabled in synthetic demo">
+            <button className="sc-btn sc-btn--primary" disabled type="button" aria-label="Retry alternative search — disabled in fictional demo">
               Retry alternative search
             </button>
           </div>
-          <p className="sc-panel__demo-note">Retry is unavailable in this synthetic demo. No live provider is connected.</p>
+          <p className="sc-panel__demo-note">Retry is unavailable in this fictional demo. No live provider is connected.</p>
         </>
       )}
 
@@ -133,11 +132,11 @@ export function AlternativesPanel({ enabled, searchResult, scenario, onScenarioC
             {searchResult.errorMessage ?? 'The alternative search did not complete in time.'}
           </div>
           <div className="sc-panel-actions">
-            <button className="sc-btn sc-btn--primary" disabled type="button" aria-label="Retry alternative search — disabled in synthetic demo">
+            <button className="sc-btn sc-btn--primary" disabled type="button" aria-label="Retry alternative search — disabled in fictional demo">
               Retry alternative search
             </button>
           </div>
-          <p className="sc-panel__demo-note">Retry is unavailable in this synthetic demo. No live provider is connected.</p>
+          <p className="sc-panel__demo-note">Retry is unavailable in this fictional demo. No live provider is connected.</p>
         </>
       )}
     </section>

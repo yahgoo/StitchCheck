@@ -52,9 +52,9 @@ evidence boundary assertions:
 
 Provider execution status:
 
-- Direct Gemini remains unexecuted.
-- Nosana remains unexecuted and undeployed.
-- Atlas remains unauthenticated and unexecuted.
+- Direct Gemini 3.7 live extraction succeeded via the Interactions API; schema-valid, no fallback. Browser walkthrough uses a local fixture.
+- Nosana workload validated offline; live execution was not verified; demo uses local fallback.
+- Atlas Sandbox Search/Verify was verified read-only. Production Search returned reference-price results; no booking occurred.
 
 ## Limitations
 

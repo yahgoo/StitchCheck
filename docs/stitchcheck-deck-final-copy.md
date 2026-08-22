@@ -93,7 +93,7 @@ The confirmation gate is the central safety mechanism. It ensures that the trave
 
 | Service | Planned Role | Current Status |
 |---|---|---|
-| **Gemini** | Structured itinerary extraction from screenshots into editable fields. | GEM-01 succeeded via OpenRouter temporary path. Direct Gemini remains unexecuted. |
+| **Gemini** | Structured itinerary extraction from screenshots into editable fields. | Direct Gemini 3.7 live extraction succeeded via the Interactions API; schema-valid, no fallback. Browser walkthrough uses a local fixture. |
 | **Nosana** | Planned connection-risk workload returning a heuristic band/score with visible status. | Local fixtures and workload skeleton only. Live execution remains unverified. |
 | **Atlas Sandbox** | Planned read-only alternative search for safer flight options. | Authentication succeeded. Two production searches succeeded (PVG→NRT/HND: 5 offers; SIN→BKK: 8 offers via ATL-LIVE-01). All reference-price only. Ticketing activation pending. |
 
@@ -179,7 +179,7 @@ The walkthrough is designed to be repeatable and self-contained. At every step, 
 - Finalise submission assets (README, demo narrative, slide recording).
 
 **Speaker note:**
-We have a working local demo that proves the review-first flow, the confirmation gate, and the Keep-or-Switch decision — the demo UI itself uses synthetic data and makes no live service calls. Atlas authentication succeeded; two production searches returned reference-price offers (PVG→NRT/HND: 5; SIN→BKK: 8), but ticketing activation is still pending and no booking was created. The Nosana live execution remains unverified. Direct Gemini remains unexecuted. The Atlas offline duplicate-booking guard passed 48 tests but is offline-only — not live Atlas evidence. No booking, payment, reservation, ticket, order, verification, or cancellation occurred. Each live-service gate must be passed independently before any live-integration claim can be made.
+We have a working local demo that proves the review-first flow, the confirmation gate, and the Keep-or-Switch decision — the demo UI itself uses synthetic data and makes no live service calls. Atlas authentication succeeded; two production searches returned reference-price offers (PVG→NRT/HND: 5; SIN→BKK: 8), but ticketing activation is still pending and no booking was created. The Nosana live execution remains unverified. Direct Gemini 3.7 live extraction was verified separately via the Interactions API. The Atlas offline duplicate-booking guard passed 48 tests but is offline-only — not live Atlas evidence. No booking, payment, reservation, ticket, order, verification, or cancellation occurred. Each live-service gate must be passed independently before any live-integration claim can be made.
 
 ---
 

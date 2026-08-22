@@ -1,4 +1,5 @@
-import { LABELS } from '../data/labels';
+import { getGeminiLabel } from '../data/labels';
+import { getDefaultExtraction } from '../data/fixtures';
 
 interface Props {
   onAcknowledge: () => void;
@@ -8,23 +9,23 @@ export function SafetyNotice({ onAcknowledge }: Props) {
   return (
     <section className="sc-safety-notice">
       <div className="sc-safety-notice__icon" aria-hidden="true">⚠</div>
-      <h1>StitchCheck — Synthetic Demo</h1>
+      <h1>StitchCheck — Fictional Demo</h1>
       <div className="sc-safety-notice__body">
         <p>
-          This is a <strong>synthetic demo application</strong>. All data displayed is
+          This is a <strong>fictional demo application</strong>. All data displayed is
           fictional and local. No real personal data, booking references, payment
           information, or live service evidence is used.
         </p>
         <ul>
           <li>Do not upload real documents.</li>
-          <li>All screenshots must be synthetic and unbooked.</li>
+          <li>All screenshots must be fictional and unbooked.</li>
           <li>No external service call will be made at any point.</li>
           <li>No booking, payment, reservation, or order will be created.</li>
         </ul>
         <p>
-          Extraction evidence is a synthetic local placeholder and is
-          not direct Gemini evidence. Nosana and Atlas remain unexecuted; all
-          risk and alternatives content is a local synthetic placeholder.
+          The browser walkthrough uses fictional local fixtures and makes no provider calls.
+          Direct Gemini 3.7 was live-verified separately. Atlas Sandbox Search/Verify was verified separately.
+          Nosana uses a local fallback in this walkthrough.
         </p>
       </div>
       <button
@@ -32,10 +33,10 @@ export function SafetyNotice({ onAcknowledge }: Props) {
         onClick={onAcknowledge}
         type="button"
       >
-        I understand — continue with synthetic data
+        I understand — continue with fictional data
       </button>
       <p className="sc-safety-notice__footer">
-        {LABELS.geminiExtraction}
+        {getGeminiLabel(getDefaultExtraction())}
       </p>
     </section>
   );

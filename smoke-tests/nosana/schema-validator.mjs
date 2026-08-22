@@ -202,6 +202,33 @@ export function validateRiskResult(value) {
   return { valid: issues.length === 0, issues };
 }
 
+// Validates the raw risk-workload output produced by the Nosana container
+// (the JSON line the Python script prints to stdout). Shared by the child
+// process (nosana_run_job.mjs) and the parent runner (nosana-risk-runner.mjs)
+// so both enforce exactly the same acceptance contract.
+export function validateNosanaOutput(output) {
+  const issues = [];
+  if (!isPlainObject(output)) {
+    return { valid: false, issues: ["output must be an object"] };
+  }
+  if (typeof output.riskScore !== "number" || output.riskScore < 0 || output.riskScore > 1) {
+    issues.push("riskScore must be a number between 0 and 1");
+  }
+  if (!["low", "medium", "high"].includes(output.riskBand)) {
+    issues.push("riskBand must be low, medium, or high");
+  }
+  if (!Array.isArray(output.assumptions)) {
+    issues.push("assumptions must be an array");
+  }
+  if (typeof output.simulationCount !== "number" || output.simulationCount < 1) {
+    issues.push("simulationCount must be a positive number");
+  }
+  if (typeof output.explanation !== "string" || output.explanation.length < 10) {
+    issues.push("explanation must be a non-empty string");
+  }
+  return { valid: issues.length === 0, issues };
+}
+
 // Validates that a fixture wrapper visibly carries the exact placeholder
 // label required for all local artifacts.
 export function validatePlaceholderLabel(fixture) {

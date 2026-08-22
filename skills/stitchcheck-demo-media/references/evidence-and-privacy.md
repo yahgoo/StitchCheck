@@ -9,32 +9,32 @@ Three exact labels must appear at specified scenes. **Never abbreviate or paraph
 ### 1. Gemini Extraction Label
 
 ```
-OpenRouter temporary path — not direct Gemini validation
+Fictional itinerary — local demo fixture
 ```
 
 **When to show:** Scene 2 (editable field and correction)  
 **Where visible:** Beside extracted itinerary fields on the review screen  
-**Meaning:** Structured extraction used the OpenRouter temporary adapter, not direct Gemini. Direct Gemini remains unexecuted.
+**Meaning:** The browser walkthrough uses a fictional local fixture. Direct Gemini 3.7 live extraction was verified separately via the Interactions API (evidence: `smoke-tests/gemini/results/results-gemini-3.7-flash-success.json`).
 
 ### 2. Nosana Risk Label
 
 ```
-Synthetic local placeholder — not Nosana evidence
+Local fallback — not Nosana evidence
 ```
 
 **When to show:** Scene 4 (sanitized provider status)  
 **Where visible:** Risk panel header and disclaimer  
-**Meaning:** Risk data is a local synthetic fixture, not a live Nosana workload result. Nosana smoke test was blocked before any network request.
+**Meaning:** Risk data is a local synthetic fixture, not a live Nosana workload result. Nosana workload validated offline; live execution was not verified.
 
 ### 3. Atlas Alternatives Label
 
 ```
-Synthetic local placeholder — not Atlas Sandbox evidence
+Fictional alternatives — local demo fixture
 ```
 
 **When to show:** Scene 4 (sanitized provider status)  
 **Where visible:** Alternatives panel header and each alternative card  
-**Meaning:** Alternative options are local synthetic fixtures, not live Atlas search results. Atlas has not been authenticated or executed.
+**Meaning:** Alternative options are local synthetic fixtures. Atlas Sandbox Search/Verify was verified separately read-only. No booking or payment was executed.
 
 ## Label Placement Rules
 
@@ -60,12 +60,13 @@ Synthetic local placeholder — not Atlas Sandbox evidence
 - **No secrets in screenshots** — hide or blur any credential-bearing UI elements
 - **Blank variable names only** — `.env.example` shows variable names without values
 
-### No Live Provider Calls
+### No Live Provider Calls (in the browser walkthrough)
 
-- **No direct Gemini execution** — extraction uses local JSON fixtures from OpenRouter temporary path
-- **No Nosana execution** — risk results are pre-built fixture shapes
-- **No Atlas execution** — alternative results are pre-built fixture shapes
-- **No network requests** — all data is local and synthetic
+- **Browser walkthrough makes no provider calls** — extraction uses local JSON fixtures
+- **Direct Gemini 3.7 live extraction was verified separately** via `ai.interactions.create` (evidence: `smoke-tests/gemini/results/results-gemini-3.7-flash-success.json`)
+- **Nosana workload validated offline** — live execution was not verified; risk results are pre-built fixture shapes
+- **Atlas Sandbox Search/Verify was verified separately** — read-only; no booking or payment occurred
+- **No network requests from the browser** — all data in the demo is local and synthetic
 
 ### No Write Actions
 
@@ -82,11 +83,11 @@ The following claims are **prohibited** in narration, captions, and any derived 
 
 1. **Local fixtures are live provider outputs** — do not state or imply that any risk estimate, alternative option, or extraction result is a live Gemini, Nosana, or Atlas response
 
-2. **Direct Gemini validation occurred** — do not claim that Google Gemini was directly called, validated, or produced results
+2. **Local fixtures are live Gemini evidence** — the browser walkthrough uses fictional local fixtures; Direct Gemini 3.7 was verified separately
 
-3. **Nosana was deployed, authenticated, executed, or validated** — the Nosana smoke-test attempt was blocked before any network request
+3. **Nosana was deployed, authenticated, or executed live** — Nosana workload validated offline; live execution was not verified; the demo uses local fallback
 
-4. **Atlas Sandbox was authenticated, executed, or validated** — Atlas is represented by local synthetic fixtures only
+4. **Atlas Sandbox was not authenticated or verified** — Atlas Sandbox Search/Verify was verified separately read-only; the browser demo uses local fixtures for the alternatives panel
 
 5. **Any booking, payment, reservation, ticket, order, or verification occurred** — the demo is entirely read-only and UI-only
 
@@ -94,7 +95,7 @@ The following claims are **prohibited** in narration, captions, and any derived 
 
 ## Safety Badge
 
-The header badge `Synthetic Demo — No Live Services` must be visible throughout the recording. This badge serves as the primary boundary indicator.
+The header badge `Fictional Demo — Live Providers Where Labelled` must be visible throughout the recording. This badge serves as the primary boundary indicator.
 
 ## Final Statement
 

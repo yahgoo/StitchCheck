@@ -91,7 +91,7 @@ export function createNosanaClient(network, config) {
       jobs: {
         list: async (params, options) => ({
           job: "${FAKE_JOB_ADDRESS}",
-          credits: { creditsUsed: 0.001 },
+          credits: { creditsUsed: 5, costUSD: 0.001 },
           ipfsResult: "QmFakeResult",
         }),
         get: async (jobId) => ({
@@ -156,7 +156,7 @@ function spawnRunJob(env, extraArgs = [], nodeArgs = []) {
       ...nodeArgs,
       RUN_JOB_PATH,
       "--market", FAKE_MARKET,
-      "--timeout", "120",
+      "--timeout", "3600",
       ...extraArgs,
     ];
     const child = spawn("node", args, {
@@ -356,7 +356,7 @@ async function runTests() {
   // not re-declared inside try/catch blocks.
   // Strategy: find the SDK-init try block (identified by the "Dynamic import"
   // comment) and verify all shared bindings are declared before it.
-  const sharedBindings = ["nosanaKit", "nosanaClient", "job", "jobId", "creditsUsed"];
+  const sharedBindings = ["nosanaKit", "nosanaClient", "job", "jobId", "creditsUsed", "costUsd"];
   const sdkInitTryPattern = /Dynamic import[\s\S]*?\btry\s*\{/;
   const sdkTryMatch = sourceCode.match(sdkInitTryPattern);
   if (sdkTryMatch) {

@@ -2,16 +2,16 @@
 
 ## Purpose
 
-This matrix separates offline implementation readiness from human authorization for one future bounded direct-Gemini test and one future bounded Atlas read-only test. Each provider has independent gates; approval for one does not imply approval for the other. No live provider execution has occurred. No SDK has been installed. No credential has been configured. No network request has been made.
+This matrix separates offline implementation readiness from human authorization for live provider execution. Each provider has independent gates; approval for one does not imply approval for the other. Direct Gemini 3.7 live extraction succeeded via the Interactions API. Atlas Sandbox Search/Verify was verified read-only. Nosana workload validated offline; live execution was not verified. The browser walkthrough itself uses fictional local fixtures and makes no provider calls.
 
 ## Current Provider Status
 
 | Provider | Current status | Offline implementation | Live evidence | Exact label |
 |----------|---------------|------------------------|---------------|-------------|
-| Direct Gemini | Unexecuted | Adapter boundary and offline tests implemented; disabled by default | No live evidence | `Synthetic local placeholder — not direct Gemini evidence` |
-| OpenRouter | Temporary path (GEM-01 only) | Executed once for GEM-01 under temporary-phase approval | Existing GEM-01 evidence | `OpenRouter temporary path — not direct Gemini validation` |
-| Atlas | Unauthenticated and unexecuted | Read-only adapter boundary and offline tests implemented; disabled by default | No live evidence | `Synthetic local placeholder — not Atlas Sandbox evidence` |
-| Nosana | Blocked before any network request | Local workload skeleton only; simulated lifecycle | No live evidence | `Synthetic local placeholder — not Nosana evidence` |
+| Direct Gemini | Live extraction validated (3.7) | Adapter boundary and offline tests implemented; disabled by default | `smoke-tests/gemini/results/results-gemini-3.7-flash-success.json` | `Direct Gemini 3.7 — live validated` (when showing live evidence); `Fictional itinerary — local demo fixture` (browser walkthrough) |
+| OpenRouter | Historical temporary path (GEM-01 only) | Executed once for GEM-01 under temporary-phase approval | Existing GEM-01 evidence | `Historical temporary OpenRouter test path — not the active provider` |
+| Atlas | Sandbox Search/Verify verified; production search verified | Read-only adapter boundary and offline tests implemented; disabled by default | Sandbox: `smoke-tests/atlas/results/sandbox-search-verify-2026-08-21T07-02-42-099Z.json`; Production: `smoke-tests/live-demo-results/2026-08-21T05-37-31Z/atlas-live-result.md` | `Atlas Sandbox — live Search/Verify` (when showing sandbox evidence); `Fictional alternatives — local demo fixture` (browser walkthrough) |
+| Nosana | Workload validated offline; live execution not verified | Local workload skeleton only; simulated lifecycle | One live job submitted but output validation failed; local fallback used | `Local fallback — not Nosana evidence` |
 
 ## Authorization Matrix
 
@@ -89,10 +89,15 @@ Execution must not proceed if any of the following conditions apply:
 
 The following evidence labels are preserved exactly:
 
-- `OpenRouter temporary path — not direct Gemini validation`
-- `Synthetic local placeholder — not direct Gemini evidence`
-- `Synthetic local placeholder — not Nosana evidence`
-- `Synthetic local placeholder — not Atlas Sandbox evidence`
+- `Direct Gemini 3.7 — live validated`
+- `Fictional itinerary — local demo fixture`
+- `Historical temporary OpenRouter test path — not the active provider`
+- `Local fallback — not Nosana evidence`
+- `Nosana workload validated offline — local fallback used; not Nosana evidence`
+- `Fictional alternatives — local demo fixture`
+- `Atlas Sandbox — live Search/Verify`
+- `Atlas production Search — reference prices only`
+- `Offline fixture — not Atlas Sandbox evidence`
 
 Rules:
 

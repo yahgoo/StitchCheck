@@ -26,9 +26,9 @@ Before confirmation, the risk and alternatives panels are disabled. They display
 
 ## Scene 4: Sanitized Provider Status (15 seconds)
 
-The risk panel displays a heuristic risk estimate — medium risk with a score of 0.293. The disclaimer states this is a synthetic local placeholder — not Nosana evidence. Nosana workload validated offline. Local fallback used.
+The risk panel displays a heuristic risk estimate — medium risk with a score of 0.293. The disclaimer states this is a local fallback — not Nosana evidence. Nosana workload validated offline. Local fallback used.
 
-The alternatives panel shows two synthetic options labeled as Atlas Sandbox placeholders. Atlas is a planned, read-only role represented by local fixtures only and has not been authenticated or executed.
+The alternatives panel shows two synthetic options labeled as local demo fixtures. Atlas Sandbox Search and Verify was verified separately. The browser demo uses local fixtures unless explicitly labelled otherwise.
 
 ---
 
@@ -40,10 +40,10 @@ The comparison view displays the original itinerary alongside a placeholder alte
 
 ## Scene 6: Local Keep/Switch Ending (20 seconds)
 
-The user makes a local decision — Keep the current plan or Switch to an alternative. This is a UI-only selection. No booking, payment, reservation, ticket, order, verification, or other external action occurs. The final screen states explicitly that no external action has been created. Direct Gemini remains unexecuted. Nosana remains unexecuted and not deployed. Atlas remains unexecuted and not authenticated. This local demo ends here, having demonstrated the review-first flow with synthetic data and zero external calls.
+The user makes a local decision — Keep the current plan or Switch to an alternative. This is a UI-only selection. No booking, payment, reservation, ticket, order, verification, or other external action occurs. The final screen states explicitly that no external action has been created. Direct Gemini 3.7 live extraction succeeded via the Interactions API, verified separately. Nosana workload validated offline; live execution was not verified. Atlas Sandbox Search/Verify was verified separately. The browser walkthrough itself uses fictional local fixtures and makes no provider calls.
 
 ---
 
 ## Closing Line
 
-This review-first flow keeps the traveler in control at every step — an honest local demo with synthetic data and zero external calls, ready for separately authorized live-service validation when each provider is deployed and evidence is collected.
+This review-first flow keeps the traveler in control at every step — an honest local demo with fictional fixtures and live provider processing where explicitly labelled, ready for separately authorized live-service validation when each provider is deployed and evidence is collected.

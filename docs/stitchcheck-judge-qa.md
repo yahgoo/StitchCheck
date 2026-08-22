@@ -20,7 +20,7 @@ The confirmation gate ensures the traveller has actually reviewed and approved t
 
 ### Q4. What does Gemini do?
 
-Gemini's planned role is structured itinerary extraction from synthetic screenshots into editable fields for user review. The current demo uses local fixture data derived from a temporary-path execution that is labelled with the documented evidence label. Direct Gemini remains unexecuted. Offline tests (92 passed, 0 failed) validate the extraction contract, validators, and safety boundaries.
+Gemini's role is structured itinerary extraction from synthetic screenshots into editable fields for user review. Direct Gemini 3.7 live extraction succeeded via the Interactions API; schema-valid, no fallback (evidence: `smoke-tests/gemini/results/results-gemini-3.7-flash-success.json`). The browser walkthrough uses a fictional local fixture and makes no provider call. Offline tests (92 passed, 0 failed) validate the extraction contract, validators, and safety boundaries.
 
 ### Q5. What do Nosana and Atlas do?
 
@@ -28,11 +28,11 @@ Nosana's planned role is a connection-risk workload that accepts a non-PII itine
 
 ### Q6. Which services have actually been executed?
 
-Direct Gemini remains unexecuted. Nosana remains unexecuted and undeployed. Atlas production authentication succeeded via the official Skill CLI with two live read-only searches (PVG→NRT/HND: 5 offers; SIN→BKK: 8 offers via ATL-LIVE-01), all reference-price only with ticketing activation pending; Atlas Sandbox was not used. GEM-01 and GEM-LIVE-01 were executed via an OpenRouter temporary path and are labelled accordingly. The OpenRouter path is not direct Gemini validation and results are not transferable to the Gemini API.
+Direct Gemini 3.7 live extraction succeeded via the Interactions API; schema-valid, no fallback. The browser walkthrough uses a fictional local fixture. Nosana workload validated offline; live execution was not verified; the demo uses local fallback. Atlas production authentication succeeded via the official Skill CLI with two live read-only searches (PVG→NRT/HND: 5 offers; SIN→BKK: 8 offers via ATL-LIVE-01), all reference-price only with ticketing activation pending; Atlas Sandbox was verified read-only. GEM-01 was also executed via a historical OpenRouter temporary path and is labelled accordingly. The OpenRouter path is historical and not the active provider.
 
 ### Q7. What does the OpenRouter evidence mean?
 
-GEM-01 was executed via an OpenRouter temporary path using a synthetic fixture and is labelled: `OpenRouter temporary path — not direct Gemini validation`. This evidence demonstrates that the extraction interface can process a synthetic screenshot through a vision-capable model, but it is not direct Gemini validation. The result is labelled accordingly and is not transferable to the Gemini API.
+GEM-01 was executed via a historical OpenRouter temporary path using a synthetic fixture and is labelled: `Historical temporary OpenRouter test path — not the active provider`. Direct Gemini 3.7 was subsequently verified via the Interactions API. The OpenRouter path is historical temporary evidence and not the active provider.
 
 ### Q8. How do you prevent incorrect itinerary data from reaching decisions?
 
