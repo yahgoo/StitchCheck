@@ -4,6 +4,7 @@ import type { ExtractionResult, FlightLeg } from '../../../core/domain';
 type ProviderLeg = Partial<FlightLeg> & {
   date?: string | null;
   airline?: string | null;
+  carrier?: string | null;
   flightNumber?: string | null;
 };
 
@@ -14,7 +15,7 @@ function mapProviderLeg(leg: ProviderLeg | null | undefined): FlightLeg | null {
     origin: leg.origin ?? '',
     destination: leg.destination ?? '',
     departureDate,
-    airline: leg.airline ?? '',
+    airline: (leg.airline || leg.carrier || '').trim(),
     flightNumber: leg.flightNumber ?? '',
     departureTime: leg.departureTime ?? '',
     arrivalTime: leg.arrivalTime ?? '',
@@ -29,7 +30,7 @@ export function mergeExtractionResult(
   const mappedFirst = mapProviderLeg(incoming.firstLeg as ProviderLeg | null | undefined);
   const mappedSecond = mapProviderLeg(incoming.secondLeg as ProviderLeg | null | undefined);
   // #region agent log
-  fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'9c1bf5'},body:JSON.stringify({sessionId:'9c1bf5',runId:'post-fix',hypothesisId:'B',location:'merge-extraction-result.ts:mapProviderLeg',message:'merge date→departureDate',data:{incomingFirstHasDate:Boolean((incoming.firstLeg as ProviderLeg | undefined)?.date),incomingFirstHasDepartureDate:Boolean(incoming.firstLeg?.departureDate),mappedFirstDepartureDate:mappedFirst?.departureDate || null,mappedFirstOrigin:mappedFirst?.origin || null},timestamp:Date.now()})}).catch(()=>{});
+  fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'d481ad'},body:JSON.stringify({sessionId:'d481ad',runId:'post-fix',hypothesisId:'B',location:'merge-extraction-result.ts:mapProviderLeg',message:'merge date→departureDate',data:{incomingFirstHasDate:Boolean((incoming.firstLeg as ProviderLeg | undefined)?.date),incomingFirstHasDepartureDate:Boolean(incoming.firstLeg?.departureDate),mappedFirstDepartureDate:mappedFirst?.departureDate || null,mappedFirstOrigin:mappedFirst?.origin || null},timestamp:Date.now()})}).catch(()=>{});
   // #endregion
   return {
     ...prev,

@@ -1,0 +1,56 @@
+# StitchCheck — Flip MiniMax M3 extraction LIVE now (Cursor, Grok 4.6)
+# EXECUTION MODE. Do not diagnose. Do not ask for approval. Apply fixes and flip live.
+# Risk accepted. I want MiniMax live extraction working end-to-end tonight.
+
+## Context
+
+Five fixes were just applied (items 2, 3, 4, 5, 7 from the earlier implementation prompt):
+1. **Snapshot-after-extraction** — itinerary snapshot is taken from MiniMax's output, not the
+   fixture.
+2. **`date` → `departureDate` normalization** — MiniMax response is normalized before
+   validation/merge.
+3. **`_callCount` reset per request** — second-click silent failure is fixed.
+4. **`extractionError` visible on UI** — traveller sees the error message, not just `offline`.
+5. **Flow lands on Review first** — not jumping straight to Options.
+
+Now I need you to:
+1. **Verify** each fix is actually applied correctly (trace the code, confirm the fix is in
+   place).
+2. **Fix any gaps** you find — apply the correct fix immediately, do not ask for approval.
+3. **Flip `DATA_MODE=live`** in `.env.local` (or `.env` if that's where it lives).
+4. **Restart `npm run dev`** in `app/` and test the full flow:
+   - Screenshot sample → Check my itinerary → Review → Options.
+   - Confirm MiniMax M3 extraction is working (real OpenRouter call, real response, real
+     itinerary rendered).
+   - Confirm the snapshot is taken after extraction (not before).
+   - Confirm `departureDate` is populated (not empty).
+   - Confirm second click works (no `call_limit_exceeded`).
+   - Confirm error messages are visible if extraction fails.
+5. **Report** the exact outcome — success or failure, with evidence (file paths, timestamps,
+   response shapes, error text if any).
+
+## Constraints
+
+- Do not diagnose. Do not ask for approval. Fix and flip.
+- Do not print or log any credential value, even partially.
+- Do not modify git history, rebase, or alter any file except to apply the fixes and flip
+  `DATA_MODE`.
+- If you find a blocker that cannot be fixed quickly, report it and stop — do not waste time
+  on deep refactors.
+
+## Output format
+
+```text
+FIXES_VERIFIED = <list of fixes confirmed in place, with file paths and line numbers>
+GAPS_FOUND_AND_FIXED = <list of gaps found, fixes applied, file paths and line numbers>
+DATA_MODE_FLIPPED = <YES/NO, file path, old value, new value>
+DEV_SERVER_RESTARTED = <YES/NO>
+FULL_FLOW_TESTED = <YES/NO, outcome: SUCCESS or FAILURE>
+EVIDENCE = <file paths, timestamps, response shapes, error text if any>
+BLOCKERS = <list, or NONE_FOUND>
+STATUS = <COMPLETE | BLOCKED: reason>
+```
+
+## Execution
+
+Start now. Trace the code, apply fixes, flip live, test, report.

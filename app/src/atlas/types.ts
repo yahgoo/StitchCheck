@@ -188,10 +188,20 @@ export interface AtlasSandboxOrderRequest {
 }
 
 /** Success envelope shape for a future approved implementation; the
- *  scaffold always answers 503 sandbox_write_not_implemented instead. */
+ *  scaffold always answers 503 sandbox_write_not_implemented instead.
+ *  The accepted-execution envelope surfaces the provider outcome code
+ *  as `providerCode` (the field the server actually sends); `code` is
+ *  retained as an optional legacy alias only. */
 export interface AtlasSandboxOrderResponse {
-  orderNo: string;
-  code: string;
+  orderNo: string | null;
+  /** Provider result code driving outcome mapping (server field name). */
+  providerCode?: string | null;
+  /** Optional legacy alias; the execution path sends `providerCode`. */
+  code?: string;
+  outcome?: 'accepted' | 'unknown';
+  reason?: string;
+  message?: string;
+  correlationId?: string | null;
   paymentSummary?: {
     currency: string;
     total: number;
@@ -215,7 +225,14 @@ export interface AtlasSandboxPayRequest {
 
 export interface AtlasSandboxPayResponse {
   orderNo: string;
-  code: string;
+  /** Provider result code driving outcome mapping (server field name). */
+  providerCode?: string | null;
+  /** Optional legacy alias; the execution path sends `providerCode`. */
+  code?: string;
+  outcome?: 'accepted' | 'unknown';
+  reason?: string;
+  message?: string;
+  correlationId?: string | null;
   nextAction?: string;
   duplicate?: boolean;
   timestamp: string;

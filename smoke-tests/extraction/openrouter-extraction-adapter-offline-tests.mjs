@@ -156,6 +156,90 @@ const badSchema = _testHooks.assessItinerarySchema({
 });
 assertEqual(badSchema.schemaValidated, false, "missing flightNumber fails schema assessment");
 
+section("Test 10 — date maps to departureDate and the reverse");
+const dateOnly = _testHooks.normalizeLegFields({
+  origin: "KUL",
+  destination: "SIN",
+  date: "2026-10-01",
+  departureTime: "06:10",
+  arrivalTime: "07:15",
+  airline: "AK",
+  flightNumber: "AK701",
+});
+assertEqual(dateOnly.departureDate, "2026-10-01", "date copies onto departureDate");
+assertEqual(dateOnly.date, "2026-10-01", "date retained for validator");
+const departureOnly = _testHooks.normalizeLegFields({
+  origin: "SIN",
+  destination: "BKK",
+  departureDate: "2026-10-01",
+  departureTime: "08:20",
+  arrivalTime: "09:55",
+  flightNumber: "TR624",
+});
+assertEqual(departureOnly.date, "2026-10-01", "departureDate copies onto date");
+assertEqual(departureOnly.airline, "", "nullish airline becomes empty string");
+const carrierOnly = _testHooks.normalizeLegFields({
+  origin: "KUL",
+  destination: "SIN",
+  date: "2026-10-01",
+  departureTime: "06:10",
+  arrivalTime: "07:15",
+  carrier: "AK",
+  flightNumber: "AK701",
+});
+assertEqual(carrierOnly.airline, "AK", "carrier copies onto airline");
+
+section("Test 11 — per-request call count reset allows a second extract");
+_resetModuleState();
+_setProviderClient(mockSuccessClient({
+  extractionStatus: "success",
+  firstLeg: {
+    origin: "KUL",
+    destination: "SIN",
+    date: "2026-10-01",
+    departureTime: "06:10",
+    arrivalTime: "07:15",
+    airline: "AK",
+    flightNumber: "AK701",
+  },
+  secondLeg: {
+    origin: "SIN",
+    destination: "BKK",
+    date: "2026-10-01",
+    departureTime: "08:20",
+    arrivalTime: "09:55",
+    airline: "TR",
+    flightNumber: "TR624",
+  },
+  connectionDurationMinutes: 65,
+  missingFields: [],
+  fieldConfidence: { overall: "high" },
+  validationMessages: [],
+  requiresUserConfirmation: true,
+  syntheticDemo: true,
+}));
+_setCredentialLoader(() => "test-credential");
+const firstCall = await openrouterExtractionAdapter.extract({
+  image: new Uint8Array([1]),
+  mediaType: "image/png",
+});
+assertEqual(firstCall.extractionStatus, "success", "first extract succeeds");
+assertEqual(firstCall.firstLeg.departureDate, "2026-10-01", "adapter result includes departureDate");
+const blocked = await openrouterExtractionAdapter.extract({
+  image: new Uint8Array([1]),
+  mediaType: "image/png",
+});
+assertEqual(blocked.extractionStatus, "disabled", "second extract hits maxCalls without reset");
+assertEqual(_testHooks.getCallCount(), 1, "call count remains 1 when blocked");
+const previous = _testHooks.resetCallCountOnly();
+assertEqual(previous, 1, "reset returns previous count");
+assertEqual(_testHooks.getCallCount(), 0, "call count is 0 after per-request reset");
+const secondCall = await openrouterExtractionAdapter.extract({
+  image: new Uint8Array([1]),
+  mediaType: "image/png",
+});
+assertEqual(secondCall.extractionStatus, "success", "extract after reset succeeds");
+
 if (_envKeyBackup.OPENROUTER_API_KEY !== undefined) {
   process.env.OPENROUTER_API_KEY = _envKeyBackup.OPENROUTER_API_KEY;
 }

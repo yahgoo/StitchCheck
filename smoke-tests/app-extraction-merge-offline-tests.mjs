@@ -37,7 +37,7 @@ function mapProviderLeg(leg) {
     origin: leg.origin ?? '',
     destination: leg.destination ?? '',
     departureDate,
-    airline: leg.airline ?? '',
+    airline: (leg.airline || leg.carrier || '').trim(),
     flightNumber: leg.flightNumber ?? '',
     departureTime: leg.departureTime ?? '',
     arrivalTime: leg.arrivalTime ?? '',
@@ -121,7 +121,60 @@ test('2. itineraryContext-style access does not crash after disabled merge', () 
 
 test('3. App.tsx uses mergeExtractionResult for live extraction merge', () => {
   const appSrc = readFileSync(resolve(ROOT, 'app/src/App.tsx'), 'utf-8');
-  assert(appSrc.includes('mergeExtractionResult(prev, extractionResponse.extraction)'), 'App uses guarded merge');
+  assert(appSrc.includes('mergeExtractionResult(extraction, incoming)'), 'App uses guarded merge');
+});
+
+test('4. provider date field maps onto UI departureDate', () => {
+  const merged = mergeExtractionResult(prev, {
+    extractionStatus: 'success',
+    firstLeg: {
+      origin: 'KUL',
+      destination: 'SIN',
+      date: '2026-10-01',
+      airline: 'AK',
+      flightNumber: 'AK701',
+      departureTime: '06:10',
+      arrivalTime: '07:15',
+    },
+    secondLeg: {
+      origin: 'SIN',
+      destination: 'BKK',
+      date: '2026-10-01',
+      airline: 'TR',
+      flightNumber: 'TR624',
+      departureTime: '08:20',
+      arrivalTime: '09:55',
+    },
+  });
+  assert(merged.firstLeg.departureDate === '2026-10-01', 'firstLeg.date mapped to departureDate');
+  assert(merged.secondLeg.departureDate === '2026-10-01', 'secondLeg.date mapped to departureDate');
+  assert(merged.firstLeg.origin === 'KUL', 'origin preserved from provider payload');
+});
+
+test('5. provider carrier field maps onto UI airline', () => {
+  const merged = mergeExtractionResult(prev, {
+    extractionStatus: 'success',
+    firstLeg: {
+      origin: 'KUL',
+      destination: 'SIN',
+      date: '2026-10-01',
+      carrier: 'AK',
+      flightNumber: 'AK701',
+      departureTime: '06:10',
+      arrivalTime: '07:15',
+    },
+    secondLeg: {
+      origin: 'SIN',
+      destination: 'BKK',
+      date: '2026-10-01',
+      carrier: 'TR',
+      flightNumber: 'TR624',
+      departureTime: '08:20',
+      arrivalTime: '09:55',
+    },
+  });
+  assert(merged.firstLeg.airline === 'AK', 'firstLeg.carrier mapped to airline');
+  assert(merged.secondLeg.airline === 'TR', 'secondLeg.carrier mapped to airline');
 });
 
 console.log(`\nApp extraction merge offline tests: ${passed} passed, ${failed} failed\n`);

@@ -6,13 +6,14 @@ import {
 import { MiniMaxOfflineNotice } from './MiniMaxOfflineNotice';
 
 const PROVIDER_ROWS: ReadonlyArray<{
-  key: 'extraction' | 'nosana' | 'atlas';
+  key: 'extraction' | 'nosana' | 'atlas' | 'daytona';
   name: string;
   role: string;
 }> = [
-  { key: 'extraction', name: 'MiniMax M3', role: 'extraction' },
+  { key: 'extraction', name: 'Kimi K3', role: 'extraction' },
   { key: 'nosana', name: 'Nosana', role: 'risk analysis' },
-  { key: 'atlas', name: 'Atlas Sandbox', role: 'flight search' },
+  { key: 'atlas', name: 'Atlas Sandbox', role: 'search' },
+  { key: 'daytona', name: 'Daytona', role: 'risk computation' },
 ];
 
 function labelFor(s: ProviderStatusResult | null, name: string): string {
@@ -48,6 +49,7 @@ function countCompletedChecks(
   if (extraction !== null && !extractionLoading) count += 1;
   if (nosana !== null) count += 1;
   if (atlas !== null) count += 1;
+  count += 1;
   return count;
 }
 
@@ -95,6 +97,16 @@ export function ProviderStatusBar({
           <summary>How this works</summary>
           <div className="sc-provider-details__body">
             {PROVIDER_ROWS.map(({ key, name, role }) => {
+              if (key === 'daytona') {
+                return (
+                  <span
+                    key={key}
+                    className="sc-provider-tag"
+                  >
+                    {`${name} (${role})`}
+                  </span>
+                );
+              }
               const status = statusByKey[key];
               const label = key === 'extraction' && extractionLoading
                 ? `${name} · extracting…`

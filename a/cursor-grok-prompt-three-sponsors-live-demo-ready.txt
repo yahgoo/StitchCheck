@@ -1,0 +1,84 @@
+# StitchCheck — Three-sponsor live demo readiness (Cursor, Grok 4.6)
+# EXECUTION MODE. Judges will run a live demo tomorrow. They will not care about fallback,
+# offline, or fixtures. They will only evaluate whether three sponsor services are running
+# live in the demo flow. Your job: make sure the demo is ready for that.
+
+## Context
+
+Current state (as of tonight):
+- **Daytona**: Live sandbox cycle wired (`daytona-risk-worker-v1`, risk band medium, score 54).
+  Recovery animation uses this real cycle. ✅
+- **Nosana**: One real job completed (`8CfUkxFgZnPpC5kxiphD1kozwiJeLYBC4KB33bKPAEp1`,
+  `evidenceSource: "nosana-evidence"`, `fallbackUsed: false`). ✅
+- **Atlas**: Historical Sandbox Search→Verify evidence (20 offers, `PRICE_CONFIRMATION_REQUIRED`,
+  no write) correctly labeled as historical. ✅
+- **MiniMax M3**: Five fixes just applied (snapshot-after-extraction, `date`→`departureDate`
+  normalization, `_callCount` reset, `extractionError` visible, flow lands on Review first).
+  `DATA_MODE` may still be `offline`. ❓
+
+Judges will run the demo tomorrow and expect:
+1. **Screenshot sample** → **Check my itinerary** → **Review** → **Options** flow to work.
+2. **MiniMax M3 extraction** to be live (real OpenRouter call, real response, real itinerary).
+3. **Daytona recovery animation** to show real risk data (already live).
+4. **Nosana job** to show real completion evidence (already live).
+5. **Atlas historical evidence** to show real Search→Verify data (already live).
+
+## Your task
+
+1. **Verify MiniMax M3 is live and working:**
+   - Confirm `DATA_MODE=live` in `.env.local` (or `.env`).
+   - Restart `npm run dev` in `app/`.
+   - Test the full flow: Screenshot sample → Check my itinerary → Review → Options.
+   - Confirm MiniMax M3 extraction is working (real OpenRouter call, real response, real
+     itinerary rendered).
+   - Confirm the snapshot is taken after extraction (not before).
+   - Confirm `departureDate` is populated (not empty).
+   - Confirm second click works (no `call_limit_exceeded`).
+   - Confirm error messages are visible if extraction fails.
+2. **Verify all three sponsors are live and visible in the demo:**
+   - **Daytona**: Recovery animation shows real risk data (score 54, risk band medium).
+   - **Nosana**: Job completion evidence is visible (job ID, `evidenceSource: "nosana-evidence"`,
+     `fallbackUsed: false`).
+   - **Atlas**: Historical Search→Verify evidence is visible (20 offers, `PRICE_CONFIRMATION_REQUIRED`,
+     no write, labeled as historical).
+   - **MiniMax**: Extraction is live and visible (itinerary cards rendered with real data).
+3. **Identify any blockers** that would break the demo tomorrow:
+   - Free-tier 429 on MiniMax (risk on second click).
+   - 60s timeout on MiniMax (risk if model is slow).
+   - `flightNumber` required by schema but optional in prompt (risk if MiniMax omits it).
+   - Any other failure modes that would break the live demo.
+4. **Propose mitigations** for each blocker (not yet applied — I will review and approve):
+   - E.g., retry logic, timeout extension, schema relaxation, etc.
+5. **Prepare a demo script** (one paragraph) that I can follow tomorrow to ensure the demo
+   runs smoothly:
+   - What to click, in what order.
+   - What to say to judges at each step.
+   - What to do if something fails (fallback plan).
+
+## Constraints
+
+- Do not modify git history, rebase, or alter any file except to apply fixes and flip
+  `DATA_MODE`.
+- Do not print or log any credential value, even partially.
+- Do not waste time on deep refactors — focus on demo readiness only.
+
+## Output format
+
+```text
+MINIMAX_LIVE_STATUS = <LIVE and WORKING | LIVE but BROKEN | OFFLINE>
+MINIMAX_EVIDENCE = <file paths, timestamps, response shapes, error text if any>
+DAYTONA_LIVE_STATUS = <LIVE and VISIBLE | LIVE but NOT VISIBLE | NOT LIVE>
+DAYTONA_EVIDENCE = <file paths, timestamps, risk score, risk band>
+NOSANA_LIVE_STATUS = <LIVE and VISIBLE | LIVE but NOT VISIBLE | NOT LIVE>
+NOSANA_EVIDENCE = <file paths, timestamps, job ID, evidenceSource, fallbackUsed>
+ATLAS_LIVE_STATUS = <HISTORICAL and VISIBLE | HISTORICAL but NOT VISIBLE | NOT LIVE>
+ATLAS_EVIDENCE = <file paths, timestamps, offer count, PRICE_CONFIRMATION_REQUIRED>
+BLOCKERS = <list of blockers, or NONE_FOUND>
+MITIGATIONS = <list of proposed mitigations, or NONE_NEEDED>
+DEMO_SCRIPT = <one-paragraph script for tomorrow's demo>
+STATUS = <READY FOR DEMO | NOT READY: reason>
+```
+
+## Execution
+
+Start now. Verify, test, identify blockers, propose mitigations, prepare demo script, report.

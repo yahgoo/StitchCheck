@@ -92,6 +92,46 @@ export function execCli(args) {
   });
 }
 
+/**
+ * Executes the atlas-flight CLI ONCE with an argument array (no shell)
+ * and an optional stdin payload: the string is written to child.stdin,
+ * which is then ended. Single attempt — no retries. Used exclusively
+ * as the sandbox write execution seam (atlas-sandbox-writes.mjs), which
+ * must stay free of any node:child_process import. Resolves the same
+ * {parsed, exitCode, timedOut, errorCode, stderr} shape as execCli.
+ */
+export function execCliOnceWithStdin(args, { stdin = '', timeoutMs = 8_000 } = {}) {
+  return new Promise((resolve) => {
+    const child = execFile(
+      'atlas-flight',
+      args,
+      { timeout: timeoutMs ?? 8_000, maxBuffer: 10 * 1024 * 1024 },
+      (error, stdout, stderr) => {
+        const raw = (stdout || '').trim();
+        let parsed = null;
+        try {
+          parsed = raw ? JSON.parse(raw) : null;
+        } catch {
+          parsed = null;
+        }
+        resolve({
+          parsed,
+          exitCode: error ? error.code || 1 : 0,
+          timedOut: error && error.killed === true,
+          errorCode: error ? error.code : null,
+          stderr: (stderr || '').trim(),
+        });
+      },
+    );
+    // Deliver the payload via stdin only — never temp files.
+    if (child.stdin) {
+      child.stdin.on('error', () => {}); // EPIPE-guard: outcome via callback
+      child.stdin.write(stdin);
+      child.stdin.end();
+    }
+  });
+}
+
 /** Returns true only for bounded, known-safe read-only retry conditions. */
 export function isRetryableAtlasResult(result) {
   return Boolean(
@@ -248,7 +288,7 @@ export function filterOffersForRequestedRoute(offers, origin, destination) {
 
 /* ── Route handlers ── */
 
-async function handleSearch(req, res) {
+async function handleSearch(req, res, execRead = execCli) {
   let body;
   try {
     body = await readBody(req);
@@ -273,7 +313,7 @@ async function handleSearch(req, res) {
   }
 
   // Step 1: Ensure sandbox environment
-  const envResult = await execCli(['environment', 'use', 'sandbox', '--json']);
+  const envResult = await execRead(['environment', 'use', 'sandbox', '--json']);
   if (envResult.parsed?.status !== 'success' && envResult.parsed?.code !== 'CONFIGURATION_UPDATED' && envResult.parsed?.code !== 'ENVIRONMENT_SWITCHED') {
     // Non-fatal: CLI may already be in sandbox mode
   }
@@ -288,7 +328,7 @@ async function handleSearch(req, res) {
     '--currency', currency,
     '--json',
   ];
-  const searchResult = await execCliWithRetry(searchArgs);
+  const searchResult = await execCliWithRetry(searchArgs, { execute: execRead });
 
   if (!searchResult.parsed || searchResult.parsed.status !== 'success') {
     const appCode = searchResult.parsed?.code || null;
@@ -310,7 +350,7 @@ async function handleSearch(req, res) {
 
   // Step 3: List offers
   const offerListArgs = ['offer', 'list', '--search-id', searchId, '--json'];
-  const offerListResult = await execCliWithRetry(offerListArgs);
+  const offerListResult = await execCliWithRetry(offerListArgs, { execute: execRead });
 
   if (!offerListResult.parsed || offerListResult.parsed.status !== 'success') {
     sendJson(res, 502, {
@@ -337,7 +377,7 @@ async function handleSearch(req, res) {
   });
 }
 
-async function handleVerify(req, res) {
+async function handleVerify(req, res, execRead = execCli) {
   let body;
   try {
     body = await readBody(req);
@@ -353,7 +393,7 @@ async function handleVerify(req, res) {
   }
 
   const verifyArgs = ['offer', 'verify', '--offer-id', offerId.trim(), '--json'];
-  const verifyResult = await execCliWithRetry(verifyArgs);
+  const verifyResult = await execCliWithRetry(verifyArgs, { execute: execRead });
 
   if (!verifyResult.parsed) {
     sendJson(res, 200, {
@@ -405,13 +445,21 @@ async function handleVerify(req, res) {
 /**
  * Creates the Atlas proxy middleware for the Vite dev server.
  * @param {object} env - Environment variables (process.env).
+ * @param {object} [seams] - Optional TEST-ONLY seams. `seams.execCliRead`
+ *   replaces the read-path CLI executor (Search/Verify) for offline
+ *   tests; when absent the real read-only executor is used, so runtime
+ *   behavior is byte-identical.
  * @returns {function} Connect-compatible middleware function.
  */
-export function createAtlasProxyMiddleware(env) {
-  // Sandbox write-scaffold handler (fail closed; execution disabled).
-  // execCli is passed purely as a future/test injection seam — the
-  // shipped scaffold handlers never invoke it.
-  const handleSandboxRoute = createSandboxWriteHandler(env, execCli);
+export function createAtlasProxyMiddleware(env, seams = {}) {
+  // Read-path executor seam (offline tests only); defaults to execCli.
+  const execRead =
+    typeof seams.execCliRead === 'function' ? seams.execCliRead : execCli;
+  // Sandbox write handler (fail closed unless the default-false
+  // ATLAS_SANDBOX_WRITES_EXECUTION_APPROVED env flag is explicitly set).
+  // execCliOnceWithStdin is the single-shot stdin-capable executor
+  // seam; it is invoked ONLY when execution approval is active.
+  const handleSandboxRoute = createSandboxWriteHandler(env, execCliOnceWithStdin);
 
   return function atlasProxyMiddleware(req, res, next) {
     const url = req.url || '';
@@ -466,11 +514,11 @@ export function createAtlasProxyMiddleware(env) {
 
     // Route to handler
     if (pathname === '/api/atlas/search') {
-      handleSearch(req, res).catch((err) => {
+      handleSearch(req, res, execRead).catch((err) => {
         sendJson(res, 500, { error: 'internal_error', message: sanitizeError(err?.message || String(err)) });
       });
     } else if (pathname === '/api/atlas/verify') {
-      handleVerify(req, res).catch((err) => {
+      handleVerify(req, res, execRead).catch((err) => {
         sendJson(res, 500, { error: 'internal_error', message: sanitizeError(err?.message || String(err)) });
       });
     } else {

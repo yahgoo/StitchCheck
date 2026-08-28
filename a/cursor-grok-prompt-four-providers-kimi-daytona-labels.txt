@@ -1,0 +1,50 @@
+# StitchCheck — Four-provider labels: 4 of 4 complete, Kimi K3, Daytona in "How this works"
+# EXECUTION MODE. Update labels only — no logic changes.
+
+## Changes required
+
+1. **Provider checks counter:** Change from "3 of 3 complete" to **"4 of 4 complete"**.
+2. **"How this works" section:** Add **Daytona** as the 4th provider alongside MiniMax/Kimi,
+   Nosana, and Atlas.
+3. **Extraction label:** Change "Extracted by MiniMax M3" to **"Extracted by Kimi K3"**
+   everywhere it appears on the Review screen.
+
+## Current state (for reference)
+
+- Provider checks shows: "3 of 3 complete" (MiniMax, Nosana, Atlas).
+- "How this works" lists: MiniMax extraction, Nosana risk, Atlas Sandbox search.
+- Review screen shows: "Extracted by MiniMax M3".
+
+## New state (apply this)
+
+- Provider checks shows: **"4 of 4 complete"**.
+- "How this works" lists:
+  1. **Kimi K3 extraction** (or MiniMax M3 if that's the active model — label should match
+     the actual model in use).
+  2. **Nosana risk analysis**.
+  3. **Atlas Sandbox search**.
+  4. **Daytona risk computation**.
+- Review screen shows: **"Extracted by Kimi K3"**.
+
+## Constraints
+
+- Change only the visible text strings and the provider count.
+- Do not change any functionality, routing, or state logic.
+- Do not change the file structure — only the text content in the existing components.
+- Keep the same layout and spacing — only the wording changes.
+
+## Output format
+
+Confirm the text has been updated and the dev server has been restarted. Report the exact
+new text as it appears on screen.
+
+```text
+PROVIDER_COUNT_UPDATED = <YES/NO>
+HOW_THIS_WORKS_UPDATED = <YES/NO, list the 4 providers as shown>
+EXTRACTION_LABEL_UPDATED = <YES/NO>
+DEV_SERVER_RESTARTED = <YES/NO>
+```
+
+## Execution
+
+Start now. Apply the text changes, restart the dev server, confirm.

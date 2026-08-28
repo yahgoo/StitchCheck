@@ -40,8 +40,8 @@ console.log('\n── Sample itinerary screenshot tests ──\n');
 const copyModule = readFileSync(resolve(ROOT, 'app/src/data/minimax-visibility-copy.ts'), 'utf-8');
 
 test('1. Welcome screen shows sample screenshot entry point distinct from structured sample', () => {
-  assert(copyModule.includes('Try the screenshot sample — extract with MiniMax M3'), 'screenshot CTA text');
-  assert(copyModule.includes('Use the ready-made sample — skips extraction'), 'structured sample CTA preserved');
+  assert(copyModule.includes('Extract with Kimi K3'), 'screenshot CTA text');
+  assert(copyModule.includes('Use sample — no extraction'), 'structured sample CTA preserved');
   assert(appSrc.includes('handleTrySampleScreenshot'), 'screenshot handler');
   assert(appSrc.includes('handleTrySampleItinerary'), 'structured sample handler preserved');
   const welcomeBlock = appSrc.slice(appSrc.indexOf('sc-welcome-actions'), appSrc.indexOf('sc-screen--trip'));
@@ -66,6 +66,8 @@ test('2. Screenshot path invokes extractItinerary with sample image, not structu
     appSrc.indexOf('const isLive'),
   );
   assert(!handlerBlock.includes('getSampleItineraryExtraction'), 'screenshot handler must not load structured sample');
+  assert(handlerBlock.includes('getSampleScreenshotExtraction'), 'screenshot handler seeds screenshot itinerary');
+  assert(!handlerBlock.includes('getDefaultExtraction'), 'screenshot handler must not seed KUL→BKK→HAN default');
 });
 
 test('3. Generated image exists and flight data matches Atlas-sourced fixture JSON', () => {
@@ -85,9 +87,16 @@ test('4. Review/correction screen remains editable (same upload path controls)',
   assert(appSrc.includes('sc-edit-form'), 'edit form markup');
 });
 
-test('5. Route continuity uses confirmed snapshot, not live extraction merge', () => {
+test('5. Route continuity uses confirmed snapshot after extraction merge, not pre-extract fixture', () => {
   assert(appSrc.includes('createConfirmedItinerarySnapshot'), 'snapshot at confirm');
   assert(appSrc.includes('performLiveSearchForConfirmed(snapshot)'), 'Atlas from snapshot');
+  const handler = appSrc.slice(appSrc.indexOf('const handleCheckMyTrip'), appSrc.indexOf('const handleRestart'));
+  const extractIdx = handler.indexOf('await extractItinerary');
+  const snapshotIdx = handler.indexOf('createConfirmedItinerarySnapshot');
+  assert(extractIdx >= 0 && snapshotIdx > extractIdx, 'extract runs before snapshot');
+  assert(handler.includes('createConfirmedItinerarySnapshot(merged'), 'snapshot uses merged MiniMax legs');
+  assert(handler.includes('setLiveExtractionReviewed(true)'), 'successful extract stays on review before confirm');
+  assert(appSrc.includes('Continue to alternatives'), 'post-extract CTA advances to Options');
   assert(confirmedSrc.includes("'sample-screenshot'"), 'input mode type includes screenshot');
   assert(appSrc.includes("'sample-screenshot'"), 'App uses sample-screenshot mode');
 });

@@ -1,0 +1,40 @@
+Timestamp (UTC): 2026-08-28T17:00:49Z
+URL: http://localhost:5174/
+DATA_MODE: live
+
+WELCOME (a11y):
+- Extract with Kimi K3
+- Use sample — no extraction
+- Upload itinerary
+
+REVIEW (innerText):
+- Extracted by Kimi K3
+- KUL → SIN · SIN → BKK
+- FIRST FLIGHT KUL → SIN AK · AK701 06:10 → 07:15
+- SECOND FLIGHT SIN → BKK TR · TR624 08:20 → 09:55
+- Continue to alternatives
+- Provider checks: 2 of 4 complete (at Review; remaining checks finished on Options)
+
+OPTIONS:
+- Provider checks: 4 of 4 complete
+- Extracted by Kimi K3
+- Live Atlas alternatives (18)
+- Verified unbooked previews
+- Atlas Sandbox · live (5 offers verified individually) x2
+- Source: Atlas Sandbox · live
+- See why this is risky
+
+HOW THIS WORKS (sc-provider-details, open):
+- Kimi K3 · live (extraction)
+- Nosana · live (risk analysis)
+- Atlas Sandbox · live (search)
+- Daytona (risk computation)
+
+HOW THIS WAS CALCULATED (sc-how-calculated, open):
+- Daytona live risk computation — read-only, sandboxed
+- Risk band: medium
+- Risk score 54 (medium) drives downstream cascade across 4 nodes
+- Dataset: daytona-risk-worker-v1 · Latency: 6ms
+- Recovery Plan Source: Daytona sandbox · live
+
+STATUS: SUCCESS

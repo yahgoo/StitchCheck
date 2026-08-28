@@ -1,0 +1,62 @@
+# StitchCheck — Demo with 4 live providers end-to-end (Cursor, Grok 4.6)
+# EXECUTION MODE. I want to see a live demo with all 4 providers running.
+# Do not diagnose. Do not ask for approval. Execute and show me the live demo.
+
+## Context
+
+Current state:
+- **Kimi K3 (MiniMax M3)**: Live extraction via OpenRouter, working end-to-end.
+- **Daytona**: Live sandbox risk worker (`daytona-risk-worker-v1`, score 54, risk band medium).
+- **Nosana**: Live job completed (`8CfUkxFgZnPpC5kxiphD1kozwiJeLYBC4KB33bKPAEp1`, `evidenceSource: "nosana-evidence"`, `fallbackUsed: false`).
+- **Atlas**: Live Sandbox Search (18 offers, executed=true, fallbackUsed=false).
+
+Labels just updated:
+- "Provider checks: 4 of 4 complete"
+- "How this works" lists 4 providers: Kimi K3, Nosana, Atlas, Daytona
+- "Extracted by Kimi K3" on Review screen
+
+## Your task
+
+1. **Ensure dev server is running** with `DATA_MODE=live`:
+   - Stop any existing Vite server on port 5173 or 5174.
+   - Restart: `cd app && DATA_MODE=live npm run dev`
+2. **Run the full demo flow** and capture evidence:
+   - Open `http://localhost:5173/` (or 5174).
+   - Click "Extract with Kimi K3" (or "Try the screenshot sample — extract with Kimi K3").
+   - Click "Check my itinerary".
+   - Wait for extraction to complete.
+   - On Review screen, confirm "Extracted by Kimi K3" and itinerary cards rendered.
+   - Click "Continue to alternatives".
+   - On Options screen, confirm:
+     - "Provider checks: 4 of 4 complete"
+     - "How this works" lists 4 providers: Kimi K3 extraction, Nosana risk, Atlas Sandbox search, Daytona risk computation
+     - "See why this is risky" → "How this was calculated" shows Daytona live risk (score 54, risk band medium, daytona-risk-worker-v1)
+     - "Live Atlas alternatives (18)" with verified unbooked previews
+3. **Capture screenshots or text evidence** of each screen:
+   - Welcome screen (with "Extract with Kimi K3" / "Use sample — no extraction")
+   - Review screen (with "Extracted by Kimi K3" and itinerary cards)
+   - Options screen (with "4 of 4 complete" and 4 providers listed)
+   - "How this works" modal (showing 4 providers)
+   - "How this was calculated" modal (showing Daytona live risk)
+4. **Report the outcome** — success or failure, with evidence (file paths, timestamps, exact text).
+
+## Constraints
+
+- Do not modify any code — only run the demo and capture evidence.
+- Do not print or log any credential value, even partially.
+
+## Output format
+
+```text
+DEV_SERVER_STATUS = <RUNNING on port XXXX | NOT RUNNING>
+WELCOME_SCREEN = <file path or text evidence>
+REVIEW_SCREEN = <file path or text evidence, extraction label>
+OPTIONS_SCREEN = <file path or text evidence, provider count, 4 providers listed>
+HOW_THIS_WORKS_MODAL = <file path or text evidence, 4 providers>
+HOW_THIS_WAS_CALCULATED_MODAL = <file path or text evidence, Daytona live risk>
+STATUS = <SUCCESS | FAILURE: reason>
+```
+
+## Execution
+
+Start now. Restart server, run demo, capture evidence, report.

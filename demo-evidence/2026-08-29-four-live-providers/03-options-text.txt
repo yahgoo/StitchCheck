@@ -1,0 +1,18 @@
+Timestamp: 2026-08-29T00:57+08 (approx)
+URL: http://localhost:5174/
+DATA_MODE: live
+
+--- Options screen text ---
+StitchCheck
+Provider checks: 4 of 4 complete
+How this works
+Your connection is at risk
+Extracted by Kimi K3
+KUL → SIN · SIN → BKK
+Itinerary checked. Live alternatives ready for review.
+See why this is risky
+Verified unbooked previews
+Atlas Sandbox · live (5 offers verified individually) [first flight]
+Atlas Sandbox · live (5 offers verified individually) [second flight]
+Live Atlas alternatives (18)
+Source: Atlas Sandbox · live

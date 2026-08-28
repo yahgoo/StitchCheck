@@ -1,0 +1,52 @@
+# StitchCheck — Simplify welcome screen copy (Kimi K3 framing)
+# EXECUTION MODE. Replace the current welcome screen text with a cleaner, shorter version
+# that frames the two options as "Extract with Kimi K3" vs "Use sample — no extraction".
+# Do not change any functionality, routing, or state logic — only the visible copy.
+
+## Current text (replace entirely)
+
+```
+StitchCheck
+Check your multi-leg itinerary for connection risks and find safer alternatives.
+Sample documents only. Do not upload real travel documents.
+Upload itineraryTry the screenshot sample — extract with MiniMax M3
+Use a sample itinerary screenshot. On the next step, select 'Check my itinerary' to start MiniMax M3 extraction.
+Use the ready-made sample — skips extraction
+Fast preview with itinerary data already loaded.
+```
+
+## New text (apply this)
+
+```
+StitchCheck
+Check your multi-leg itinerary for connection risks and find safer alternatives.
+Sample documents only. Do not upload real travel documents.
+
+Extract with Kimi K3
+Use a sample itinerary screenshot. Kimi K3 will extract your flights and dates.
+
+Use sample — no extraction
+Fast preview with itinerary data already loaded.
+```
+
+## Constraints
+
+- Change only the visible text strings on the welcome screen.
+- Do not change button IDs, routing, state logic, or any functionality.
+- Do not change the file structure — only the text content in the existing component.
+- Keep the same layout and spacing — only the wording changes.
+
+## Output format
+
+Confirm the text has been updated and the dev server has been restarted. Report the exact
+new text as it appears on screen.
+
+```text
+WELCOME_SCREEN_UPDATED = <YES/NO>
+NEW_TEXT = <exact text as it appears on screen>
+DEV_SERVER_RESTARTED = <YES/NO>
+```
+
+## Execution
+
+Start now. Apply the text change, restart the dev server, confirm.

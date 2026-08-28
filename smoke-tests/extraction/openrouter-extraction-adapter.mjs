@@ -17,7 +17,7 @@ import {
 const harnessDir = dirname(fileURLToPath(import.meta.url));
 
 const SAFETY_LIMITS = Object.freeze({
-  requestTimeoutMs: 60000,
+  requestTimeoutMs: 90000,
   maxResponseBytes: 10 * 1024 * 1024,
   maxRetries: 0,
   maxCalls: 1,
@@ -273,15 +273,16 @@ function _asTrimmedString(value) {
   return String(value).trim();
 }
 
-/** Align provider `date` with UI `departureDate`; keep airline/flightNumber as strings. */
+/** Align provider `date` with UI `departureDate`; map `carrier` → `airline`. */
 export function _normalizeLegFields(leg) {
   if (!leg || typeof leg !== "object" || Array.isArray(leg)) return leg;
   const date = _asTrimmedString(leg.date) || _asTrimmedString(leg.departureDate);
+  const airline = _asTrimmedString(leg.airline) || _asTrimmedString(leg.carrier);
   return {
     ...leg,
     date,
     departureDate: _asTrimmedString(leg.departureDate) || date,
-    airline: leg.airline == null ? "" : _asTrimmedString(leg.airline),
+    airline,
     flightNumber: leg.flightNumber == null ? "" : _asTrimmedString(leg.flightNumber),
   };
 }
@@ -470,7 +471,9 @@ export function createProviderCallFunction(client) {
   return async function callProvider(request, model) {
     if (_callCount >= SAFETY_LIMITS.maxCalls) {
       // #region agent log
-      fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'9c1bf5'},body:JSON.stringify({sessionId:'9c1bf5',runId:'post-fix',hypothesisId:'C',location:'openrouter-extraction-adapter.mjs:maxCalls',message:'call budget exhausted',data:{callCount:_callCount,maxCalls:SAFETY_LIMITS.maxCalls},timestamp:Date.now()})}).catch(()=>{});
+      fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'6d26ff'},body:JSON.stringify({sessionId:'6d26ff',runId:'demo-ready',hypothesisId:'D',location:'openrouter-extraction-adapter.mjs:maxCalls',message:'call budget exhausted',data:{callCount:_callCount,maxCalls:SAFETY_LIMITS.maxCalls},timestamp:Date.now()})}).catch(()=>{});
+      fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'d481ad'},body:JSON.stringify({sessionId:'d481ad',runId:'post-fix',hypothesisId:'C',location:'openrouter-extraction-adapter.mjs:maxCalls',message:'call budget exhausted',data:{callCount:_callCount,maxCalls:SAFETY_LIMITS.maxCalls},timestamp:Date.now()})}).catch(()=>{});
+      fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'975ced'},body:JSON.stringify({sessionId:'975ced',runId:'live-flip',hypothesisId:'D',location:'openrouter-extraction-adapter.mjs:maxCalls',message:'call budget exhausted',data:{callCount:_callCount,maxCalls:SAFETY_LIMITS.maxCalls},timestamp:Date.now()})}).catch(()=>{});
       // #endregion
       return createDisabledExtractionResult("call_limit_exceeded");
     }
@@ -503,7 +506,8 @@ export function createProviderCallFunction(client) {
     const { parsed, warnings, failurePoint } = _parseProviderText(text);
     const normalized = parsed ? _normalizeParsedExtraction(parsed) : null;
     // #region agent log
-    fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'9c1bf5'},body:JSON.stringify({sessionId:'9c1bf5',runId:'post-fix',hypothesisId:'B',location:'openrouter-extraction-adapter.mjs:normalize',message:'provider JSON after date mapping',data:{parsed:Boolean(parsed),incomingDate:parsed?.firstLeg?.date || null,incomingDepartureDate:parsed?.firstLeg?.departureDate || null,normalizedDate:normalized?.firstLeg?.date || null,normalizedDepartureDate:normalized?.firstLeg?.departureDate || null,origin:normalized?.firstLeg?.origin || null,callCount:_callCount},timestamp:Date.now()})}).catch(()=>{});
+    fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'d481ad'},body:JSON.stringify({sessionId:'d481ad',runId:'post-fix',hypothesisId:'B',location:'openrouter-extraction-adapter.mjs:normalize',message:'provider JSON after date mapping',data:{parsed:Boolean(parsed),incomingDate:parsed?.firstLeg?.date || null,incomingDepartureDate:parsed?.firstLeg?.departureDate || null,normalizedDate:normalized?.firstLeg?.date || null,normalizedDepartureDate:normalized?.firstLeg?.departureDate || null,origin:normalized?.firstLeg?.origin || null,callCount:_callCount},timestamp:Date.now()})}).catch(()=>{});
+    fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'975ced'},body:JSON.stringify({sessionId:'975ced',runId:'live-flip',hypothesisId:'C',location:'openrouter-extraction-adapter.mjs:normalize',message:'provider JSON after date mapping',data:{parsed:Boolean(parsed),incomingDate:parsed?.firstLeg?.date||null,incomingDepartureDate:parsed?.firstLeg?.departureDate||null,normalizedDate:normalized?.firstLeg?.date||null,normalizedDepartureDate:normalized?.firstLeg?.departureDate||null,origin:normalized?.firstLeg?.origin||null,destination:normalized?.firstLeg?.destination||null,flightNumber:normalized?.firstLeg?.flightNumber||null,callCount:_callCount},timestamp:Date.now()})}).catch(()=>{});
     // #endregion
     if (!normalized) {
       return Object.freeze({
@@ -532,6 +536,9 @@ export function createProviderCallFunction(client) {
     }
     const itinerary = _assessItinerarySchema(normalized);
     if (!itinerary.schemaValidated) {
+      // #region agent log
+      fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'6d26ff'},body:JSON.stringify({sessionId:'6d26ff',runId:'demo-ready',hypothesisId:'C',location:'openrouter-extraction-adapter.mjs:schema',message:'itinerary schema rejected',data:{issues:itinerary.issues,origin:normalized?.firstLeg?.origin||null,departureDate:normalized?.firstLeg?.departureDate||null,flightNumber:normalized?.firstLeg?.flightNumber||null},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion
       return _schemaFailureResult(normalized, itinerary.issues, warnings, model);
     }
     return _normalizeProviderResult(normalized, warnings);

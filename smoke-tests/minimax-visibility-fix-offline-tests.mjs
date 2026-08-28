@@ -33,13 +33,13 @@ const provenanceSrc = readFileSync(resolve(ROOT, 'app/src/components/MiniMaxProv
 const offlineSrc = readFileSync(resolve(ROOT, 'app/src/components/MiniMaxOfflineNotice.tsx'), 'utf-8');
 
 const SPEC = {
-  screenshotCta: 'Try the screenshot sample — extract with MiniMax M3',
+  screenshotCta: 'Extract with Kimi K3',
   screenshotHelper:
-    "Use a sample itinerary screenshot. On the next step, select 'Check my itinerary' to start MiniMax M3 extraction.",
-  readyMadeCta: 'Use the ready-made sample — skips extraction',
+    'Use a sample itinerary screenshot. Kimi K3 will extract your flights and dates.',
+  readyMadeCta: 'Use sample — no extraction',
   readyMadeHelper: 'Fast preview with itinerary data already loaded.',
   loading: 'MiniMax M3 is reading your itinerary…',
-  provenance: 'Extracted by MiniMax M3',
+  provenance: 'Extracted by Kimi K3',
   offlineStatus: 'MiniMax M3: offline',
   offlineExplanation:
     'Expected for this fast path — a ready-made itinerary was loaded directly, so no MiniMax M3 extraction request was made.',
@@ -93,6 +93,8 @@ test('4. MiniMax loading tied to real extractionLoading for the in-flight reques
   const extractionBlock = appSrc.slice(appSrc.indexOf('setExtractionLoading(true)'), appSrc.indexOf('setExtractionLoading(false)'));
   assert.ok(!extractionBlock.includes('setTimeout'), 'no artificial dwell in extraction block');
   assert.ok(appSrc.includes('extractionError && !extractionLoading'), 'extraction errors are visible');
+  assert.ok(appSrc.includes('Extraction failed:'), 'traveller-visible extraction error copy');
+  assert.ok(appSrc.includes('Continue to alternatives'), 'post-extract continue CTA');
   assert.ok(appSrc.includes('setLiveExtractionReviewed(true)'), 'successful extract stays on review');
 });
 

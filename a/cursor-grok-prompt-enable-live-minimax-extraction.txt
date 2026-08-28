@@ -1,0 +1,91 @@
+# StitchCheck — Enable live MiniMax M3 extraction for demo (Cursor, Grok 4.6)
+# IMPLEMENTATION MODE — authorized to make code/config changes. Read the entire prompt
+# before executing anything. If any gate fails, stop and report — do not improvise around it.
+
+## Context — what's broken right now
+
+Per your earlier diagnosis:
+- MiniMax M3 via OpenRouter is **wired**, but `DATA_MODE=offline` gates it off entirely.
+- Even if flipped live, four failure modes would break the demo:
+  1. **Snapshot happens BEFORE extraction** — confirmed itinerary snapshot (which feeds Atlas
+     Search and the provenance pill) is taken from the fixture, not from MiniMax's output.
+  2. **`date` vs `departureDate` schema mismatch** — MiniMax outputs `date`, UI expects
+     `departureDate`. A valid MiniMax response gets marked as error after merge, or leaves
+     `departureDate` empty.
+  3. **`maxCalls: 1` per Vite lifetime** — first click might work, second click in the same
+     dev session silently returns `call_limit_exceeded`.
+  4. **Extraction errors have no traveller-visible message** — only provider-bar `unavailable` /
+     `offline`.
+
+## Task — implement items 2, 3, 4, 5, 7 from the diagnosis (in that order)
+
+### Item 2 — Extract first, then snapshot, then Options
+In `app/src/App.tsx`, `handleCheckMyTrip` (lines 422–545):
+- On `sample-screenshot` or upload mode: wait for MiniMax extraction (or failure) **before**
+  calling `createConfirmedItinerarySnapshot`.
+- Map the merged extraction legs (after normalization from item 3) into the snapshot.
+- Only then advance to Options.
+- This is the core demo-correctness fix — without it, MiniMax's output never reaches
+  Atlas/provenance.
+
+### Item 3 — Normalize `date` → `departureDate` (and keep `airline`/`flightNumber`)
+In `app/server/openrouter-extraction-adapter.mjs`, before validation/merge:
+- Add a normalization pass that copies `date` → `departureDate` (and `airline` → `carrier` if
+  needed, `flightNumber` stays as-is).
+- This aligns MiniMax JSON with the UI's `FlightLeg` type (`core/domain/itinerary.ts` lines
+  5–13).
+- Do this in the adapter layer, not in the UI — keeps the fix isolated.
+
+### Item 4 — Reset `_callCount` per HTTP request (or drop `maxCalls` on the Vite proxy path)
+In `app/server/openrouter-extract.mjs`:
+- The module-level `_callCount` (lines 19–24, 431–432) causes the second "Check my itinerary"
+  in one `npm run dev` session to silently disable MiniMax.
+- Reset this counter at the start of each `POST /api/extract` handler (lines 127–229), or
+  simply remove the `maxCalls: 1` guard entirely for the Vite proxy path (it's meant for
+  one-off CLI runs, not a dev server).
+- This prevents the silent second-click failure.
+
+### Item 5 — Show `extractionError` on the trip/options screen
+In `app/src/App.tsx`:
+- The `extractionError` state (line 143) is currently write-only — errors are discarded.
+- Add a visible error banner on the trip or options screen that renders `extractionError` if
+  it's non-null (e.g., "Extraction failed: [error message]. Please try again or use the
+  ready-made sample.").
+- Keep the existing loading line for the real in-flight window — this is just for the
+  failure case.
+
+### Item 7 — Stay on Review after a successful extract so the judge can see MiniMax-filled
+### cards + "Extracted by MiniMax M3" before Options
+In `app/src/App.tsx`:
+- After a successful extract (and snapshot), set `step` to `'trip'` (Review) instead of
+  jumping straight to `'options'`.
+- Add a "Continue to alternatives" button on the Review screen that advances to Options when
+  clicked (this button already exists in the normal flow — just ensure it's visible post-
+  extract).
+- This matches the `docs/minimax-visibility-fix-spec-2026-08-28.md` intent — lets the judge
+  see the MiniMax-filled cards before clicking to Options.
+
+## Hard constraints
+
+- Do not change `DATA_MODE` yet — that's a separate, explicit decision. Implement these
+  fixes with `DATA_MODE=offline` first, verify they compile and typecheck, then I'll decide
+  whether to flip live.
+- Do not touch any of tonight's verified Daytona/Nosana live wiring, docs, manifest, or deck.
+- Do not modify `.env.local` or any credential file.
+- Run `npm run typecheck` and `npm run build` after all five items — both must pass.
+
+## Final report
+
+For each item: what was changed (file paths, line numbers), verification results (typecheck/
+build pass). End with:
+
+```text
+ITEM2_STATUS = <DONE | BLOCKED: reason>
+ITEM3_STATUS = <DONE | BLOCKED: reason>
+ITEM4_STATUS = <DONE | BLOCKED: reason>
+ITEM5_STATUS = <DONE | BLOCKED: reason>
+ITEM7_STATUS = <DONE | BLOCKED: reason>
+TYPECHECK_STATUS = <PASS | FAILURES: list>
+BUILD_STATUS = <PASS | FAILURES: list>
+READY_TO_FLIP_LIVE = <YES | NOT_YET: reason>
+```
