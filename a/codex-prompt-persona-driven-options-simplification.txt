@@ -1,0 +1,178 @@
+# StitchCheck — Persona-Driven Simplification of the Options Screen
+# Codex Agent — reduce scrolling, add sort/filter, keep it intuitive for rushed/budget travellers
+
+## Context
+
+The current options screen (KUL→SIN→BKK sample) works but is scroll-heavy and unsorted for
+two realistic traveller personas:
+
+1. **Price-conscious traveller** — wants the cheapest viable option fast, doesn't want to
+   scroll through 20 unsorted raw offers to eyeball prices manually.
+2. **Time-conscious / rushed traveller** — wants to make a decision in seconds, not compare
+   20 rows spread across multiple scroll-pages; wants the fastest path from "see options" to
+   "pick one."
+
+Current pain points observed in a live capture:
+- The "Live Atlas alternatives (20)" list for the KUL→SIN leg is unsorted (mixed prices from
+  USD 21.80 to USD 48.05 scattered across the list in no clear order) and spans several
+  screen-heights of scrolling.
+- Each of the 20 rows requires two separate actions ("Verify offer" then "Switch to this
+  plan") with no visual indication of which one is cheapest, fastest, or best-value without
+  reading every row.
+- The already-implemented "best option + See more verified options" pattern exists for the
+  5-card verified-preview sections per leg, but the raw 20-offer Atlas alternatives list does
+  not have the same treatment — it's the biggest remaining scroll/overload offender.
+- No sort or filter controls exist at all on this screen.
+
+## Goal
+
+Add persona-aware sort/filter controls to the raw alternatives list specifically, consistent
+with (not duplicating) the best-option pattern already built for the verified preview
+sections, so the whole options screen feels intuitive and low-effort regardless of whether
+someone cares most about price or about speed of decision.
+
+## Absolute constraints
+
+- Do not touch Atlas write routes, Nosana execution, extraction logic, route-continuity
+  snapshot logic, or the existing best-option/disclosure-dedup logic for the 5-card verified
+  preview sections — those are demo-verified and out of scope.
+- Do not fabricate any ranking not derivable from real Atlas data (price, verify status,
+  departure time) — every sort/filter must be a deterministic transform of real offer fields.
+- Do not hide any of the 20 offers permanently — collapsing/sorting must always leave a way
+  to see all of them (mirroring the existing "See more" pattern), never silently drop data.
+- Do not change the meaning of "Verify offer" or "Switch to this plan" — only how offers are
+  ordered, grouped, or visually surfaced before the traveller clicks either.
+- Do not weaken any existing test to force a pass.
+- Do not touch video/narration/subtitle files.
+- Do not commit/push.
+
+## Step 1 — Add sort control to the raw alternatives list
+
+In the component rendering "Live Atlas alternatives (N)" (locate it — likely
+`AlternativesPanel.tsx` or the live-search results section in `App.tsx`/a dedicated
+alternatives component):
+
+1. Add a sort toggle with three options:
+   - **Price: low to high** (default) — cheapest offer first. This directly serves the
+     price-conscious persona without them doing anything.
+   - **Soonest departure** — earliest `departureTime` first, for a traveller who wants to
+     leave ASAP.
+   - **Verified first** — any offer that has already been through Atlas Verify (if
+     applicable at this list level) sorts above unverified ones.
+2. Persist the selected sort in component state only (no need for backend/storage) so it
+   doesn't reset while the traveller is comparing.
+3. Sort must be a pure, deterministic function over the real offer array — write it as a
+   named exported function (e.g. `sortAlternatives(offers, sortMode)`) so it's independently
+   testable, following the same pattern as the existing `selectBestOptionCard` /
+   `OFFER_SELECTION_RULE` helpers.
+
+## Step 2 — Reduce scrolling with a collapse-by-default view
+
+Apply the same "show best, then expand" pattern already used for the 5-card verified preview
+sections, adapted for this larger 20-offer list:
+
+1. By default, show only the **top 3 offers** under the current sort mode (e.g. 3 cheapest,
+   if sort mode is price).
+2. Add a `Show all N options` expand control (reuse styling/pattern from the existing "See
+   more verified options (N)" control for consistency).
+3. When sort mode changes, the top-3 (or expanded full list) must re-sort accordingly, not
+   just re-order within a stale slice.
+
+## Step 3 — Add persona-quick-glance badges
+
+On each offer card (top-3 default view and expanded view), add a small inline badge where
+applicable, computed from real data only:
+
+- `Cheapest` badge on the single lowest-priced offer in the current full list.
+- `Fastest departure` badge on the single earliest-departing offer in the current full list.
+
+These badges must be computed once from the full offer set (not just the visible top-3) so
+they remain accurate even when only 3 are shown by default. Do not add a badge implying
+information not present in the data (e.g. no "best value" composite score unless you can
+show the exact formula and it's documented as clearly derived, not opaque).
+
+## Step 4 — Reduce clicks for the decisive persona
+
+Currently each row needs "Verify offer" then "Switch to this plan" as two separate clicks.
+For the time-conscious persona:
+
+1. Keep both actions available, but consider whether "Switch to this plan" can auto-trigger
+   Verify first if not already verified (i.e. one click does verify-then-switch as a single
+   flow), rather than requiring the traveller to click twice per offer.
+2. If combining them safely is feasible without changing the underlying safety gates (no
+   auto-booking, still requires explicit confirmation before any write-adjacent action), do
+   it. If it's not feasible in the remaining time, keep two buttons but visually group them
+   as a single control pair, and clearly label the flow (e.g. "Verify & switch").
+3. Do not change what "Switch" ultimately means — it must still just submit a request, not
+   book, exactly as today.
+
+## Step 5 — Tests
+
+Add tests for:
+1. `sortAlternatives` — deterministic sort correctness for all 3 modes given a mixed
+   fixture set of offers (varying prices, times, verify status).
+2. Default view shows exactly 3 offers under default sort; `Show all N` reveals the rest.
+3. Sort mode change re-sorts both the default 3 and the expanded full list correctly.
+4. `Cheapest` and `Fastest departure` badges land on the correct single offer, computed from
+   the full set even when only 3 are visible.
+5. No existing tests for the verified-preview best-option/disclosure-dedup pattern regress.
+6. If Step 4's combined verify-then-switch flow is implemented, add a test confirming it
+   still requires explicit user confirmation and still results only in "Request submitted,"
+   never a booked/switched claim without a real verified outcome.
+
+## Step 6 — Full regression check
+
+```bash
+npm run typecheck
+npm run build
+```
+
+Re-run the full smoke-test suite (all files in `smoke-tests/`, excluding the two Gemini
+harness files already removed) and confirm no regressions, especially in:
+- `unbooked-ticket-preview-offline-tests.mjs`
+- `cross-provider-invariant-tests.mjs`
+- `live-mode-banned-words-tests.mjs`
+- `traveller-flow-ui-tests.mjs`
+- `screen-consolidation-offline-tests.mjs`
+
+## Step 7 — Live check with both personas in mind
+
+Restart the dev server, run "Try a sample itinerary" through to the options screen, and
+manually verify:
+
+1. **Price-conscious walkthrough:** land on the screen, confirm the top-3 alternatives are
+   already the 3 cheapest without touching anything, confirm the `Cheapest` badge is visible
+   and correct.
+2. **Time-conscious walkthrough:** confirm reaching a decision (verify + switch, or keep)
+   takes noticeably fewer scrolls/clicks than before — count and report the before/after
+   click/scroll count for the same task ("switch to the cheapest available KUL→SIN option").
+3. Switch sort mode to "Soonest departure" and confirm the list and badges update correctly.
+4. Expand "Show all 20" and confirm the full list is still reachable and correctly sorted.
+
+## Final report
+
+Return:
+
+1. Files changed, with the new `sortAlternatives` function signature and sort modes.
+2. Before/after click and scroll count for the same "pick cheapest option" task, using the
+   sample itinerary flow, measured consistently.
+3. Confirmation the `Cheapest` / `Fastest departure` badges are computed from the full set,
+   not just the visible slice.
+4. Whether Step 4's combined verify-then-switch flow was implemented or deferred, and why.
+5. Full test results (new + regression).
+6. Typecheck/build results.
+7. Live confirmation for both personas' walkthroughs.
+8. Confirmation no data was hidden (only default-collapsed, fully expandable) and no test
+   was weakened.
+
+End with:
+
+```text
+SORT_CONTROL_STATUS = <IMPLEMENTED | BLOCKED: reason>
+SCROLL_REDUCTION_STATUS = <IMPLEMENTED | BLOCKED: reason>
+BADGE_STATUS = <IMPLEMENTED | BLOCKED: reason>
+CLICK_REDUCTION_STATUS = <IMPLEMENTED | DEFERRED: reason>
+ALL_REGRESSION_STATUS = <ALL_PASS | FAILURES: list>
+PRICE_CONSCIOUS_UX = <BEFORE: N clicks/scrolls -> AFTER: N clicks/scrolls>
+TIME_CONSCIOUS_UX = <BEFORE: N clicks/scrolls -> AFTER: N clicks/scrolls>
+```

@@ -1,11 +1,11 @@
 {
   "meta": {
-    "filePurpose": "Synthetic local demo data for the future React/Vite StitchCheck UI. Not live service evidence.",
+    "filePurpose": "Local offline demo data for the StitchCheck UI traveller flow. Uses a coherent KUL-BKK-HAN route.",
     "syntheticDemo": true,
     "externalCallsMade": false,
     "isLiveServiceEvidence": false,
     "atlasSearchOnly": true,
-    "piiReview": "All data is synthetic by construction: invented airport codes (AAA/BBB/CCC), fictional correlation identifiers, invented dates and placeholder prices. No real passenger, booking reference, payment data, airline record, PII, or credential appears anywhere in this file.",
+    "piiReview": "All data is local demo content: invented flight numbers (SC-101/SC-202), sample carrier labels, and placeholder times for the KUL-BKK-HAN route. No real passenger, booking reference, payment data, airline record, PII, or credential appears anywhere in this file.",
     "forbiddenActions": [
       "verify",
       "book",
@@ -23,9 +23,9 @@
   },
 
   "labels": {
-    "geminiExtraction": "Synthetic local placeholder — not direct Gemini evidence",
-    "nosanaRisk": "Synthetic local placeholder — not Nosana evidence",
-    "atlasAlternatives": "Synthetic local placeholder — not Atlas Sandbox evidence"
+    "geminiExtraction": "Sample itinerary — local fixture",
+    "nosanaRisk": "Offline risk analysis — local computation",
+    "atlasAlternatives": "Offline alternatives — local fixture"
   },
 
   "uiStates": {
@@ -33,7 +33,7 @@
     "itineraryUnconfirmed": {
       "stateId": "itinerary-unconfirmed",
       "description": "Clean editable itinerary extracted from the GEM-01 synthetic fixture. User has not yet confirmed. Risk and alternatives panels remain disabled.",
-      "sourceLabel": "Synthetic local placeholder — not direct Gemini evidence",
+      "sourceLabel": "Sample itinerary — local fixture",
       "requiresUserConfirmation": true,
       "confirmationStatus": "unconfirmed",
       "externalCallsMade": false,
@@ -43,19 +43,19 @@
       "extractionResult": {
         "extractionStatus": "success",
         "firstLeg": {
-          "origin": "AAA",
-          "destination": "BBB",
+          "origin": "KUL",
+          "destination": "BKK",
           "departureDate": "2026-09-15",
-          "airline": "Synthetic Carrier",
+          "airline": "Sample carrier",
           "flightNumber": "SC-101",
           "departureTime": "08:00",
           "arrivalTime": "10:30"
         },
         "secondLeg": {
-          "origin": "BBB",
-          "destination": "CCC",
+          "origin": "BKK",
+          "destination": "HAN",
           "departureDate": "2026-09-15",
-          "airline": "Synthetic Carrier",
+          "airline": "Sample carrier",
           "flightNumber": "SC-202",
           "departureTime": "13:00",
           "arrivalTime": "15:45"
@@ -64,7 +64,7 @@
         "missingFields": [],
         "fieldConfidence": {
           "overall": "high",
-          "note": "All core fields populated from the GEM-01 clean synthetic fixture"
+          "note": "All core fields populated from the local demo fixture"
         },
         "validationMessages": [],
         "requiresUserConfirmation": true,
@@ -83,7 +83,7 @@
     "itineraryCorrected": {
       "stateId": "itinerary-corrected",
       "description": "User corrected one extracted field (flight number on the second leg) before confirming. Demonstrates the edit-and-correct flow.",
-      "sourceLabel": "Synthetic local placeholder — not direct Gemini evidence",
+      "sourceLabel": "Sample itinerary — local fixture",
       "requiresUserConfirmation": true,
       "confirmationStatus": "unconfirmed",
       "externalCallsMade": false,
@@ -93,19 +93,19 @@
       "extractionResult": {
         "extractionStatus": "success",
         "firstLeg": {
-          "origin": "AAA",
-          "destination": "BBB",
+          "origin": "KUL",
+          "destination": "BKK",
           "departureDate": "2026-09-15",
-          "airline": "Synthetic Carrier",
+          "airline": "Sample carrier",
           "flightNumber": "SC-101",
           "departureTime": "08:00",
           "arrivalTime": "10:30"
         },
         "secondLeg": {
-          "origin": "BBB",
-          "destination": "CCC",
+          "origin": "BKK",
+          "destination": "HAN",
           "departureDate": "2026-09-15",
-          "airline": "Synthetic Carrier",
+          "airline": "Sample carrier",
           "flightNumber": "SC-299",
           "departureTime": "13:00",
           "arrivalTime": "15:45"
@@ -133,7 +133,7 @@
     "itineraryConfirmed": {
       "stateId": "itinerary-confirmed",
       "description": "User explicitly confirmed the corrected itinerary. Downstream panels may now activate with local placeholder data only.",
-      "sourceLabel": "Synthetic local placeholder — not direct Gemini evidence",
+      "sourceLabel": "Sample itinerary — local fixture",
       "requiresUserConfirmation": true,
       "confirmationStatus": "confirmed",
       "externalCallsMade": false,
@@ -143,19 +143,19 @@
       "extractionResult": {
         "extractionStatus": "success",
         "firstLeg": {
-          "origin": "AAA",
-          "destination": "BBB",
+          "origin": "KUL",
+          "destination": "BKK",
           "departureDate": "2026-09-15",
-          "airline": "Synthetic Carrier",
+          "airline": "Sample carrier",
           "flightNumber": "SC-101",
           "departureTime": "08:00",
           "arrivalTime": "10:30"
         },
         "secondLeg": {
-          "origin": "BBB",
-          "destination": "CCC",
+          "origin": "BKK",
+          "destination": "HAN",
           "departureDate": "2026-09-15",
-          "airline": "Synthetic Carrier",
+          "airline": "Sample carrier",
           "flightNumber": "SC-299",
           "departureTime": "13:00",
           "arrivalTime": "15:45"
@@ -185,7 +185,7 @@
     "riskSuccess": {
       "stateId": "risk-success",
       "description": "Local placeholder risk result after confirmation. Sourced from the Nosana success fixture shape. Not Nosana evidence.",
-      "sourceLabel": "Synthetic local placeholder — not Nosana evidence",
+      "sourceLabel": "Offline risk analysis — local computation",
       "requiresUserConfirmation": true,
       "confirmationStatus": "confirmed",
       "externalCallsMade": false,
@@ -210,7 +210,7 @@
     "riskUnavailable": {
       "stateId": "risk-unavailable",
       "description": "Local placeholder risk result where the risk band is unavailable. No score is invented.",
-      "sourceLabel": "Synthetic local placeholder — not Nosana evidence",
+      "sourceLabel": "Offline risk analysis — local computation",
       "requiresUserConfirmation": true,
       "confirmationStatus": "confirmed",
       "externalCallsMade": false,
@@ -235,7 +235,7 @@
     "riskError": {
       "stateId": "risk-error",
       "description": "Local placeholder risk error state. Understandable feedback with error code; no invented score.",
-      "sourceLabel": "Synthetic local placeholder — not Nosana evidence",
+      "sourceLabel": "Offline risk analysis — local computation",
       "requiresUserConfirmation": true,
       "confirmationStatus": "confirmed",
       "externalCallsMade": false,
@@ -260,7 +260,7 @@
     "riskTimeout": {
       "stateId": "risk-timeout",
       "description": "Local placeholder risk timeout state. Labelled timeout outcome with replay path; no invented score.",
-      "sourceLabel": "Synthetic local placeholder — not Nosana evidence",
+      "sourceLabel": "Offline risk analysis — local computation",
       "requiresUserConfirmation": true,
       "confirmationStatus": "confirmed",
       "externalCallsMade": false,
@@ -285,7 +285,7 @@
     "riskFailure": {
       "stateId": "risk-failure",
       "description": "Local placeholder risk workload-failure state. Error status with replay path; no invented score.",
-      "sourceLabel": "Synthetic local placeholder — not Nosana evidence",
+      "sourceLabel": "Offline risk analysis — local computation",
       "requiresUserConfirmation": true,
       "confirmationStatus": "confirmed",
       "externalCallsMade": false,
@@ -310,7 +310,7 @@
     "alternativesSuccess": {
       "stateId": "alternatives-success",
       "description": "Local placeholder alternatives result after confirmation. Sourced from the Atlas success fixture shape. Not Atlas Sandbox evidence.",
-      "sourceLabel": "Synthetic local placeholder — not Atlas Sandbox evidence",
+      "sourceLabel": "Offline alternatives — local fixture",
       "requiresUserConfirmation": true,
       "confirmationStatus": "confirmed",
       "externalCallsMade": false,
@@ -324,7 +324,7 @@
         "alternatives": [
           {
             "offerReference": "display-only-reference-a1",
-            "routeSummary": "AAA → BBB → CCC (synthetic)",
+            "routeSummary": "KUL → BKK → HAN",
             "departureTime": "08:30",
             "arrivalTime": "16:10",
             "duration": "7h 40m",
@@ -336,7 +336,7 @@
           },
           {
             "offerReference": "display-only-reference-a2",
-            "routeSummary": "AAA → CCC direct (synthetic)",
+            "routeSummary": "KUL → HAN direct",
             "departureTime": "09:15",
             "arrivalTime": "13:05",
             "duration": "3h 50m",
@@ -356,7 +356,7 @@
     "alternativesEmpty": {
       "stateId": "alternatives-empty",
       "description": "Local placeholder empty alternatives state. No alternatives fabricated.",
-      "sourceLabel": "Synthetic local placeholder — not Atlas Sandbox evidence",
+      "sourceLabel": "Offline alternatives — local fixture",
       "requiresUserConfirmation": true,
       "confirmationStatus": "confirmed",
       "externalCallsMade": false,
@@ -378,7 +378,7 @@
     "alternativesError": {
       "stateId": "alternatives-error",
       "description": "Local placeholder alternatives error state. Understandable error with retry/replay path.",
-      "sourceLabel": "Synthetic local placeholder — not Atlas Sandbox evidence",
+      "sourceLabel": "Offline alternatives — local fixture",
       "requiresUserConfirmation": true,
       "confirmationStatus": "confirmed",
       "externalCallsMade": false,
@@ -400,7 +400,7 @@
     "alternativesTimeout": {
       "stateId": "alternatives-timeout",
       "description": "Local placeholder alternatives timeout state. Timeout message with retry/replay path.",
-      "sourceLabel": "Synthetic local placeholder — not Atlas Sandbox evidence",
+      "sourceLabel": "Offline alternatives — local fixture",
       "requiresUserConfirmation": true,
       "confirmationStatus": "confirmed",
       "externalCallsMade": false,
@@ -422,7 +422,7 @@
     "comparisonAndDecision": {
       "stateId": "comparison-and-decision",
       "description": "Local placeholder comparison view and Keep/Switch decision. No booking, payment, reservation, ticket, order, verification, or write action occurs.",
-      "sourceLabel": "Synthetic local placeholder — not Atlas Sandbox evidence",
+      "sourceLabel": "Offline alternatives — local fixture",
       "requiresUserConfirmation": true,
       "confirmationStatus": "confirmed",
       "externalCallsMade": false,
@@ -431,17 +431,17 @@
       "forbiddenActions": ["verify", "book", "pay", "ticket", "reserve", "order", "write"],
       "comparison": {
         "originalItinerary": {
-          "routeSummary": "AAA → BBB → CCC (self-transfer, synthetic)",
-          "firstLeg": "AAA → BBB, SC-101, 08:00–10:30",
-          "secondLeg": "BBB → CCC, SC-299, 13:00–15:45",
+          "routeSummary": "KUL → BKK → HAN (self-transfer)",
+          "firstLeg": "KUL → BKK, SC-101, 08:00–10:30",
+          "secondLeg": "BKK → HAN, SC-299, 13:00–15:45",
           "connectionDurationMinutes": 150,
           "riskBand": "medium",
-          "riskLabel": "Synthetic local placeholder — not Nosana evidence"
+          "riskLabel": "Offline risk analysis — local computation"
         },
         "alternatives": [
           {
             "offerReference": "display-only-reference-a1",
-            "routeSummary": "AAA → BBB → CCC (synthetic)",
+            "routeSummary": "KUL → BKK → HAN",
             "departureTime": "08:30",
             "arrivalTime": "16:10",
             "duration": "7h 40m",
@@ -452,7 +452,7 @@
           },
           {
             "offerReference": "display-only-reference-a2",
-            "routeSummary": "AAA → CCC direct (synthetic)",
+            "routeSummary": "KUL → HAN direct",
             "departureTime": "09:15",
             "arrivalTime": "13:05",
             "duration": "3h 50m",
@@ -468,7 +468,7 @@
         "options": ["Keep", "Switch"],
         "noOrderCreated": true,
         "syntheticDemo": true,
-        "finalStatement": "No booking, payment, reservation, ticket, order, verification, or other write action has been created. This is a synthetic demo only."
+        "finalStatement": "No booking, payment, reservation, ticket, order, verification, or other write action has been created."
       }
     }
   }

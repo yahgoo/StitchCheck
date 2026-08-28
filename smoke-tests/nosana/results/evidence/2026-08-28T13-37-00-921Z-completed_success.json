@@ -1,0 +1,20 @@
+{
+  "eventType": "completed_success",
+  "recordedAt": "2026-08-28T13:37:00.921Z",
+  "phase": "complete",
+  "jobId": "fakeJobAddress123456",
+  "market": "fakeMarketAddress",
+  "ipfsHash": "QmFakeIpfsHashForRegressionTest",
+  "resultIpfsHash": "QmFakeResult",
+  "creditsUsed": 5,
+  "costUsd": 0.001,
+  "reservationId": null,
+  "project": null,
+  "observedStates": [
+    "completed"
+  ],
+  "outputSource": "direct",
+  "latencyMs": 3017,
+  "submittedAt": "2026-08-28T13:36:57.904Z",
+  "completedAt": "2026-08-28T13:37:00.921Z"
+}

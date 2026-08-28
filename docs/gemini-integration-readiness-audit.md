@@ -12,11 +12,11 @@ This audit is read-only. It covers the adapter boundary, offline tests, configur
 | Direct Gemini adapter | `smoke-tests/gemini/direct-gemini-adapter.mjs` | Implemented (disabled by default) | Provider-call boundary with dependency-injection seam, request-shaping, response-normalization, error sanitization, one-request limit, timeout/response bounds. Disabled unless all safety gates are satisfied. |
 | Extraction validator | `smoke-tests/gemini/extraction-validator.mjs` | Implemented | Validates required fields, date/time formats, connection-duration plausibility, confidence values. Preserves uncertainty as warnings. Does not invent data. |
 | Offline test suite | `smoke-tests/gemini/adapter-offline-tests.mjs` | Implemented | 87 assertions across 21 test cases covering disabled-by-default fallback, fixture normalization, validation pass/fail, network/credential absence, label correctness, confirmation gate, provider-call boundary, fake-client injection, error sanitization, and one-request limit. |
-| Adapter offline notes | `docs/gemini-adapter-offline-test-notes.md` | Created | Documents adapter boundary implementation, test results, SDK dependency status, and human authorization prerequisites. States direct Gemini remains unexecuted. |
-| Authorization packet | `docs/gemini-live-smoke-test-authorization-packet.md` | Created | Defines 11-item prerequisite checklist, configuration review table, execution command requirements, evidence record template, stop conditions, and human sign-off fields. No live test has occurred. |
+| Adapter offline notes | `docs/gemini-adapter-offline-test-notes.md` | Created | Documents adapter boundary implementation, test results, SDK dependency status, and human authorization prerequisites. Historical Gemini evidence is preserved separately under `smoke-tests/extraction/`. |
+| Authorization packet | `docs/gemini-live-smoke-test-authorization-packet.md` | Created | Defines prerequisites and stop conditions for any new run. It does not supersede the historical evidence preserved under `smoke-tests/extraction/`. |
 | SDK/model review worksheet | `docs/gemini-sdk-model-review-worksheet.md` | Created | Provides blank review fields for SDK and model, 10 compatibility questions (all Pending), 9 unchecked approval checkboxes, and stop conditions. No values have been entered. |
 | Browser application boundary | `app/src/` | Unchanged | React/Vite/TypeScript UI with local synthetic fixtures. Zero provider imports, zero credential access, zero network primitives. Confirmation gate intact. |
-| Existing Gemini evidence artifacts | `smoke-tests/gemini/results/` | Pre-existing (Aug 20) | GEM-01 evidence from OpenRouter temporary path only. Labeled `OpenRouter temporary path — not direct Gemini validation`. No direct Gemini evidence exists. |
+| Existing Gemini evidence artifacts | `smoke-tests/extraction/` | Historical | Historical Gemini live evidence is preserved here. The active ready-made demo performs no extraction and correctly shows MiniMax offline. |
 
 ## Safety-Gate Audit
 
@@ -79,9 +79,10 @@ The following evidence labels are preserved:
 
 Status statements:
 
-- Direct Gemini remains unexecuted. No live Gemini API call has been made.
-- Nosana remains blocked before any network request.
-- Atlas remains unauthenticated and unexecuted.
+- Historical Gemini live evidence is preserved under `smoke-tests/extraction/`; this audit did not make a fresh provider call.
+- Historical Nosana evidence is reconciled; the current runtime fixture is a permitted dry-run preview with no submitted job ID.
+- Historical Atlas Sandbox Search→Verify evidence returned 20 offers and then `PRICE_CONFIRMATION_REQUIRED`, with no write. The most recent Aug 28 attempt was an environment-switch failure, not fresh evidence.
+- The ready-made browser demo performs no extraction and correctly shows MiniMax offline.
 - Offline fake-client tests are not provider evidence. They validate adapter logic with synthetic data only.
 - No status may be upgraded by this audit. All provider statuses remain as previously recorded.
 

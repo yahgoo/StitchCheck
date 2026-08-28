@@ -1,0 +1,36 @@
+{
+  "fixtureId": "nos-browser-local-fallback",
+  "description": "Offline browser-result shape for tests. Represents the local-fallback path when no live Nosana job has been served to the UI. Not the live runtime file at app/public/nosana-risk-result.json.",
+  "success": true,
+  "provider": "local-fallback",
+  "tierUsed": "local",
+  "usedFallback": true,
+  "evidenceSource": "local-fallback",
+  "evidenceLabel": "Nosana unavailable — local fallback used; not Nosana evidence.",
+  "latencyMs": 1,
+  "jobMetadata": null,
+  "riskResult": {
+    "correlationId": "synthetic-browser-local-fallback",
+    "workloadStatus": "completed",
+    "jobOrServiceReference": null,
+    "riskBand": "medium",
+    "riskScore": 0.293,
+    "heuristicDisclaimer": "Heuristic risk estimate only — derived from a static/historical synthetic dataset; not a live delay, weather, legal, or guaranteed-outcome prediction. Synthetic local placeholder — not Nosana evidence",
+    "failureCascadeExplanation": "Local fallback used when Nosana live execution is unavailable or blocked.",
+    "datasetVersion": "hist-delay-v1",
+    "fallbackUsed": true,
+    "errorCode": null,
+    "errorMessage": null,
+    "evidenceSource": "local-fallback",
+    "evidenceLabel": "Nosana unavailable — local fallback used; not Nosana evidence.",
+    "simulationCount": 800,
+    "assumptions": [
+      "Historical average delay at BBB: 25 min",
+      "On-time rate: 0.72",
+      "Route miss rate: 0.28",
+      "Monte Carlo simulations: 800"
+    ],
+    "latencyMs": 1,
+    "fallbackReason": "NOSANA_SKIPPED"
+  }
+}

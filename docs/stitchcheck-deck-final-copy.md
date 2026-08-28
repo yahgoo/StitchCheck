@@ -94,17 +94,17 @@ The confirmation gate is the central safety mechanism. It ensures that the trave
 | Service | Planned Role | Current Status |
 |---|---|---|
 | **Gemini** | Structured itinerary extraction from screenshots into editable fields. | Direct Gemini 3.7 live extraction succeeded via the Interactions API; schema-valid, no fallback. Browser walkthrough uses a local fixture. |
-| **Nosana** | Planned connection-risk workload returning a heuristic band/score with visible status. | Local fixtures and workload skeleton only. Live execution remains unverified. |
+| **Nosana** | Planned connection-risk workload returning a heuristic band/score with visible status. | Live job completed and reconciled offline (`riskScore: 0.2895`, `costUsd: 0.044`). Browser demo uses local fallback fixture. |
 | **Atlas Sandbox** | Planned read-only alternative search for safer flight options. | Authentication succeeded. Two production searches succeeded (PVG→NRT/HND: 5 offers; SIN→BKK: 8 offers via ATL-LIVE-01). All reference-price only. Ticketing activation pending. |
 
 **Evidence labels (displayed below the table):**
 
-- `OpenRouter temporary path — not direct Gemini validation`
-- `Synthetic local placeholder — not Nosana evidence`
-- `Synthetic local placeholder — not Atlas Sandbox evidence`
+- `Demo itinerary — local demo fixture`
+- `Local fallback — not Nosana evidence`
+- `Demo alternatives — local demo fixture`
 
 **Speaker note:**
-Each service has a clearly defined role. Gemini provides the structured extraction that feeds the review screen — GEM-01 succeeded through the OpenRouter temporary path, but direct Gemini remains unexecuted. Nosana is planned to deliver a heuristic risk assessment; the local harness exists but live execution remains unverified. Atlas authentication succeeded. Two production searches returned reference-price offers (PVG→NRT/HND: 5 offers; SIN→BKK: 8 offers via ATL-LIVE-01); however, ticketing activation is still pending and no booking was created. All risk data in the demo carries the label: Synthetic local placeholder — not Nosana evidence. All alternatives data carries the label: Synthetic local placeholder — not Atlas Sandbox evidence.
+Each service has a clearly defined role. Gemini provides the structured extraction — Direct Gemini 3.7 live extraction succeeded via the Interactions API; the browser walkthrough uses a local fixture. Nosana live job was completed and reconciled offline; the browser demo uses a local fallback fixture. Atlas authentication succeeded; two production searches and one Sandbox Search + Verify returned reference-price offers; ticketing activation is still pending and no booking was created. All risk data in the demo carries the label: Local fallback — not Nosana evidence. All alternatives data carries the label: Demo alternatives — local demo fixture.
 
 ---
 
@@ -143,9 +143,9 @@ Safety is not an afterthought — it is baked into every layer of the demo. No p
 
 **Visible labels (at bottom of slide):**
 
-- `OpenRouter temporary path — not direct Gemini validation`
-- `Synthetic local placeholder — not Nosana evidence`
-- `Synthetic local placeholder — not Atlas Sandbox evidence`
+- `Demo itinerary — local demo fixture`
+- `Local fallback — not Nosana evidence`
+- `Demo alternatives — local demo fixture`
 
 **Visual direction:**
 Numbered step list with small screenshot thumbnails from the local demo at each stage. Alternatively, one annotated wide screenshot of the confirmed state.
@@ -164,9 +164,9 @@ The walkthrough is designed to be repeatable and self-contained. At every step, 
 | Component | Status | Detail |
 |---|---|---|
 | **Local demo** | ✅ Ready | Type-check, production build, and browser walkthrough all pass. |
-| **Gemini (direct)** | ⬜ Not executed | Pass/fail intentionally blank. |
+| **Gemini (direct)** | ✅ Live extraction validated | `ai.interactions.create` succeeded; schema-valid. Re-verification transient error; not retried. |
 | **Gemini (OpenRouter path)** | 🟡 Temporary | GEM-01 succeeded via OpenRouter temporary path. Labelled accordingly. |
-| **Nosana** | ⬜ Not verified | Local harness exists. Live execution remains unverified. |
+| **Nosana** | ✅ Live job completed | Live job completed; result reconciled offline. Browser uses local fallback. |
 | **Atlas** | 🟡 Partial | Authentication succeeded. Two production searches succeeded (PVG→NRT/HND: 5 offers; SIN→BKK: 8 offers). All reference-price only. Ticketing activation pending. No booking, payment, ticket, or order was created. |
 | **Atlas duplicate-booking guard** | 🔵 Offline only | 48 offline tests passed. Not live Atlas evidence. |
 
@@ -179,7 +179,7 @@ The walkthrough is designed to be repeatable and self-contained. At every step, 
 - Finalise submission assets (README, demo narrative, slide recording).
 
 **Speaker note:**
-We have a working local demo that proves the review-first flow, the confirmation gate, and the Keep-or-Switch decision — the demo UI itself uses synthetic data and makes no live service calls. Atlas authentication succeeded; two production searches returned reference-price offers (PVG→NRT/HND: 5; SIN→BKK: 8), but ticketing activation is still pending and no booking was created. The Nosana live execution remains unverified. Direct Gemini 3.7 live extraction was verified separately via the Interactions API. The Atlas offline duplicate-booking guard passed 48 tests but is offline-only — not live Atlas evidence. No booking, payment, reservation, ticket, order, verification, or cancellation occurred. Each live-service gate must be passed independently before any live-integration claim can be made.
+We have a working local demo that proves the review-first flow, the confirmation gate, and the Keep-or-Switch decision — the demo UI itself uses synthetic data and makes no live service calls. Direct Gemini 3.7 live extraction was validated via the Interactions API. Nosana live job was completed and reconciled offline. Atlas authentication succeeded; two production searches and one Sandbox Search + Verify returned reference-price offers, but ticketing activation is still pending and no booking was created. The Atlas offline duplicate-booking guard passed 48 tests but is offline-only — not live Atlas evidence. No booking, payment, reservation, ticket, order, verification, or cancellation occurred. Each live-service gate must be passed independently before any live-integration claim can be made.
 
 ---
 

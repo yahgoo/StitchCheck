@@ -1,0 +1,90 @@
+# StitchCheck — Confirm Atlas Sandbox Outage Status + Produce a Support-Ready Report
+# Codex Agent — run real diagnostic checks now, then write a short, factual summary the user
+# can paste directly into a WhatsApp message to Atlas support. Do not speculate — only report
+# what you actually observe from real commands run in this session.
+
+## Goal
+
+Determine, right now, with evidence, whether Atlas Sandbox is genuinely down/unavailable or
+whether this is a local environment issue (credentials, keychain, network), and produce a
+short, precise, support-ready incident report suitable for sending to Atlas support.
+
+## Step 1 — Run the standard health check
+
+1. Run `atlas-flight doctor --json` (or the exact equivalent health-check command used in
+   prior sessions this project). Capture the full raw JSON output verbatim.
+2. Note the exact timestamp (local time and UTC) when this was run.
+
+## Step 2 — Attempt a real, minimal, read-only Search call
+
+1. Run a single real `atlas-flight search` call (read-only, no booking) for a simple route
+   already used in this project's testing (e.g. KUL → SIN, a near-future date). Use the
+   existing project convention for invoking this (via the CLI directly or via the local
+   `/api/atlas/search` proxy endpoint at `http://localhost:5173/api/atlas/search` if the dev
+   server is running).
+2. Capture the exact raw response or error — status code, error code (e.g.
+   `SERVICE_TEMPORARILY_UNAVAILABLE`, `SECURE_STORE_UNAVAILABLE`), and message, verbatim.
+3. Repeat this call 2–3 times over the next couple of minutes (not in a tight loop — a few
+   seconds apart) to distinguish between a hard outage (fails every time, same error) versus
+   intermittent flakiness (sometimes succeeds, sometimes fails) versus a purely local issue
+   (e.g. only fails when something on this machine is contending for the same resource).
+
+## Step 3 — Rule out local-environment causes before concluding it's an Atlas-side outage
+
+1. Confirm `.env.local` has `ATLAS_CLIENT_ID`, `ATLAS_CLIENT_SECRET`, `ATLAS_BASE_URL` present
+   and non-empty (do not print the actual values).
+2. Confirm no other process on this machine is concurrently hitting the Atlas CLI at the same
+   moment (check for any other running dev server instances, background scripts, or duplicate
+   requests that could cause local contention rather than a genuine upstream outage).
+3. If `atlas-flight doctor --json` reports healthy (`DOCTOR_OK` or equivalent) but the actual
+   search call still fails, note this specific combination explicitly — it's meaningful
+   evidence for support (health check passes but real requests fail).
+4. If possible, check whether the error response includes any request ID, correlation ID, or
+   timestamp from Atlas's side that would help their support team look up the specific failed
+   request server-side.
+
+## Step 4 — Write the support-ready summary
+
+Produce a short, factual, WhatsApp-appropriate message (not a formal report — a few short
+paragraphs/bullets someone could paste directly into a chat) containing:
+
+1. What was attempted (exact command/endpoint, exact route, exact time, local + UTC).
+2. What error was returned, verbatim (error code + message), and whether it was consistent
+   across repeated attempts or intermittent.
+3. The `atlas-flight doctor --json` result, and whether it agrees or disagrees with the
+   actual search failure (this is the most useful diagnostic signal for their support team).
+4. Any request/correlation ID captured, if available.
+5. A one-line, non-accusatory framing appropriate for a support request — e.g. "Getting
+   SERVICE_TEMPORARILY_UNAVAILABLE on Search calls since [time]; doctor check reports healthy.
+   Can you confirm on your side whether Sandbox is experiencing issues, or if there's
+   something we should check on our end?"
+
+Keep it under ~150 words so it's easy to paste into WhatsApp as-is.
+
+## Constraints
+
+- Only report what you actually ran and observed in this session — do not reuse or restate
+  results from any earlier session's reports as if you just confirmed them again.
+- Do not modify any application code. This is a diagnostic-and-report task only.
+- Do not attempt any write/booking operation, even to test — read-only Search/health-check
+  calls only.
+- Do not include any credential values, API keys, or secrets in the summary.
+- Do not commit/push.
+
+## Final output
+
+Return:
+1. The raw `atlas-flight doctor --json` output.
+2. The raw search-call results from each of the 2–3 attempts, with timestamps.
+3. Your assessment: genuine Atlas-side outage, intermittent flakiness, or local-environment
+   issue — with the specific evidence that supports your conclusion.
+4. The final WhatsApp-ready support message (as a clearly marked, copy-pasteable block).
+
+End with:
+
+```text
+ATLAS_STATUS = <DOWN_CONFIRMED | INTERMITTENT | LOCAL_ENV_ISSUE | HEALTHY_NOW | INCONCLUSIVE>
+DOCTOR_CHECK_RESULT = <exact result>
+SEARCH_CALL_RESULT = <exact result(s) across attempts>
+SUPPORT_MESSAGE_READY = <YES, see block above | BLOCKED: reason>
+```

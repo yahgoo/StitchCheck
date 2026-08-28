@@ -115,10 +115,21 @@ assert(
 
 section("Test 3: Dry-run remains the default mode");
 
-// Set a fake NOSANA_API_KEY so the code doesn't short-circuit to the
-// skipNosana path. The dry-run check happens AFTER the skip check.
+// Configure the environment so the safety gate permits execution and the
+// dry-run path is actually exercised:
+//   - DEMO_MODE=daytona (non-local, so the DEMO_MODE gate does not block)
+//   - NOSANA_ENABLED=true + NOSANA_LIVE_ENABLED=true (both flags pass)
+//   - Fake NOSANA_API_KEY (so the skipNosana/credential check does not block)
+// With the gate open, dryRun defaults to true (not explicitly set), so
+// buildDryRunResult() is reached — verifying dry-run is still the default.
 const savedKey = process.env.NOSANA_API_KEY;
+const savedDemoMode = process.env.DEMO_MODE;
+const savedNosanaEnabled = process.env.NOSANA_ENABLED;
+const savedNosanaLiveEnabled = process.env.NOSANA_LIVE_ENABLED;
 process.env.NOSANA_API_KEY = "fake-key-for-dry-run-test";
+process.env.DEMO_MODE = "daytona";
+process.env.NOSANA_ENABLED = "true";
+process.env.NOSANA_LIVE_ENABLED = "true";
 try {
   const dryRunResult2 = await runNosanaRiskWorkload(payload, {
     skipNosana: false,
@@ -134,6 +145,21 @@ try {
     delete process.env.NOSANA_API_KEY;
   } else {
     process.env.NOSANA_API_KEY = savedKey;
+  }
+  if (savedDemoMode === undefined) {
+    delete process.env.DEMO_MODE;
+  } else {
+    process.env.DEMO_MODE = savedDemoMode;
+  }
+  if (savedNosanaEnabled === undefined) {
+    delete process.env.NOSANA_ENABLED;
+  } else {
+    process.env.NOSANA_ENABLED = savedNosanaEnabled;
+  }
+  if (savedNosanaLiveEnabled === undefined) {
+    delete process.env.NOSANA_LIVE_ENABLED;
+  } else {
+    process.env.NOSANA_LIVE_ENABLED = savedNosanaLiveEnabled;
   }
 }
 

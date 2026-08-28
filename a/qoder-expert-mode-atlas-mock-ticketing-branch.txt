@@ -1,0 +1,119 @@
+# StitchCheck — Build Atlas Mock Ticketing on feature/atlas-sandbox-mock-ticketing (Qoder
+# Expert Mode). Target: merge into main on Aug 30 for the Alibaba x Atlas hackathon
+# submission. This branch is NOT for tomorrow's Daytona HackSprint demo — that runs on the
+# current safe main branch state. Execute now, in order.
+
+## Context — current main branch state (do not disrupt this)
+
+Tonight's session already fixed and verified on main:
+- `DATA_MODE=offline` by default (P0 fix — no accidental live Atlas calls on default launch).
+- One real, live Daytona sandbox cycle wired into the recovery animation
+  (`daytona-risk-worker-v1`, risk band medium, score 54).
+- One real, live Nosana job completed (`8CfUkxFgZnPpC5kxiphD1kozwiJeLYBC4KB33bKPAEp1`,
+  `evidenceSource: "nosana-evidence"`, `fallbackUsed: false`).
+- Historical Atlas Sandbox Search→Verify evidence (20 offers, `PRICE_CONFIRMATION_REQUIRED`,
+  no write) correctly labeled as historical, not fresh.
+- 8 docs reconciled, submission manifest regenerated, deck exported to PPTX with no
+  "synthetic" wording.
+- `SAFE_FOR_TOMORROW_DEMO = YES`.
+
+**Do not modify, weaken, or regress any of the above in this branch.** This branch adds
+ticketing scaffolding in parallel — it must not touch the live Daytona/Nosana wiring, the
+DATA_MODE default, or any of the reconciled docs/manifest/deck.
+
+## Still-blocked item (unchanged since last check)
+
+**ATRIP ticketing activation** remains a human-action item in Atlas's own ATRIP workspace,
+external to this codebase. Exact CLI order-create response field names and the numeric
+status-code mapping (`0/1/2/-3`) remain unconfirmed pending a first supervised rehearsal that
+can only happen after activation. If you have information that activation has since cleared,
+STOP and report that first — it changes what's safe to build in this pass.
+
+## Branch setup
+
+1. Confirm the working tree is clean on main with all tonight's fixes committed. Do not
+   scaffold this branch on top of uncommitted work.
+2. Create and switch to `feature/atlas-sandbox-mock-ticketing`, based off current main.
+3. Do not push this branch anywhere. Local only, for now.
+
+## Build exactly items 1–3 fully, items 4–7 as scaffolds only (unchanged scope from the
+## original spec — these are the items that do NOT depend on the ATRIP-activation-blocked
+## items, so they can be built safely without any live order/pay call ever executing)
+
+### Item 1 — `.env.example` additions
+Add `ATLAS_ENVIRONMENT=sandbox`, `ATLAS_SANDBOX_WRITES_ENABLED=false`,
+`ATLAS_SANDBOX_BASE_URL=https://sandbox.atriptech.com` as documented placeholder names only.
+Add the corresponding `vite.config.ts` define for a compile-time `__ATLAS_SANDBOX_WRITES__`
+boolean UI switch (secondary defense layer, separate from the `DATA_MODE` gate already on
+main), and declare it in `vite-env.d.ts`.
+
+### Item 2 — `core/simulation/sandbox-order-states.ts`
+Pure state machine only, no I/O: states `hidden → opt-in → order-review →
+order-submitting → order-created-unpaid → payment-review → payment-submitting →
+pay-accepted → status-polling → ticketed-simulated/cancelled`, plus error states
+`gate-rejected(403)`, `cli-error(502,code)`, `unknown-create`, `unknown-pay`,
+`safely-stopped`. Implement `canTransition(from, event)` as a pure function. No transition
+from an unknown-outcome state back to submitting without a fresh confirmation token. Write
+full unit tests for every transition, including illegal-transition rejections.
+
+### Item 3 — `server/atlas-proxy.mjs` additive-only skeleton
+Export the 5 existing private helpers (`execCli`, `sanitizeResponse`, `sanitizeError`,
+`sendJson`, `readBody`) for reuse, and insert a `SANDBOX_ROUTES` exact-set dispatch stub
+between the existing `BLOCKED_PATHS` check and the `ALLOWED_ROUTES` check. The stub only
+recognizes the five `/api/atlas/sandbox/*` paths and currently returns 501 not-yet-implemented
+for all of them. Maximum 20-line additive diff to this file — do not restructure it, and do
+not touch the `DATA_MODE` gate logic that's already correct on main.
+
+### Items 4–7 — scaffold only, do NOT implement runtime logic
+Items 4 (`server/atlas-sandbox-writes.mjs`), 5 (client/types/adapter), 6
+(`SandboxOrderPanel.tsx` + App.tsx mount), 7 (gate-test file) depend on the still-blocked
+CLI field names and numeric status codes. Create each as:
+- Empty scaffolds with a header comment stating exactly what's blocked and why.
+- The full TypeScript interface/type definitions from the original spec (these don't depend
+  on the blocked items — only runtime field-extraction logic does).
+- A single `TODO(ATLAS_ACTIVATION_BLOCKED)` marker at each point where real field extraction
+  would go, with the documented defensive-extraction fallback chain written as a comment,
+  ready to uncomment once activation clears.
+- Do NOT guess at exact field names or numeric code semantics.
+- Do NOT enable `ATLAS_SANDBOX_WRITES_ENABLED` anywhere.
+- Do NOT wire `SandboxOrderPanel` into `App.tsx` yet — leave it unmounted.
+
+## Constraints
+
+- `ATLAS_SANDBOX_WRITES_ENABLED` must resolve to `false` everywhere by default — verify with
+  a grep after scaffolding.
+- No live network call to `sandbox.atriptech.com` may occur from anything built in this pass.
+- Do not touch `.env.local`, `core/safety-gates.ts`, `core/simulation/ticketing.ts`,
+  `scripts/atlas-orchestrator.mjs`, `RecoveryPlanAnimation.tsx`, `AlternativesPanel.tsx`,
+  `SafetyNotice.tsx`, `DecisionPanel.tsx`, any existing smoke-test file, any
+  video/presentation asset, or ANY of tonight's Daytona/Nosana live-wiring files.
+- Run `npm run typecheck` and the full existing regression suite at the end — everything must
+  stay green, since item 3 touches the security-critical proxy file. Confirm the 188 Daytona
+  offline tests and Nosana offline tests (post tonight's fixes) still pass unchanged.
+- No commit, no push. Leave changes staged/unstaged on the branch for manual review before
+  you decide to commit.
+
+## Final report
+
+1. Branch created and confirmed local-only.
+2. Confirmation main's current state (DATA_MODE offline, Daytona/Nosana live wiring, docs/
+   manifest/deck) is completely unmodified on this branch relative to main, except for the
+   new ticketing scaffold files.
+3. Files created/modified for items 1–3, with exact diff size for `atlas-proxy.mjs`.
+4. Sandbox-order-states.ts test results (all transitions, illegal transitions rejected).
+5. Scaffold files created for items 4–7, each with BLOCKED marker and spec citation.
+6. Full regression + typecheck results on the new branch (must match main's green state).
+7. Explicit confirmation the kill switch defaults to false and no live call occurred.
+
+End with:
+```text
+BRANCH_CREATED = <feature/atlas-sandbox-mock-ticketing, local-only: YES/NO>
+MAIN_STATE_PRESERVED = <YES, Daytona/Nosana/DATA_MODE untouched | NO: what changed>
+ITEMS_1_3_STATUS = <IMPLEMENTED | BLOCKED: reason>
+STATE_MACHINE_TESTS = <ALL_PASS | FAILURES: list>
+ITEMS_4_7_SCAFFOLD_STATUS = <SCAFFOLDED_WITH_TODO_MARKERS | reason if not>
+KILL_SWITCH_DEFAULT_FALSE_CONFIRMED = <YES | NO>
+NO_LIVE_CALL_CONFIRMED = <YES | NO>
+REGRESSION_STATUS = <ALL_PASS, matches main | FAILURES: list>
+READY_TO_MERGE_AUG_30 = <NOT YET — pending ATRIP activation | blocked reason>
+```

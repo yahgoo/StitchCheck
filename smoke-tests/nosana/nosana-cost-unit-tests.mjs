@@ -362,32 +362,86 @@ assert(
   "Nosana success results still use evidenceSource 'nosana-evidence'",
 );
 
-// Dry-run should use local-fallback evidence source
+// Dry-run should use the explicit dry-run evidence source
 assert(
-  /buildDryRunResult[\s\S]*?local-fallback/.test(RUNNER_SOURCE),
-  "Dry-run result uses 'local-fallback' evidence source",
+  /buildDryRunResult[\s\S]*?evidenceSource:\s*"dry-run"/.test(RUNNER_SOURCE),
+  "Dry-run result uses 'dry-run' evidence source",
 );
 
-// ── Test 14: Dry-run execution test ─────────────────────────────────────────
+function saveNosanaEnv() {
+  return {
+    NOSANA_API_KEY: process.env.NOSANA_API_KEY,
+    DEMO_MODE: process.env.DEMO_MODE,
+    NOSANA_ENABLED: process.env.NOSANA_ENABLED,
+    NOSANA_LIVE_ENABLED: process.env.NOSANA_LIVE_ENABLED,
+  };
+}
 
-section("Test 14: Dry-run execution test (no network call)");
+function restoreNosanaEnv(saved) {
+  for (const key of ["NOSANA_API_KEY", "DEMO_MODE", "NOSANA_ENABLED", "NOSANA_LIVE_ENABLED"]) {
+    if (saved[key] === undefined) delete process.env[key];
+    else process.env[key] = saved[key];
+  }
+}
+
+function clearNosanaEnv() {
+  delete process.env.DEMO_MODE;
+  delete process.env.NOSANA_ENABLED;
+  delete process.env.NOSANA_LIVE_ENABLED;
+}
+
+// ── Test 14: Dry-run / safety-gate execution tests ──────────────────────────
+
+section("Test 14: Dry-run and safety-gate behavior (isolated env, no network call)");
+
+const savedNosanaEnv = saveNosanaEnv();
 
 try {
+  clearNosanaEnv();
+  const gateBlockedResult = await runNosanaRiskWorkload(payload, {
+    skipNosana: false,
+    dryRun: true,
+  });
+  assert(gateBlockedResult.success === true, "Safety-gate blocked dry-run call succeeds structurally");
+  assert(
+    gateBlockedResult.evidenceSource === "safety-gate-blocked",
+    "Without live flags, safety gate blocks before dry-run path",
+  );
+  assert(gateBlockedResult.usedFallback === true, "Safety-gate blocked result uses fallback");
+  assert(
+    gateBlockedResult.jobMetadata === null || gateBlockedResult.jobMetadata?.jobId === undefined,
+    "Safety-gate blocked result has no live jobMetadata",
+  );
+
+  process.env.DEMO_MODE = "live";
+  process.env.NOSANA_ENABLED = "true";
+  process.env.NOSANA_LIVE_ENABLED = "true";
+  // A dummy key reaches the dry-run branch only. dryRun=true returns before
+  // any child process or network-capable code can run.
+  process.env.NOSANA_API_KEY = "fake-key-for-dry-run-test";
+
   const dryRunResult = await runNosanaRiskWorkload(payload, {
     skipNosana: false,
     dryRun: true,
   });
-  assert(dryRunResult.success === true, "Dry-run succeeds");
-  assert(dryRunResult.evidenceSource === "local-fallback", "Dry-run evidenceSource is local-fallback");
-  assert(dryRunResult.usedFallback === true, "Dry-run usedFallback is true");
-  assert(dryRunResult.jobMetadata === null || dryRunResult.jobMetadata?.jobId === undefined,
-    "Dry-run has no live jobMetadata");
+  assert(dryRunResult.success === true, "Permitted dry-run succeeds");
   assert(
-    typeof dryRunResult.dryRun === "undefined" || dryRunResult.dryRun === true || dryRunResult.isDryRun === true || true,
-    "Dry-run result is properly labelled",
+    dryRunResult.evidenceSource === "dry-run",
+    "Permitted dry-run uses explicit dry-run evidenceSource",
+  );
+  assert(dryRunResult.usedFallback === true, "Permitted dry-run usedFallback is true");
+  assert(
+    dryRunResult.jobMetadata != null && dryRunResult.jobMetadata.jobId === null,
+    "Permitted dry-run includes preview jobMetadata with null jobId (no submission)",
+  );
+  assert(
+    dryRunResult.jobMetadata?.market != null,
+    "Permitted dry-run preview jobMetadata includes market",
   );
 } catch (err) {
   assert(false, `Dry-run execution threw: ${err.message}`);
+} finally {
+  restoreNosanaEnv(savedNosanaEnv);
 }
 
 // ── Test 15: Job definition validation still works ──────────────────────────

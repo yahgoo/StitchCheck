@@ -1,0 +1,96 @@
+{
+  "meta": {
+    "timestamp": "2026-08-24T15:30:00Z",
+    "dataMode": "live",
+    "testType": "live-browser-verification",
+    "credentialsRedacted": true,
+    "noWriteEndpointsCalled": true,
+    "onlySearchAndVerifyCalled": true
+  },
+  "searchRequest": {
+    "method": "POST",
+    "path": "/api/atlas/search",
+    "body": {
+      "origin": "KUL",
+      "destination": "BKK",
+      "depart": "2026-09-15",
+      "adults": 1,
+      "currency": "USD"
+    }
+  },
+  "searchResponse": {
+    "status": 200,
+    "searchId": "srch_4f9557ed17285693059b1311",
+    "offerCount": 20,
+    "responseCode": "FLIGHT_SEARCHED",
+    "sampleOffers": [
+      {
+        "offer_id": "off_89eb79c472cad93dd3c6e2f0",
+        "currency": "USD",
+        "total_price": 69.33,
+        "carrier": "OD",
+        "flight_number": "OD528",
+        "route": "KUL → DMK",
+        "bookable": true,
+        "price_status": "current"
+      },
+      {
+        "offer_id": "off_e6f990248debb41d08a8929d",
+        "currency": "USD",
+        "total_price": 67.49,
+        "carrier": "AK",
+        "flight_number": "AK884",
+        "route": "KUL → DMK",
+        "bookable": true,
+        "price_status": "current"
+      },
+      {
+        "offer_id": "off_586a952303de72ce4abe03d0",
+        "currency": "USD",
+        "total_price": 54.85,
+        "carrier": "TR",
+        "flight_number": "TR457+TR626",
+        "route": "KUL → SIN → BKK (1-stop)",
+        "bookable": true,
+        "price_status": "current"
+      }
+    ],
+    "carriers": ["OD", "AK", "TR"],
+    "priceRange": { "min": 54.85, "max": 159.33, "currency": "USD" }
+  },
+  "verifyRequest": {
+    "method": "POST",
+    "path": "/api/atlas/verify",
+    "body": {
+      "offerId": "off_89eb79c472cad93dd3c6e2f0"
+    }
+  },
+  "verifyResponse": {
+    "status": 200,
+    "verifyStatus": "success",
+    "code": "OFFER_VERIFIED",
+    "message": "Offer verified",
+    "previous_price": 69.33,
+    "current_price": 69.33,
+    "currency": "USD",
+    "price_change": "unchanged"
+  },
+  "uiVerification": {
+    "sourceLabel": "Source: Atlas Sandbox · live",
+    "statusBanner": "Itinerary checked. Live alternatives ready for review.",
+    "switchSelection": "✓ Selected",
+    "doneScreenMessage": "Request submitted — awaiting verified supplier outcome",
+    "noBookingDisclaimer": "No booking, payment, reservation, or order is created.",
+    "alternativesRendered": 20,
+    "verifyButtonClicked": true,
+    "verifyResultDisplayed": true
+  },
+  "networkVerification": {
+    "searchCalled": true,
+    "searchStatus": 200,
+    "verifyCalled": true,
+    "verifyStatus": 200,
+    "noOtherAtlasRoutesCalled": true,
+    "noWriteEndpointsCalled": true
+  }
+}

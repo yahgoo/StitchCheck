@@ -1,0 +1,95 @@
+{
+  "testId": "live-app-run-2026-08-24T06-30-00Z",
+  "timestamp": "2026-08-24T06:30:46.347Z",
+  "dataMode": "live",
+  "provider": "atlas-sandbox",
+  "scope": "read-only Search + Verify",
+  "searchRequest": {
+    "origin": "KUL",
+    "destination": "SIN",
+    "depart": "2026-09-15",
+    "adults": 1,
+    "currency": "USD"
+  },
+  "searchResponse": {
+    "searchId": "srch_382a9028e28574ab66a3cc27",
+    "offerCount": 20,
+    "responseCode": "FLIGHT_SEARCHED",
+    "carriers": ["AK", "OD", "TR"],
+    "priceRange": {
+      "min": 29.28,
+      "max": 56.56,
+      "currency": "USD"
+    },
+    "sampleOfferIds": [
+      "off_4011eeac8e63c63345684e82",
+      "off_8b7e851ad899f1357ee230f7",
+      "off_f3483cee2557243057dbb7e7",
+      "off_7dd8f38a74e5e57de368ba0c"
+    ]
+  },
+  "verifyRequest": {
+    "offerId": "off_4011eeac8e63c63345684e82"
+  },
+  "verifyResponse": {
+    "status": "success",
+    "code": "OFFER_VERIFIED",
+    "message": "Offer verified",
+    "data": {
+      "previous_price": 45.9,
+      "current_price": 45.9,
+      "currency": "USD",
+      "price_change": "unchanged"
+    }
+  },
+  "provenance": {
+    "label": "Atlas Sandbox — live Search + Verify, read-only",
+    "evidenceSource": "atlas-sandbox",
+    "executed": true,
+    "fallbackUsed": false
+  },
+  "noWriteConfirmation": {
+    "booking": false,
+    "order": false,
+    "payment": false,
+    "ticketing": false,
+    "cancellation": false,
+    "refund": false,
+    "blockedRoutes": [
+      "/api/atlas/order",
+      "/api/atlas/booking",
+      "/api/atlas/reservation",
+      "/api/atlas/payment",
+      "/api/atlas/ticket",
+      "/api/atlas/cancel",
+      "/api/atlas/refund"
+    ],
+    "allBlockedRoutesReturned404": true
+  },
+  "browserVerification": {
+    "headerBadge": "Live — Atlas Sandbox Search + Verify",
+    "statusBanner": "Atlas Sandbox — live Search + Verify, read-only",
+    "footer": "Atlas Sandbox — live Search + Verify, read-only",
+    "alternativesTitle": "Safer Alternatives — Atlas Sandbox Results",
+    "sourceEnvironment": "atlas-sandbox",
+    "realCarrierCodes": true,
+    "realOfferIds": true,
+    "realPrices": true,
+    "noFixtureDataAsLive": true
+  },
+  "secretScan": {
+    "ATLAS_CLIENT_SECRET": "not found in bundle",
+    "ATLAS_CLIENT_ID": "not found in bundle",
+    "sandbox.atriptech.com": "not found in bundle",
+    "Bearer": "not found in bundle",
+    "ATLAS_BASE_URL": "not found in bundle"
+  },
+  "screenshots": [
+    "/tmp/step1-safety-notice.png",
+    "/tmp/step4-itinerary-review.png",
+    "/tmp/step6-atlas-live-results.png",
+    "/tmp/step8-verify-result.png",
+    "/tmp/step10-footer.png",
+    "/tmp/step-final-fullpage.png"
+  ]
+}

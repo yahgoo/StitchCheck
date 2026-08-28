@@ -97,7 +97,7 @@ No environment variables are required. The demo works without any `.env.local` f
 | Fixture | Path |
 |---|---|
 | Demo UI data (default extraction, comparison) | `app-fixture-contracts/stitchcheck-ui-demo-data.json` |
-| Screenshot images (GEM-01 through GEM-05) | `smoke-tests/gemini/fixtures/gem-*.png` |
+| Screenshot images (GEM-01 through GEM-05) | `smoke-tests/extraction/fixtures/gem-*.png` |
 | Nosana risk result (dry-run, served as static file) | `app/public/nosana-risk-result.json` |
 | Nosana success fixture | `smoke-tests/nosana/fixtures/res-nos-success.json` |
 | Atlas alternatives success fixture | `smoke-tests/atlas/fixtures/result-atl-success.json` |
@@ -308,7 +308,7 @@ No environment variables are required. The demo works without any `.env.local` f
 
 **What to say:** "Once the traveller confirms the itinerary, the downstream panels activate. The risk panel shows a medium risk band with a heuristic score. The alternatives panel shows safer single-ticket options from the Atlas Sandbox placeholder. No external service call was made."
 
-**What not to claim:** Do not say the risk was computed by Nosana or the alternatives came from a live Atlas search. Use: "The risk workload is validated offline, and this demo uses the clearly labelled local fallback because live Nosana execution was not verified." And: "Atlas Sandbox Search and Verify provides the recorded alternatives. No booking or payment is executed."
+**What not to claim:** Do not say the risk was computed by Nosana or the alternatives came from a live Atlas search. Say instead: "The browser uses a permitted dry-run preview with no submitted Nosana job; historical Nosana evidence is reconciled separately." And: "Historical Atlas Sandbox Search→Verify evidence returned 20 offers and then `PRICE_CONFIRMATION_REQUIRED`, with no write; these browser alternatives are local fixtures."
 
 ---
 
@@ -330,7 +330,7 @@ No environment variables are required. The demo works without any `.env.local` f
 
 **Expected UI state:** (As described in Step 7.)
 
-**What to say:** "The alternatives panel shows two safer options — a one-stop and a nonstop single-ticket itinerary. All results are synthetic placeholders from the sandbox environment. No booking, payment, or order is created."
+**What to say:** "The alternatives area shows one recommended option first, with additional choices under See more verified options in live mode (or See more options offline). Source tags on each section show whether data is local fixture, Atlas Sandbox live, or offline fallback. No booking, payment, or order is created."
 
 **What not to claim:** Do not say these are live Atlas search results. Do not say Atlas is fully live.
 
@@ -421,7 +421,7 @@ The following is a natural spoken script matched to the actual UI. Total target 
 
 ### 1:15–1:50 — Risk explanation
 
-> The connection-risk panel now activates. It shows a medium risk band with a heuristic score of 0.293 from 800 Monte Carlo simulations. The disclaimer is clear: this is a heuristic indication only, not a prediction or guarantee. The label reads: Local fallback — not Nosana evidence. Nosana workload validated offline; live execution was not verified. If the first leg is delayed, the second ticket is void — no automatic rebooking or refund.
+> The connection-risk panel now activates. It shows a medium risk band with a heuristic score of 0.293 from 800 Monte Carlo simulations. The disclaimer is clear: this is a heuristic indication only, not a prediction or guarantee. The label reads: Local fallback — not Nosana evidence. The current browser fixture is a permitted dry-run preview with no submitted job; reconciled historical Nosana evidence is separate. If the first leg is delayed, the second ticket is void — no automatic rebooking or refund.
 
 ### 1:50–2:20 — Atlas Sandbox alternatives
 
@@ -443,7 +443,7 @@ The following is a natural spoken script matched to the actual UI. Total target 
 |---|---|---|
 | Direct Gemini extraction (browser UI) | `Fictional itinerary — local demo fixture` | Local fixture data; the browser walkthrough makes no provider call. Direct Gemini 3.7 live extraction was verified separately. |
 | Historical OpenRouter (GEM-01) | `Historical/temporary OpenRouter smoke-test result; not evidence of direct Google Gemini execution.` | GEM-01 was executed via OpenRouter as a historical smoke-test. Never call this "active" or "direct Gemini validation." |
-| Nosana risk (browser UI, dry-run result) | `Local fallback — not Nosana evidence` | The dry-run result file is served with `fallbackUsed: true`. Nosana workload validated offline; live execution was not verified. |
+| Nosana risk (browser UI, dry-run result) | `Local fallback — not Nosana evidence` | The dry-run result has `fallbackUsed: true` and `jobId: null`; it is not a submitted workload. Historical Nosana evidence is reconciled separately. |
 | Nosana risk (if dry-run file absent) | `Local fallback — not Nosana evidence` | Generic fixture label when no Nosana result file is found. |
 | Atlas alternatives (browser UI) | `Fictional alternatives — local demo fixture` | Local fixture data; Atlas Sandbox Search and Verify was verified separately. No booking or payment was executed. |
 | Atlas ticketing / booking | N/A — no UI label or action exists | Ticketing is activation-gated. No UI handler enables booking, payment, or ticketing. |

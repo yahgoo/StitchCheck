@@ -47,16 +47,16 @@
 
 **Spoken narrative:**
 
-> Before any analysis begins, the itinerary must be confirmed by the user. Extracted fields are displayed for review, and every field is editable. The traveler can correct any value — a flight number, a date, an airline code. Before confirmation, downstream panels are locked with the message: Confirm itinerary first. The itinerary is not accepted until the user explicitly confirms it. This review-and-correct step ensures no downstream panel acts on unverified data.
+> On Review trip the traveller edits fields if needed, then clicks **Check my itinerary**. That freezes the confirmed snapshot. Downstream risk, recovery, and search all use that snapshot — not live extraction state afterward. The consolidated **Your options** screen shows one recommended plan first, with risk detail under **See why this is risky**.
 
 **Word count:** ~72 words.  
-**Visible proof:** Locked panels with "Confirm itinerary first" and lock icons visible.
+**Visible proof:** Review trip boarding-pass summary, **Check my itinerary** button, consolidated options screen with section-level disclosures and per-panel source tags.
 
 ---
 
 ### Segment 4 — Risk Analysis (1:10–1:45, ~35 s)
 
-**Visual:** Scene 3 capture — confirmed and unlocked panels (`scene-03-confirmed-unlocked.png`).
+**Visual:** Scene 3 capture — consolidated options screen after Check my itinerary (`scene-03-confirmed-unlocked.png`).
 
 **Spoken narrative:**
 
@@ -127,9 +127,9 @@
 
 | # | Exact label | Segment | Panel |
 |---|---|---|---|
-| 1 | `Direct Gemini — live validated` | 2 Input | Itinerary review |
+| 1 | `Direct Gemini 3.7 — live validated` | 2 Input | Itinerary review |
 | 2 | `Local fallback — not Nosana evidence` | 4 Risk | Risk panel |
-| 3 | `Offline fixture — not Atlas Sandbox evidence` | 5 Provider | Alternatives panel |
+| 3 | `Demo alternatives — local demo fixture` | 5 Provider | Alternatives panel |
 
 ---
 
@@ -146,7 +146,7 @@
 
 ### Prohibited claims — do not add
 
-- Direct Gemini was not validated or produced results (it was — see evidence).
+- Direct Gemini was not validated or produced results (it was validated — see `results-gemini-3.7-flash-success.json`).
 - The browser walkthrough made a live Nosana call (it did not — the browser uses local fixtures; the live Nosana result exists as a separate reconciled artifact).
 - Any offline fixture is labelled as live provider evidence.
 - Any booking, payment, reservation, ticket, order, or verification was created.

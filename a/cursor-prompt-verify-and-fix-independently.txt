@@ -1,0 +1,125 @@
+# StitchCheck — Independently Verify (and Fix if Needed) the Airport-Mismatch Bug
+# Cursor Agent — do not trust a prior report at face value. Check the actual code and actual
+# running app yourself. If the fix is genuinely there and working, confirm it with fresh
+# evidence. If it is NOT actually there, or doesn't actually work, fix it now for real.
+
+## Context
+
+A prior session (a different agent) reported diagnosing and fixing a bug where the Atlas
+flight-search proxy was substituting nearby airports (e.g. returning SZB or DMK offers for a
+confirmed KUL→BKK leg) instead of enforcing exact airport matches. The report claims:
+
+- Fix applied in `app/server/atlas-proxy.mjs` around line 197 — filtering offers to only
+  those whose first/last segment exactly matches the requested origin/destination airports.
+- A new regression test added in `smoke-tests/app-route-continuity-offline-tests.mjs` around
+  line 148.
+- Both the "ready-made sample" and "screenshot sample" demo paths were walked live,
+  end-to-end, with no console errors, after this fix.
+
+The user is understandably not fully confident this actually happened just from a text
+report. Your job is to INDEPENDENTLY VERIFY this from scratch, and only make changes if you
+find the fix is missing, incomplete, or not actually effective.
+
+## Absolute constraints
+
+- Do not undo or contradict the reported fix if you find it's genuinely present and correct
+  — your job is verification first, correction only if verification fails.
+- Do not touch Nosana execution, extraction logic beyond what's needed, or route-continuity
+  snapshot logic unless verification proves a real problem there.
+- Do not weaken any existing test to force a pass.
+- Do not touch video/narration/subtitle files. Do not commit/push.
+- Every claim you make in your final report must be backed by something you personally
+  observed in this session — actual file contents you read, actual test output you ran,
+  actual browser/console state you captured. Do not restate the prior report's claims as if
+  you verified them unless you actually did.
+
+## Step 1 — Read the actual code, don't trust the report's line numbers blindly
+
+1. Open `app/server/atlas-proxy.mjs` and find the actual airport-filtering logic. Confirm:
+   - Does it check the first segment's departure airport against the requested origin?
+   - Does it check the last segment's arrival airport against the requested destination?
+   - Is this filter actually applied to the response before it reaches the browser, or is it
+     dead code / unreachable / only applied in one code path but not another (e.g. applied to
+     the main search but not to the per-leg preview searches, or vice versa)?
+2. Open `smoke-tests/app-route-continuity-offline-tests.mjs` around the reported test and
+   confirm it actually exists, actually asserts the airport-match behavior (not something
+   unrelated), and is wired into the test runner (not orphaned/unreferenced).
+3. Run that specific test file directly and confirm it passes on the CURRENT code, right now.
+
+## Step 2 — Reproduce the ORIGINAL bug scenario to prove the fix actually prevents it
+
+1. If possible, find or construct a test case where Atlas would plausibly return a
+   nearby-airport substitution (reuse whatever fixture/mock data the reported test uses, or
+   check if there's a way to force this with the real Atlas CLI in a controlled way).
+2. Confirm that with the current code, a nearby-airport offer is actually REJECTED/filtered
+   out, and does not appear in what's rendered to the user. Do not just confirm the test
+   passes in isolation — trace the logic yourself and be able to explain WHY it works.
+3. If you find a gap — e.g. the filter works for the main "Live Atlas alternatives" list but
+   NOT for the per-leg "Verified unbooked previews" cards (a separate code path that also
+   calls Atlas independently) — flag this explicitly. This would mean the previous fix was
+   incomplete, not wrong.
+
+## Step 3 — Live, fresh, end-to-end re-verification of BOTH paths
+
+Do not accept the prior session's live-walkthrough claims without redoing this yourself:
+
+1. Confirm the dev server is running (`DATA_MODE=live`) and responds at
+   `http://localhost:5173/`. Restart fresh if needed.
+2. Walk **Path 1 (ready-made sample):** Welcome → ready-made sample → Trip/Review →
+   "Check my itinerary" → Options. Confirm all offers shown for both legs have airports that
+   exactly match the confirmed itinerary — check this by reading the actual rendered airport
+   codes, not assuming.
+3. Walk **Path 2 (screenshot sample):** Welcome → screenshot sample → Trip/Review →
+   "Check my itinerary" → confirm MiniMax extraction runs and completes → Options. Again,
+   confirm every offer shown for both legs (main alternatives list AND per-leg preview cards)
+   has airports that exactly match what was confirmed — no SZB/DMK-style substitutions
+   anywhere on this screen.
+4. Capture the browser console during both walkthroughs. Confirm there is no
+   `route-continuity` mismatch warning and no unhandled error.
+5. Complete both paths through to Done (Keep on one, Switch on the other) to confirm nothing
+   downstream breaks either.
+
+## Step 4 — Fix ONLY if Step 1-3 reveal an actual gap
+
+If everything checks out, do not change any code — your job is done, report the verification
+evidence. If you find a real gap (e.g. the filter is incomplete, missing on one code path,
+or the test doesn't actually cover what it claims to), fix that specific gap precisely and
+add/extend test coverage for it.
+
+## Step 5 — Full regression check (run regardless of whether Step 4 required changes)
+
+```bash
+npm run typecheck
+npm run build
+```
+
+Run the full `smoke-tests/` suite and report pass/fail counts.
+
+## Final report
+
+Return, with evidence for each claim:
+
+1. What you found when you actually read `atlas-proxy.mjs` — quote the relevant lines as they
+   currently exist.
+2. What you found when you actually read and ran the regression test — quote the assertion
+   and the real pass/fail output from running it just now.
+3. Whether the filter logic covers ALL Atlas-calling code paths (main alternatives list AND
+   per-leg previews) or only some — state this explicitly, this is the most likely place for
+   an incomplete fix.
+4. Fresh live walkthrough evidence for both paths — actual airport codes observed on actual
+   rendered offers, actual console output, actual completion to Done.
+5. If a gap was found and fixed, describe exactly what was wrong and what you changed.
+6. Full regression results.
+7. Typecheck/build results.
+
+End with:
+
+```text
+PRIOR_FIX_VERIFIED = <YES, confirmed present and effective on all paths | PARTIAL: gap found | NO: fix was not actually present/effective>
+GAP_FOUND = <NONE | description of exact gap>
+FIX_APPLIED_THIS_SESSION = <NONE_NEEDED | description>
+PATH_1_AIRPORT_INTEGRITY = <CONFIRMED_CLEAN | VIOLATION_FOUND: description>
+PATH_2_AIRPORT_INTEGRITY = <CONFIRMED_CLEAN | VIOLATION_FOUND: description>
+ALL_REGRESSION_STATUS = <ALL_PASS | FAILURES: list>
+DEMO_READY = <YES | NOT_YET: reason>
+```

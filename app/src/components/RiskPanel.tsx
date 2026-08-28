@@ -124,14 +124,14 @@ export function RiskPanel({ enabled, riskResult, scenario, onScenarioChange }: P
           <div className="sc-disclaimer">{riskResult.heuristicDisclaimer}</div>
           <p className="sc-explanation">{riskResult.failureCascadeExplanation}</p>
           <div className="sc-panel-actions">
-            <button className="sc-btn sc-btn--primary" disabled type="button" aria-label="Re-run risk assessment — disabled in fictional demo">
+            <button className="sc-btn sc-btn--primary" disabled type="button" aria-label="Re-run risk assessment — disabled in demo mode">
               Re-run risk assessment
             </button>
-            <button className="sc-btn sc-btn--secondary" disabled type="button" aria-label="Proceed without risk guidance — disabled in fictional demo">
+            <button className="sc-btn sc-btn--secondary" disabled type="button" aria-label="Proceed without risk guidance — disabled in demo mode">
               Proceed without risk guidance
             </button>
           </div>
-          <p className="sc-panel__demo-note">Retry is unavailable in this fictional demo. No live provider is connected.</p>
+          <p className="sc-panel__demo-note">Retry is unavailable in this demo mode. No live provider is connected.</p>
         </>
       )}
 
@@ -149,11 +149,11 @@ export function RiskPanel({ enabled, riskResult, scenario, onScenarioChange }: P
           <div className="sc-disclaimer">{riskResult.heuristicDisclaimer}</div>
           <p className="sc-explanation">{riskResult.failureCascadeExplanation}</p>
           <div className="sc-panel-actions">
-            <button className="sc-btn sc-btn--primary" disabled type="button" aria-label="Retry risk assessment — disabled in fictional demo">
+            <button className="sc-btn sc-btn--primary" disabled type="button" aria-label="Retry risk assessment — disabled in demo mode">
               Retry risk assessment
             </button>
           </div>
-          <p className="sc-panel__demo-note">Retry is unavailable in this fictional demo. No live provider is connected.</p>
+          <p className="sc-panel__demo-note">Retry is unavailable in this demo mode. No live provider is connected.</p>
         </>
       )}
 
@@ -171,11 +171,11 @@ export function RiskPanel({ enabled, riskResult, scenario, onScenarioChange }: P
           <div className="sc-disclaimer">{riskResult.heuristicDisclaimer}</div>
           <p className="sc-explanation">{riskResult.failureCascadeExplanation}</p>
           <div className="sc-panel-actions">
-            <button className="sc-btn sc-btn--primary" disabled type="button" aria-label="Retry risk assessment — disabled in fictional demo">
+            <button className="sc-btn sc-btn--primary" disabled type="button" aria-label="Retry risk assessment — disabled in demo mode">
               Retry risk assessment
             </button>
           </div>
-          <p className="sc-panel__demo-note">Retry is unavailable in this fictional demo. No live provider is connected.</p>
+          <p className="sc-panel__demo-note">Retry is unavailable in this demo mode. No live provider is connected.</p>
         </>
       )}
 

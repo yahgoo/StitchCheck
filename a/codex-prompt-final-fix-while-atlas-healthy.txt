@@ -1,0 +1,128 @@
+# StitchCheck — Final Fix-and-Confirm Pass While Atlas Is Confirmed Healthy
+# Codex Agent — Atlas Sandbox just confirmed HEALTHY (3/3 real searches succeeded, doctor
+# check OK). Use this working window to fully verify the app end-to-end with REAL live data,
+# fix anything still broken, and give a definitive demo-readiness answer. Do not ask for
+# further authorization — this is a live debugging and fixing session, proceed through all
+# steps automatically.
+
+## What StitchCheck is (context)
+
+A hackathon travel app: upload a flight screenshot (or use a sample), extract the itinerary
+via MiniMax M3, evaluate self-transfer connection risk, show real flight alternatives from
+Atlas Sandbox (read-only, no booking/payment ever). Two Welcome-screen demo paths exist:
+"Use the ready-made sample — skips extraction" and "Try the screenshot sample — extract with
+MiniMax M3." Both should reach Options with live Atlas alternatives and complete to Done.
+
+## Known fixed issues this session (do not rediscover, but DO re-verify live now that Atlas works)
+
+1. Atlas CLI secure-store contention (`SECURE_STORE_UNAVAILABLE`) — pre-existing macOS
+   keychain flakiness, not app code.
+2. Concurrent Atlas calls on Options entry (`SERVICE_TEMPORARILY_UNAVAILABLE`) — real
+   regression, fixed by serializing the primary search and the unbooked-previews effect in
+   `app/src/App.tsx`.
+3. Airport-mismatch bug — Atlas sometimes substituted nearby airports (e.g. SZB/DMK) instead
+   of the exact requested origin/destination. Fixed with `filterOffersForRequestedRoute()` in
+   `app/server/atlas-proxy.mjs` (~line 197), applied in `handleSearch` before responses reach
+   the browser. Independently re-verified as present and effective on all Atlas-calling
+   browser code paths (main alternatives list AND per-leg unbooked previews).
+4. Atlas was just confirmed HEALTHY: `atlas-flight doctor --json` → `DOCTOR_OK`; 3
+   consecutive `atlas-flight search --origin KUL --destination SIN --depart 2026-09-04`
+   calls all succeeded with `FLIGHT_SEARCHED`, 23 offers each.
+
+## Your task — use this healthy window to get a definitive, evidence-backed answer
+
+### Step 1 — Baseline checks
+
+```bash
+npm run typecheck
+npm run build
+```
+
+Confirm the dev server is running (`DATA_MODE=live`), restart cleanly if needed, and confirm
+it responds 200 at `http://localhost:5173/`.
+
+### Step 2 — Walk BOTH demo paths live, right now, with Atlas actually healthy
+
+This is the first time both paths can be checked with REAL Atlas data populating instead of
+falling back to offline/unavailable states. Do this properly:
+
+**Path 1 — Ready-made sample:**
+1. Welcome → "Use the ready-made sample — skips extraction" → Trip/Review.
+2. "Check my itinerary" → Options.
+3. Confirm the "Live Atlas alternatives" list actually populates with real offers (not a
+   fallback/unavailable state) — capture real offer counts, carriers, prices.
+4. Confirm both legs' "Verified unbooked previews" sections populate with real verified
+   offers.
+5. Confirm every airport shown exactly matches the confirmed itinerary (no SZB/DMK-style
+   substitutions) — this is the critical check now that real data is flowing.
+6. Expand "See more live alternatives," check "See why this is risky" and "How this works."
+7. Complete Keep → Done.
+
+**Path 2 — Screenshot sample:**
+1. Welcome → "Try the screenshot sample — extract with MiniMax M3" → Trip/Review.
+2. Confirm MiniMax extraction loading copy appears and resolves — capture whether it reaches
+   real `live-success` this time (with Atlas healthy, extraction and search should both be
+   able to succeed) and whether the "Extracted by MiniMax M3" provenance tag actually renders.
+3. "Check my itinerary" → Options, same checks as Path 1 (real offers, airport integrity,
+   expand/detail sections).
+4. Complete Switch → Submit switch request → Done.
+
+Capture browser console output throughout both walkthroughs — confirm no
+`[route-continuity]` warnings, no unhandled errors.
+
+### Step 3 — Fix anything found broken, precisely
+
+If either path fails or shows incorrect data at any point, diagnose with the same rigor as
+prior sessions this project: find the exact root cause (file/line, real error, real stack
+trace) before fixing, apply the minimal precise fix, and add/extend test coverage for it. Do
+not broadly refactor working code. Do not mask a real bug by retrying until it happens to
+succeed — if it's flaky, say so and characterize the flakiness precisely (how often, under
+what condition).
+
+### Step 4 — Full regression
+
+Run the entire `smoke-tests/` suite. Report exact pass/fail counts for every file, not just a
+subset. For any failure, state whether it's pre-existing/unrelated (e.g. the previously
+identified Nosana metadata assertions) or newly introduced by anything in this session.
+
+### Step 5 — Provider status bar sanity check
+
+Since Atlas is healthy right now, confirm the "Provider checks: N of 3 complete" bar can
+actually reach "3 of 3" on at least one path (whichever ones are capable of it per the
+MiniMax-visibility-fix spec) and does so correctly, with real data, right now — this was
+never confirmed with all three providers genuinely succeeding simultaneously.
+
+## Constraints
+
+- Do not touch Nosana execution, extraction logic beyond fixing a proven bug, or
+  route-continuity snapshot logic unless evidence requires it.
+- Do not weaken any existing test.
+- Do not touch video/narration/subtitle files. Do not commit/push.
+- Never claim something works without direct observed evidence from THIS session.
+- If Atlas becomes unhealthy again mid-session (it was previously intermittent), note the
+  exact moment it changed and characterize whether the app's Retry/error-handling behaves
+  correctly when that happens, rather than treating it as a new mystery bug.
+
+## Final report
+
+1. Baseline check results.
+2. Full live walkthrough evidence for BOTH paths — real offers, real prices, real airport
+   codes, real MiniMax status, real console output.
+3. Any bugs found and fixed this session, with exact file/line and before/after evidence.
+4. Full regression suite results (every file).
+5. Provider-status-bar "3 of 3" confirmation, with evidence.
+6. A definitive, evidence-backed demo-readiness verdict.
+
+End with:
+
+```text
+BASELINE_STATUS = <CLEAN | FAILING: exact error>
+PATH_1_LIVE_DATA_STATUS = <CONFIRMED_REAL_OFFERS: count/details | FALLBACK_USED: reason | BROKEN: error>
+PATH_2_LIVE_DATA_STATUS = <CONFIRMED_REAL_OFFERS: count/details | FALLBACK_USED: reason | BROKEN: error>
+MINIMAX_LIVE_SUCCESS_CONFIRMED = <YES, provenance tag shown | NO: reason>
+AIRPORT_INTEGRITY_LIVE = <CONFIRMED_CLEAN | VIOLATION_FOUND: description>
+PROVIDER_BAR_3_OF_3_CONFIRMED = <YES | NO: reason>
+BUGS_FIXED_THIS_SESSION = <NONE | list with file:line>
+ALL_REGRESSION_STATUS = <ALL_PASS | FAILURES: list with pre-existing/new classification>
+DEMO_READY = <YES, fully evidence-backed | NOT_YET: reason>
+```

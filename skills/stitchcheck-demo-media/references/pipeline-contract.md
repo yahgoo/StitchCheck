@@ -36,16 +36,16 @@ This document defines the six-scene video pipeline for the StitchCheck demo walk
 - Upload panel with five fixture slots (GEM-01 through GEM-05)
 - Select GEM-01 fixture
 - Extraction result appears with itinerary fields
-- Source label visible: `OpenRouter temporary path — not direct Gemini validation`
+- Source label visible: `Demo itinerary — local demo fixture`
 - All fields are editable (text inputs visible)
 - Edit second-leg flight number from `SC-202` to `SC-299`
 - Correction note appears: `Changed secondLeg.flightNumber: "SC-202" → "SC-299"`
 
 ### Required Labels
-- `OpenRouter temporary path — not direct Gemini validation` (visible beside extracted fields)
+- `Demo itinerary — local demo fixture` (visible beside extracted fields)
 
 ### Narration
-"The demo begins with synthetic itinerary screenshots — fictional images containing no real passenger data, booking references, or payment information. The user selects GEM-01, a clear two-leg itinerary. The extraction label reads: OpenRouter temporary path — not direct Gemini validation. This is structured-extraction functionality only; direct Gemini remains unexecuted. Extracted itinerary fields are displayed for review. All fields are editable — the user can correct any value before confirming. In this demo, the second-leg flight number is corrected from SC-202 to SC-299. The correction is recorded locally. This editable extraction and user correction step ensures the traveler has full control over the itinerary data before any downstream processing."
+"The demo begins with synthetic itinerary screenshots — fictional images containing no real passenger data, booking references, or payment information. The user selects GEM-01, a clear two-leg itinerary. The extraction label reads: Demo itinerary — local demo fixture. Direct Gemini 3.7 was verified separately via the Interactions API; the browser walkthrough uses a local fixture. Extracted itinerary fields are displayed for review. All fields are editable — the user can correct any value before confirming. In this demo, the second-leg flight number is corrected from SC-202 to SC-299. The correction is recorded locally. This editable extraction and user correction step ensures the traveler has full control over the itinerary data before any downstream processing."
 
 ### Screenshot Capture Points
 - Upload panel with GEM-01 selected
@@ -87,16 +87,16 @@ This document defines the six-scene video pipeline for the StitchCheck demo walk
 ### Visual Elements
 - Risk panel displays medium risk band (score 0.42)
 - Heuristic disclaimer visible
-- Risk panel source label: `Synthetic local placeholder — not Nosana evidence`
+- Risk panel source label: `Local fallback — not Nosana evidence`
 - Alternatives panel shows two synthetic options
-- Alternatives panel source label: `Synthetic local placeholder — not Atlas Sandbox evidence`
+- Alternatives panel source label: `Demo alternatives — local demo fixture`
 
 ### Required Labels
-- `Synthetic local placeholder — not Nosana evidence` (visible in risk panel header)
-- `Synthetic local placeholder — not Atlas Sandbox evidence` (visible in alternatives panel header)
+- `Local fallback — not Nosana evidence` (visible in risk panel header)
+- `Demo alternatives — local demo fixture` (visible in alternatives panel header)
 
 ### Narration
-"The risk panel displays a heuristic risk estimate — medium risk with a score of 0.42. The disclaimer states this is a synthetic local placeholder — not Nosana evidence. Nosana is a planned role whose smoke test was intentionally blocked before any network request due to missing infrastructure; it has not been deployed or executed. The alternatives panel shows two synthetic options labeled as Atlas Sandbox placeholders. Atlas is a planned, read-only role represented by local fixtures only and has not been authenticated or executed."
+"The risk panel displays a heuristic risk estimate — medium risk with a score of 0.42. The disclaimer states this is a local fallback — not Nosana evidence. Nosana live job was completed and reconciled offline; the browser demo uses a local fallback fixture. The alternatives panel shows two synthetic options labeled as local demo fixtures. Atlas production authentication succeeded with two read-only searches; the demo panels remain local placeholders."
 
 ### Screenshot Capture Points
 - Risk panel with label visible

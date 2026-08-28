@@ -1,0 +1,17 @@
+{
+  "name": "stitchcheck-scripts",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "StitchCheck orchestrator scripts (Daytona sandbox lifecycle, offline tests)",
+  "scripts": {
+    "test:offline": "node scripts/daytona-orchestrator-offline-tests.mjs && node scripts/daytona-worker-sanitize-tests.mjs",
+    "secret-scan": "node scripts/secret-scan.mjs",
+    "secret-scan:all": "node scripts/secret-scan.mjs --all",
+    "secret-scan:working-tree": "node scripts/secret-scan.mjs --working-tree",
+    "secret-scan:untracked": "node scripts/secret-scan.mjs --untracked"
+  },
+  "dependencies": {
+    "@daytona/sdk": "^0.205.1"
+  }
+}

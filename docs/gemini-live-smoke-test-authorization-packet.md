@@ -10,10 +10,10 @@ No live direct-Gemini test has occurred. This document is not provider evidence.
 
 | Provider / path | Status |
 |-----------------|--------|
-| Direct Gemini | Unexecuted. Adapter disabled by default. Provider-call boundary implemented but unreachable without all safety gates satisfied. |
-| OpenRouter temporary path | Existing GEM-01 evidence only. Label: `OpenRouter temporary path — not direct Gemini validation` |
-| Nosana | Blocked before any network request. Label: `Synthetic local placeholder — not Nosana evidence` |
-| Atlas | Unauthenticated and unexecuted. Label: `Synthetic local placeholder — not Atlas Sandbox evidence` |
+| Direct Gemini | Historical live evidence is preserved under `smoke-tests/extraction/`. This packet governs any new run; the active ready-made demo performs no extraction and shows MiniMax offline. |
+| OpenRouter temporary path | Historical GEM-01 evidence remains distinct from the active demo path. |
+| Nosana | Historical evidence is reconciled. The current browser fixture is a permitted dry-run preview (`jobId: null`), not a submitted workload. |
+| Atlas | Historical Sandbox Search→Verify evidence returned 20 offers then `PRICE_CONFIRMATION_REQUIRED`, with no write. The Aug 28 attempt was an environment-switch failure, not fresh evidence. |
 | Offline fake-client tests | Not Gemini evidence. Validate adapter request-shaping and response-normalization with synthetic fake clients. |
 | `@google/genai` SDK | Not installed. Dependency-injection seam only. |
 

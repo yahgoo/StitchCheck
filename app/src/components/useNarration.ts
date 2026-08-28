@@ -19,9 +19,9 @@ import { useState, useCallback, useRef, useEffect } from 'react';
  */
 export const NARRATION_SCENES: Record<string, string> = {
   'safety-notice':
-    'StitchCheck helps budget travelers understand the hidden risk of stitching two separately purchased flight tickets. This is a fictional demo with a fictional itinerary; live provider processing is used where explicitly labelled.',
+    'StitchCheck helps budget travelers understand the hidden risk of stitching two separately purchased flight tickets. This is a demo walkthrough with a demo itinerary; live provider processing is used where explicitly labelled.',
   'upload':
-    'The user starts with a fictional test itinerary. Select a fixture to populate the itinerary fields. The extraction label reads: Direct Gemini — live validated.',
+    'The user starts with a local fixture itinerary. Select a fixture to populate the itinerary fields. The source tag reads: Local fixture.',
   'review':
     'Extracted fields are displayed for human review. Every field is editable. The traveler confirms only what they have personally reviewed.',
   'confirmed':

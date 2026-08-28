@@ -1,0 +1,129 @@
+# StitchCheck — Diagnose Live-Alternatives Failure + Actually Verify Persona Fixes Live
+# Cursor Agent — the persona UX changes were never actually confirmed against a live success
+# state; the last manual check hit "Secure credential storage is unavailable" before the new
+# UI ever rendered. Fix root cause, then verify the real behavior, not just fixture tests.
+
+## Context — what actually happened
+
+A manual browser check of the Options screen (sample itinerary, DATA_MODE=live) captured:
+
+- Top of screen: "Live alternatives are unavailable. Secure credential storage is
+  unavailable" with a [Retry] button, right below the risk headline.
+- The RECOMMENDED card correctly omits the blank "Arrival impact: —" line (improvement #5
+  confirmed working).
+- The per-leg "Verified unbooked previews" sections (first leg AK701/AK703/AK707/TR467/AK719,
+  second leg FD356/TR626/TR624/TR610/TR608) rendered fine, all sourced from
+  "Atlas Sandbox · live" — these are a DIFFERENT, pre-existing component
+  (`UnbookedTicketPreviewLegSection`) from the new `LiveAlternativesList` built for the
+  20-card raw alternatives list.
+- Near "Your choice": another "Live alternatives unavailable" message.
+- The new `LiveAlternativesList` component (price-sort, collapse-to-1 + "See more (N)",
+  "Lowest price shown" badge, combined "Verify and select plan" button) NEVER RENDERED in
+  this run, because the underlying live alternatives fetch failed with a credential-storage
+  error before that component had any data to display.
+
+**Conclusion: improvements #1–#4 from the persona critique (sort, collapse, lowest-price
+label, verify+select merge) have only ever been confirmed against offline fixture tests —
+never against an actual successful live Atlas response in the browser.** This must be fixed
+before calling this feature demo-ready.
+
+## Absolute constraints
+
+- Do not touch Nosana execution, extraction logic, or route-continuity snapshot logic.
+- Do not weaken any existing test to force a pass.
+- Do not touch video/narration/subtitle files.
+- Do not commit/push.
+- If the credential-storage failure is an environment/infra issue outside the app's control
+  (e.g., macOS Keychain access, expired sandbox credentials), say so plainly rather than
+  papering over it with a code change that masks the real cause.
+
+## Step 1 — Diagnose "Secure credential storage is unavailable"
+
+1. Reproduce the error: restart the dev server, load the sample itinerary flow, and trigger
+   the same failure. Capture the exact error path — is this coming from the Atlas proxy
+   middleware (`app/atlas-proxy.mjs` or similar) failing to read `.env.local` credentials, an
+   OS-level keychain/credential-store call, or something else entirely?
+2. Determine: is this the SAME intermittent Atlas credential issue flagged earlier this
+   session (pre-existing, unrelated to tonight's persona UX changes), or did the
+   `LiveAlternativesList` refactor introduce a new failure path (e.g., a new fetch call, a
+   changed error-handling branch, a race condition) that makes this error trigger more often
+   or trigger somewhere it didn't before?
+3. Check `.env.local` for `ATLAS_CLIENT_ID` / `ATLAS_CLIENT_SECRET` / `ATLAS_BASE_URL` —
+   confirm they are present and non-empty (do not print their values — just confirm presence).
+4. Click "Retry" in the browser and observe whether it succeeds on a second attempt (this
+   would indicate transient flakiness rather than a hard failure) or fails consistently.
+5. Report the exact root cause before making any fix.
+
+## Step 2 — Fix if it's a real regression; otherwise get to a working state
+
+- If Step 1 finds this is a genuine regression introduced by the persona-critique changes,
+  fix it precisely and explain what was wrong.
+- If it's pre-existing environment flakiness (credentials, sandbox availability, network),
+  do NOT attempt to "fix" Atlas itself — instead, get the dev environment into a working
+  state (fresh credentials if expired, restart, retry) so that the live alternatives fetch
+  actually succeeds, so Step 3 can proceed.
+- If it cannot be made to succeed live no matter what, stop and report that clearly — do not
+  fabricate a "working" screenshot or claim visual confirmation that didn't happen.
+
+## Step 3 — Actually verify the 4 persona improvements against a REAL successful live response
+
+Once the "Live Atlas alternatives" section actually loads real offers (not the error state),
+walk through and confirm, with exact observed values (not assumed ones):
+
+1. **Sort:** Is the first card genuinely the lowest `total_price` among all loaded offers?
+   State the exact price/offer shown first and confirm it against the full list.
+2. **Collapse:** Does the list show only 1 featured card by default, with a
+   "See more live alternatives (N)" control showing the correct remaining count? Click it and
+   confirm all offers are revealed, still correctly sorted.
+3. **Lowest-price label:** Does the featured card show a "Lowest price shown" (or whatever
+   the actual implemented label text is — quote it exactly) badge, and only on that one card?
+4. **Verify+select merge:** Click the combined button on a non-featured card (after
+   expanding). Confirm: (a) it actually triggers a real Atlas Verify call, (b) the
+   Keep/Switch decision area only reflects that offer as selected AFTER verify succeeds, (c)
+   if you can find or force an offer where verify fails or price changes, confirm the honest
+   failure state renders and selection does NOT silently happen.
+5. Confirm the RECOMMENDED card still correctly omits the blank arrival-impact line (already
+   working per the capture, but reconfirm under this successful run).
+6. Confirm "Submit switch request" (final gate) and the "No booking, payment, reservation, or
+   order created" footer are present and unchanged.
+
+## Step 4 — Regression check
+
+```bash
+npm run typecheck
+npm run build
+```
+
+Re-run the persona-critique test suite and the full regression list already used this
+session (`unbooked-ticket-preview-offline-tests.mjs`, `cross-provider-invariant-tests.mjs`,
+`live-mode-banned-words-tests.mjs`, `traveller-flow-ui-tests.mjs`,
+`screen-consolidation-offline-tests.mjs`, `provider-status-model-offline-tests.mjs`,
+`live-app-integration-tests.mjs`).
+
+## Final report
+
+Return:
+
+1. Root cause of "Secure credential storage is unavailable" (Step 1) — regression vs.
+   pre-existing environment issue, with evidence.
+2. What was done to reach a working live state (Step 2), or explicit confirmation it could
+   not be reached and why.
+3. For each of the 4 improvements in Step 3: the exact observed behavior, quoting real prices/
+   labels/button text as actually rendered — not the previously assumed description. If any
+   improvement does NOT behave as originally reported, say so explicitly and describe the gap.
+4. Any code fixes made, each described individually with before/after behavior.
+5. Regression test results.
+6. Typecheck/build results.
+
+End with:
+
+```text
+CREDENTIAL_FAILURE_ROOT_CAUSE = <REGRESSION_FROM_PERSONA_CHANGES | PRE_EXISTING_ENV_ISSUE | UNKNOWN: reason>
+LIVE_STATE_REACHED = <YES | NO: reason>
+SORT_VERIFIED_LIVE = <CONFIRMED_WORKING | GAP_FOUND: description | NOT_TESTABLE: reason>
+COLLAPSE_VERIFIED_LIVE = <CONFIRMED_WORKING | GAP_FOUND: description | NOT_TESTABLE: reason>
+LOWEST_PRICE_LABEL_VERIFIED_LIVE = <CONFIRMED_WORKING | GAP_FOUND: description | NOT_TESTABLE: reason>
+VERIFY_SELECT_MERGE_VERIFIED_LIVE = <CONFIRMED_WORKING | GAP_FOUND: description | NOT_TESTABLE: reason>
+REGRESSION_STATUS = <ALL_PASS | FAILURES: list>
+DEMO_READY = <YES | NOT_YET: reason>
+```

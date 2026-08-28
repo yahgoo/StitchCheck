@@ -1,0 +1,76 @@
+{
+  "harness": "stitchcheck-gemini-smoke-test",
+  "harnessVersion": "0.4.1-direct-gemini-live-runner",
+  "phase": "gemini-direct",
+  "provider": "gemini",
+  "providerMode": "direct",
+  "providerLabel": "Direct Gemini validation",
+  "modelIdentifier": "gemini-3.7-flash",
+  "modelTestPurpose": "Re-verify gemini-3.7-flash via Interactions API (ai.interactions.create)",
+  "apiStyle": "interactions",
+  "sdkMethod": "ai.interactions.create",
+  "sdkVersion": "@google/genai 2.18.0",
+  "thinkingLevel": "medium",
+  "store": false,
+  "runAt": "2026-08-22T06:42:11.937Z",
+  "outcome": "failure",
+  "latencyMs": 11635,
+  "networkRequestsMade": 1,
+  "test": {
+    "provider": "gemini",
+    "providerMode": "direct",
+    "modelIdentifier": "gemini-3.7-flash",
+    "apiStyle": "interactions",
+    "sdkMethod": "ai.interactions.create",
+    "testId": "GEM-01",
+    "fixtureId": "gem-01-two-leg-clean",
+    "fixtureBasename": "gem-01-two-leg-clean.png",
+    "fixtureMimeType": "image/png",
+    "fixtureByteLength": 5917,
+    "fixtureSyntheticNonPii": true,
+    "timestamp": "2026-08-22T06:42:11.937Z",
+    "endedAt": "2026-08-22T06:42:23.572Z",
+    "latencyMs": 11635,
+    "outcome": "error",
+    "schemaValidation": "valid",
+    "schemaIssues": [],
+    "missingFields": [
+      "all — provider error"
+    ],
+    "validationMessages": [
+      "[REDACTED]"
+    ],
+    "fieldConfidence": {
+      "overall": "none",
+      "note": "provider call failed"
+    },
+    "requiresUserConfirmation": true,
+    "sourceStatus": {
+      "provider": "gemini",
+      "label": "Direct Gemini validation",
+      "executed": true,
+      "enabled": true,
+      "authorizationKey": "GEMINI_API_KEY",
+      "fallbackUsed": true
+    },
+    "label": "Direct Gemini validation",
+    "networkDestinationCategory": "Google Gemini API (direct)",
+    "errorCategory": "single_request_guard",
+    "httpStatus": null,
+    "sanitizedExtractedFields": null
+  },
+  "safetyCompliance": {
+    "exactlyOneLiveRequest": true,
+    "noRetry": true,
+    "singleRequestGuardArmed": true,
+    "environmentOverrideInlineOnly": true,
+    "noAtlasCall": true,
+    "noNosanaSubmission": true,
+    "noAppOrVideoOrFixtureModification": true,
+    "noGithubPush": true,
+    "noUpload": true,
+    "noApiKeyExposed": true,
+    "redactionApplied": true,
+    "previousEvidencePreserved": true
+  }
+}

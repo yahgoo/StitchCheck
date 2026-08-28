@@ -1,0 +1,81 @@
+# StitchCheck — Remove Dead Gemini Harness + Start Dev Server for Live Check
+# Cursor Agent — cleanup confirmed-dead code, then run the app and report status
+
+## Context
+
+The Gemini-specific hackathon track is over and is no longer being tracked. Investigation
+already confirmed:
+- `app/` and `core/` do NOT import `direct-gemini-adapter.mjs` at runtime.
+- Live extraction runs entirely through `openrouter-extraction-adapter` (20/20 passing).
+- `extraction/config.json` already pins OpenRouter/MiniMax and marks direct Gemini as deprecated.
+- The two suites depending on the direct-Gemini adapter
+  (`extraction/gemini-3.7-routing-regression-tests.mjs`,
+  `extraction/interactions-api-offline-tests.mjs`) fail on config drift, not missing code,
+  and are no longer relevant.
+
+## Absolute constraints
+
+- Do not touch Atlas write routes, Nosana execution, extraction provider logic actually in use
+  (OpenRouter/MiniMax), route-continuity, best-option, disclosure-dedup, or screen-consolidation
+  code — those are working and demo-verified.
+- Do not touch video, narration, or subtitle files.
+- Do not weaken any test that is unrelated to Gemini to force a pass.
+- Do not commit/push.
+
+## Step 1 — Remove the dead Gemini harness
+
+1. Delete `smoke-tests/extraction/direct-gemini-adapter.mjs` (restored earlier from git history
+   but confirmed unused at runtime).
+2. Delete `smoke-tests/extraction/gemini-3.7-routing-regression-tests.mjs` and
+   `smoke-tests/extraction/interactions-api-offline-tests.mjs`.
+3. Grep the whole repo (excluding `.git/`) for any remaining references to
+   `direct-gemini-adapter`, `gemini-3.7`, or similar direct-Gemini-specific identifiers in
+   `app/`, `core/`, `smoke-tests/`, and config files. Confirm none remain, or list any that are
+   intentionally kept (e.g. a changelog entry) and why.
+4. If any test runner manifest, `package.json` script, or CI config explicitly lists these two
+   deleted test files by name, update it to remove the reference so the run command doesn't
+   error on a missing file.
+
+## Step 2 — Full regression after removal
+
+```bash
+npm run typecheck
+npm run build
+```
+
+Run every remaining suite in `smoke-tests/` and confirm the previously-passing 35 suites still
+all pass, and that the removal didn't silently break an unrelated import.
+
+## Step 3 — Start the dev server for live manual checking
+
+1. Ensure `DATA_MODE=live` is set as it was in prior verified sessions.
+2. Start the dev server (`npm run dev` or the project's documented equivalent) bound to
+   `http://localhost:5173/`.
+3. Confirm the process is actually up (not just launched) by checking it responds — e.g. curl
+   or fetch the root path and confirm a 200 / valid HTML response — before reporting it ready.
+4. Leave the server running in the foreground/background as appropriate for the user to open
+   in their browser.
+
+## Final report
+
+Return:
+
+1. Confirmation of the 3 deleted files, plus grep results confirming no remaining references.
+2. Any manifest/CI reference cleanup performed.
+3. Full regression suite count post-removal (expect 35/35 of the previously-passing, non-Gemini
+   suites, with the 2 removed suites simply gone rather than failing).
+4. Typecheck/build results.
+5. Confirmation the dev server is live at http://localhost:5173/ and responding, with
+   `DATA_MODE=live` set.
+6. A one-line reminder of the fastest manual-check path: Welcome → "Try a sample itinerary" →
+   "Check my itinerary" → expand "See why this is risky" / "How this works" / "See more
+   verified options" → Keep or Switch → Done.
+
+End with:
+
+```text
+GEMINI_CLEANUP_STATUS = <REMOVED | BLOCKED: reason>
+REGRESSION_STATUS = <ALL_PASS | FAILURES: list>
+DEV_SERVER_STATUS = <RUNNING at http://localhost:5173/ | BLOCKED: reason>
+READY_FOR_MANUAL_CHECK = <YES | NOT_YET: reason>
+```

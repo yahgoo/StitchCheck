@@ -1,0 +1,173 @@
+# StitchCheck — Full Diagnostic Debug Session (Codex)
+# Execute this now. Do not ask for more context — everything needed is below. Do not fix
+# anything until Steps 1-3 (diagnosis) are complete with evidence.
+
+## What StitchCheck is
+
+A hackathon travel app: a traveller uploads a flight screenshot (or uses a built-in sample),
+the app extracts the itinerary via MiniMax M3, evaluates whether a self-transfer connection
+is at risk, and shows real flight alternatives from the Atlas Sandbox flight-search API — all
+strictly read-only. It never books, pays, or issues tickets. Every screen ends with "No
+booking, payment, reservation, or order created." The only traveller actions are "Keep
+current itinerary" or "Switch to this plan" (a non-binding request, not a real booking).
+
+## Architecture anchors (real files — verify current names/line numbers yourself)
+
+- `app/src/App.tsx` — main screen orchestration (Welcome → Review/Trip → Options → Done).
+  This file has been heavily modified in the last several hours across two sessions:
+  (1) a "MiniMax visibility fix" adding Welcome-screen button hierarchy, extraction loading
+  state, provenance tag, and provider-check-bar timing; (2) an Atlas-race fix serializing two
+  concurrent Atlas CLI calls that were firing on Options entry.
+- `app/atlas-proxy.mjs` — Vite dev-server middleware proxying `/api/atlas/search` and
+  `/api/atlas/verify` to the local `atlas-flight` CLI via `child_process.execFile`, with an
+  allow-list (only search/verify forwarded, all write routes 404), 8s timeout, one retry on
+  5xx/timeout only. Returns HTTP 502 with `{ error: <CLI code>, message: sanitizeError(...) }`
+  on CLI failure.
+- `app/src/atlas/client.ts` (or `app/src/lib/atlasClient.ts`) — throws `AtlasClientError(code,
+  message, 502)` on proxy failure.
+- `app/src/components/LiveAlternativesList.tsx` — new component (added in the persona-UX
+  critique implementation pass) rendering the sorted/collapsed 20-offer KUL→SIN alternatives
+  list with a "Verify and select plan" combined action.
+- `app/src/components/UnbookedTicketPreviewLegSection.tsx` — pre-existing per-leg preview
+  component with its own independent Atlas search+verify calls for the featured/expandable
+  5-offer cards per leg.
+- `app/src/components/MiniMaxProvenanceTag.tsx`, `MiniMaxOfflineNotice.tsx`,
+  `app/src/data/minimax-visibility-copy.ts` — new components/copy from the MiniMax visibility
+  fix.
+- `app/src/components/ProviderStatusBar.tsx` — compact "Provider checks: N of 3 complete" bar,
+  recently changed to not render before checks start and to never say "passed."
+
+## Known issue history (do NOT rediscover from scratch — build on this)
+
+1. **Issue A (resolved):** `atlas-flight` CLI intermittently failed with
+   `SECURE_STORE_UNAVAILABLE` ("Secure credential storage is unavailable") — macOS
+   Keychain/`keyring` contention. Confirmed via `atlas-flight doctor --json` passing when run
+   alone (`DOCTOR_OK`) but failing under concurrent CLI invocations. This was diagnosed as
+   PRE-EXISTING environment flakiness, not app-code caused, in an earlier session.
+2. **Issue B (resolved, but see caveat):** A SECOND, related issue surfaced:
+   "Live alternatives are unavailable. Service temporarily unavailable"
+   (`SERVICE_TEMPORARILY_UNAVAILABLE` CLI error code). Root-caused this time as a REAL
+   regression: on Options entry, `handleCheckMyTrip` called `performLiveSearchForConfirmed`
+   (main KUL→SIN alternatives search) while a separate `useEffect` for unbooked previews
+   ALSO fired immediately on `step === 'options'`, launching a second concurrent
+   `atlas-flight` search for the same leg — causing secure-store contention under load. Fixed
+   by: (a) setting `searchLoading` true before `setStep('options')`, and (b) gating the
+   unbooked-previews effect until the primary search settles
+   (`!searchLoading && (alternativesResult || searchError)`).
+3. **Caveat explicitly flagged after Issue B's fix:** the fix was verified end-to-end on the
+   READY-MADE sample path only (first load succeeded, 20 real offers, TR467 at USD 21.52). The
+   SCREENSHOT-sample path (which also runs MiniMax extraction before reaching Options) was
+   NOT independently re-walked after this fix — it was assumed to work because it "shares the
+   same Options transition logic," but this was never actually observed.
+4. **Current report: "app still not working"** — no further detail given. This could be:
+   a. The exact same race as Issue B recurring (if the fix didn't fully eliminate all
+      concurrent Atlas calls — e.g. `LiveAlternativesList.tsx`'s own fetch, or the
+      per-leg `UnbookedTicketPreviewLegSection` calls, could still overlap with the primary
+      search or with each other).
+   b. A NEW issue specific to the screenshot-sample path (the never-independently-verified
+      caveat above) — e.g. MiniMax extraction completing and the Options transition firing
+      Atlas calls before extraction-related state has settled, similar in shape to Issue B
+      but on a different path.
+   c. A completely unrelated regression from the MiniMax-visibility-fix UI changes themselves
+      (button hierarchy, loading state gating, provider-bar timing) breaking something
+      unrelated to Atlas entirely.
+   d. A build/typecheck failure or dev-server crash unrelated to any of the above (check this
+      FIRST — it's the cheapest thing to rule out).
+
+## Your task
+
+### Step 1 — Cheapest checks first
+
+1. Confirm the dev server is actually running and responds with 200 at
+   `http://localhost:5173/`. If not running or crashed, capture the exact crash/error output.
+2. Run `npm run typecheck` and `npm run build` on the current code as-is. If either fails,
+   that is very likely the whole explanation for "app not working" — report the exact error
+   and stop before investigating further, unless instructed otherwise.
+
+### Step 2 — If build/typecheck are clean, reproduce live
+
+1. Restart cleanly with `DATA_MODE=live`. Hard-reload the browser (rule out stale bundle).
+2. Open browser console; capture any error on page load alone.
+3. Walk BOTH paths from Welcome, one at a time, capturing console + server-side (Vite/
+   atlas-proxy) output at each step, stopping at the first failure:
+   - **Path 1 (ready-made sample):** Welcome → "Use the ready-made sample — skips extraction"
+     → Review/Trip → "Check my itinerary" → Options (confirm live alternatives load) →
+     expand "See more live alternatives" → "See why this is risky" → "How this works" →
+     Keep/Switch → Done.
+   - **Path 2 (screenshot sample) — PRIORITIZE THIS ONE, it's the unverified caveat:**
+     Welcome → "Try the screenshot sample — extract with MiniMax M3" → Review/Trip →
+     "Check my itinerary" → confirm MiniMax loading copy appears → confirm it resolves
+     (success with provenance tag, OR an honest failure state — capture which and its exact
+     text) → confirm Options loads with live alternatives → same downstream checks as Path 1.
+
+### Step 3 — Isolate the exact root cause with evidence
+
+For whichever step actually fails:
+1. Capture the exact UI error text verbatim.
+2. Capture the exact browser console stack trace verbatim.
+3. Capture server-side console output (Vite dev server / atlas-proxy middleware logs) at the
+   same moment — this is essential for Atlas CLI errors, which won't show full detail in the
+   browser alone.
+4. If it's an Atlas CLI contention error again: grep the ENTIRE codebase (not just App.tsx)
+   for every place that invokes an Atlas search/verify call — `LiveAlternativesList.tsx`,
+   `UnbookedTicketPreviewLegSection.tsx`, any pre-fetch/hover-triggered calls, and the
+   screenshot-sample's extraction-to-Options transition — and map out the ACTUAL current
+   sequencing/concurrency of all of them relative to each other. The previous fix only
+   addressed ONE specific pair of concurrent calls; there may be others still unaddressed,
+   especially on the screenshot-sample path where MiniMax extraction + Atlas search both need
+   to happen and could now be racing in a way that wasn't true on the simpler ready-made path.
+5. If it's a JS/React error unrelated to Atlas, identify the precise file:line from the stack
+   trace — do not guess.
+
+### Step 4 — Fix precisely, minimally
+
+Fix only the specific, evidenced root cause. If it's another concurrency race, apply the same
+serialization principle already used for Issue B (gate the second call until the first
+settles) rather than inventing a different pattern — but locate the ACTUAL second colliding
+call this time, don't assume it's the same one already fixed.
+
+### Step 5 — Regression + full live re-verification
+
+```bash
+npm run typecheck
+npm run build
+```
+
+Re-run: `minimax-visibility-fix-offline-tests.mjs`, `sample-itinerary-ui-tests.mjs`,
+`sample-itinerary-screenshot-tests.mjs`, `unbooked-ticket-preview-offline-tests.mjs`,
+`traveller-flow-ui-tests.mjs`, `live-app-integration-tests.mjs`, and the full `smoke-tests/`
+suite.
+
+Then walk BOTH Path 1 and Path 2 completely, live, start to finish, with real observed
+evidence at each step (not inferred from shared code).
+
+## Constraints
+
+- Do not touch Nosana execution, extraction logic beyond what's needed to fix a proven bug,
+  or route-continuity snapshot logic unless evidence specifically requires it.
+- Do not weaken any existing test.
+- Do not touch video/narration/subtitle files. Do not commit/push.
+- Never claim something works without direct observed evidence.
+- If the root cause is genuine external Atlas/infra flakiness (not app code), do not mask it
+  — confirm the Retry button works and report it honestly, same as prior sessions.
+
+## Final report
+
+1. Step 1 result (build/typecheck status).
+2. Exact failure point for Path 1 and Path 2 separately, with verbatim errors and root cause.
+3. Fix applied (exact file/lines) or confirmation none was needed, with walkthrough evidence.
+4. Regression test results.
+5. Typecheck/build results.
+6. Full live evidence for BOTH paths, observed, not assumed.
+
+End with:
+
+```text
+BUILD_TYPECHECK_STATUS = <CLEAN | FAILING: exact error>
+PATH_1_READY_MADE_STATUS = <CONFIRMED_WORKING_E2E | BROKEN_AT: step, error>
+PATH_2_SCREENSHOT_SAMPLE_STATUS = <CONFIRMED_WORKING_E2E | BROKEN_AT: step, error>
+ROOT_CAUSE = <description with file:line>
+FIX_APPLIED = <description | NONE_NEEDED>
+ALL_REGRESSION_STATUS = <ALL_PASS | FAILURES: list>
+DEMO_READY = <YES | NOT_YET: reason>
+```

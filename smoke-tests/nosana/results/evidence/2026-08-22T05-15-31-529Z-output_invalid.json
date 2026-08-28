@@ -1,0 +1,27 @@
+{
+  "eventType": "output_invalid",
+  "recordedAt": "2026-08-22T05:15:31.529Z",
+  "phase": "validate",
+  "jobId": "BNZTHNoARu98EdaqPU5WiCaFWZAyU1e9NYCZJj2h1afY",
+  "market": "7AtiXMSH6R1jjBxrcYjehCkkSF7zvYWte63gwEDBcGHq",
+  "ipfsHash": "QmVtywQCBsMokSSnpjDDNAgGJR6dDa8rAHffpMwqmnq5Jg",
+  "resultIpfsHash": "QmbCmtmcbfwRKyU8vE6axGvTMZ6YA1AWkLzVVNpYPZrNHE",
+  "creditsUsed": 44,
+  "costUsd": 0.044,
+  "reservationId": "4a02696c-f4d5-429e-8b4a-e2f6cb3b1722",
+  "project": "7LB623XexGGLN4b9nbiGvQXrQAnBaYeaJzaPtVfrL5fG",
+  "observedStates": [
+    "success"
+  ],
+  "retrievedShape": {
+    "status": "string",
+    "startTime": "number",
+    "endTime": "number",
+    "secrets": {},
+    "opStates": "array[1]"
+  },
+  "errorCode": "OUTPUT_INVALID",
+  "error": "Retrieved content parsed but failed risk-output validation (candidate: direct): riskScore must be a number between 0 and 1; riskBand must be low, medium, or high; assumptions must be an array; simulationCount must be a positive number; explanation must be a non-empty string",
+  "submittedAt": "2026-08-22T05:15:05.200Z",
+  "completedAt": "2026-08-22T05:15:31.529Z"
+}

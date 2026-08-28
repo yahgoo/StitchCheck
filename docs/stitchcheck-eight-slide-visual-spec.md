@@ -37,7 +37,7 @@ Local demo landing screen showing the app header, the "Synthetic Demo — No Liv
 No evidence labels required on this slide. The "Synthetic Demo — No Live Services" badge serves as the primary boundary indicator.
 
 ### Speaker emphasis
-StitchCheck is a local demo that helps budget travellers understand the hidden risk of stitching two separately purchased flight tickets. The entire flow runs locally with synthetic data — no live service is called at any point.
+StitchCheck is a local demo that helps budget travellers understand the hidden risk of stitching two separately purchased flight tickets. The local demo walkthrough runs with synthetic fixture data — the demo UI itself makes no live service calls. Separately, OpenRouter and Atlas production have been called outside the demo UI; their status is reported in Slide 8.
 
 ### Do-not-show/do-not-claim
 - No provider logos (Gemini, Nosana, Atlas, OpenRouter).
@@ -158,24 +158,24 @@ Use a three-column role map for Gemini, Nosana, and Atlas Sandbox. Include the e
 - **Nosana:** planned connection-risk workload returning a heuristic band/score with visible status.
 - **Atlas Sandbox:** planned read-only alternative search for safer flight options.
 - Locally demonstrated: extraction UI, risk placeholder states, alternatives placeholder states.
-- Awaiting live execution: direct Gemini, Nosana workload deployment and submission, Atlas Sandbox authentication.
+- Awaiting live execution: direct Gemini (re-verification not retried after transient error), Nosana workload deployment and submission. Atlas production authentication and two live searches have succeeded; the demo panel remains a local placeholder labelled accordingly.
 
 ### Visual asset
 Original diagram drawn in the presentation tool. Three columns with status badges: "Temporary path evidence" for Gemini, "Local placeholder" for Nosana, "Local placeholder" for Atlas. Draw as an original diagram in the presentation tool.
 
 ### Evidence label treatment
 Include the three exact labels below the columns:
-- `OpenRouter temporary path — not direct Gemini validation`
-- `Synthetic local placeholder — not Nosana evidence`
-- `Synthetic local placeholder — not Atlas Sandbox evidence`
+- `Demo itinerary — local demo fixture`
+- `Local fallback — not Nosana evidence`
+- `Demo alternatives — local demo fixture`
 
 ### Speaker emphasis
-Each service has a clearly defined role. Gemini provides the structured extraction that feeds the review screen. Nosana is planned to deliver a heuristic risk assessment; the local harness exists but the smoke test was blocked before any network request — no workload, endpoint, SDK, or submission mechanism is in place yet. Atlas Sandbox is planned to return safer alternatives for comparison. Today, the local demo shows all three roles with placeholder data; live execution of each service is separately gated and has not yet occurred. All risk data carries the label: Synthetic local placeholder — not Nosana evidence. All Atlas alternatives carry the label: Synthetic local placeholder — not Atlas Sandbox evidence.
+Each service has a clearly defined role. Gemini provides the structured extraction — Direct Gemini 3.7 live extraction succeeded via the Interactions API; the browser walkthrough uses a local fixture. Nosana live job was completed and reconciled offline; the browser demo uses a local fallback fixture. Atlas Sandbox is planned to return safer alternatives for comparison. Atlas production authentication succeeded and live read-only searches returned reference-price offers; however, the demo panels remain local placeholders. All risk data carries the label: Local fallback — not Nosana evidence. All Atlas alternatives carry the label: Demo alternatives — local demo fixture.
 
 ### Do-not-show/do-not-claim
-- No claim that direct Gemini has been executed.
+- No claim that direct Gemini has been executed without qualification (Direct Gemini 3.7 was verified via the Interactions API; the browser walkthrough uses a local fixture).
 - No claim that Nosana has been deployed or executed.
-- No claim that Atlas has been authenticated or executed.
+- No claim that Atlas production has not been authenticated (production authentication succeeded; two live read-only searches returned reference-price offers).
 
 ---
 
@@ -227,7 +227,7 @@ Use a numbered six-step walkthrough. Identify where to capture local screenshots
 5. Compare options and choose Keep or Switch.
 6. View the final statement: no booking or external action created.
 
-Visible labels: `OpenRouter temporary path — not direct Gemini validation`, `Synthetic local placeholder — not Nosana evidence`, `Synthetic local placeholder — not Atlas Sandbox evidence`.
+Visible labels: `Demo itinerary — local demo fixture`, `Local fallback — not Nosana evidence`, `Demo alternatives — local demo fixture`.
 
 ### Visual asset
 Numbered step list with small screenshot thumbnails captured from the local demo at each stage:
@@ -242,9 +242,9 @@ Alternatively, a single wide screenshot showing the full scrollable page in the 
 
 ### Evidence label treatment
 The three exact labels are visible at their respective stages:
-- `OpenRouter temporary path — not direct Gemini validation` (visible after extraction)
-- `Synthetic local placeholder — not Nosana evidence` (visible in risk panel)
-- `Synthetic local placeholder — not Atlas Sandbox evidence` (visible in alternatives panel)
+- `Demo itinerary — local demo fixture` (visible after extraction)
+- `Local fallback — not Nosana evidence` (visible in risk panel)
+- `Demo alternatives — local demo fixture` (visible in alternatives panel)
 
 ### Speaker emphasis
 The walkthrough is designed to be repeatable and self-contained. At every step, the operator can point to a specific label or safety message. The three required source labels are visible at their respective stages, making it clear which data is local placeholder and which came from the temporary extraction path.
@@ -267,10 +267,10 @@ Separate "proven locally/offline" from "not yet live-validated." Include the Atl
 
 ### On-slide copy
 - Local React/Vite demo: **ready** — type-check, production build, and browser walkthrough all pass.
-- GEM-01 evidence: `OpenRouter temporary path — not direct Gemini validation`.
-- Direct Gemini: not yet executed. Pass/fail intentionally blank.
-- Nosana: local harness exists — smoke test blocked before any network request; not executed, not deployed.
-- Atlas Sandbox: local fixtures only — not authenticated, not executed.
+- GEM-01 evidence: `Historical temporary OpenRouter test path — not the active provider`.
+- Direct Gemini 3.7: live extraction validated via `ai.interactions.create`; schema-valid, `fallbackUsed: false`. A subsequent re-verification attempt returned a transient error and was not retried.
+- Nosana: live job completed and reconciled offline. `riskScore: 0.2895`, `riskBand: medium`, `costUsd: 0.044`. Browser demo uses local fallback fixture.
+- Atlas Sandbox: local fixtures only for demo panels. Atlas production: authentication succeeded; two live read-only searches succeeded (PVG→NRT/HND: 5 offers; SIN→BKK: 8 offers). Sandbox Search + Verify (ATL-SBX-SV-01) partially succeeded. Ticketing activation pending.
 - Atlas duplicate-booking guard: offline-only state machine for synthetic 318 scenarios; 48 tests passed; not live Atlas evidence.
 - Next goals: obtain human authorization and credentials for each service smoke test; begin submission assets (README, demo narrative, slide recording).
 
@@ -316,7 +316,7 @@ We have a working local demo that proves the review-first flow, the confirmation
    - **Used in:** Slide 4 (right side), Slide 7 (step 4).
 
 4. **Risk/alternatives placeholder state with labels**
-   - **What must be visible:** Risk Panel and Alternatives Panel with placeholder data and visible labels: `Synthetic local placeholder — not Nosana evidence` and `Synthetic local placeholder — not Atlas Sandbox evidence`.
+   - **What must be visible:** Risk Panel and Alternatives Panel with placeholder data and visible labels: `Local fallback — not Nosana evidence` and `Demo alternatives — local demo fixture`.
    - **What must be hidden:** No real risk scores, no real alternative flights, no credentials.
    - **Used in:** Slide 7 (step 5).
 
@@ -339,9 +339,9 @@ We have a working local demo that proves the review-first flow, the confirmation
 - [ ] Exactly eight slides present.
 - [ ] No unsupported provider claim appears in any slide.
 - [ ] Exact labels preserved:
-  - `OpenRouter temporary path — not direct Gemini validation`
-  - `Synthetic local placeholder — not Nosana evidence`
-  - `Synthetic local placeholder — not Atlas Sandbox evidence`
+  - `Demo itinerary — local demo fixture`
+  - `Local fallback — not Nosana evidence`
+  - `Demo alternatives — local demo fixture`
 - [ ] Offline Atlas guard clearly marked offline-only in Slide 8.
 - [ ] Confirmation gate visibly demonstrated in Slide 4.
 - [ ] No credentials, PII, raw provider output, or real booking/payment data appears in any screenshot or diagram.

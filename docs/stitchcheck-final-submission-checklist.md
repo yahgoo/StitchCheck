@@ -23,10 +23,10 @@
 
 - [ ] `README.md` reviewed — public-facing project description with service roles, evidence status, and safety boundaries.
 - [ ] `docs/stitchcheck-slide-deck-outline.md` reviewed — 8-slide hackathon presentation outline with speaker notes.
-- [ ] `docs/stitchcheck-demo-narrative-video-plan.md` reviewed — **file does not exist yet**; video production was blocked by missing Kokoro TTS and HyperFrames CLI. The fallback recording package (`docs/stitchcheck-demo-recording-fallback.md`) and recording runbook (`docs/stitchcheck-local-recording-runbook.md`) are available instead.
+- [ ] `docs/stitchcheck-demo-narrative-video-plan.md` reviewed — present; its provider wording must match the reconciled historical evidence while keeping the recording itself offline.
 - [ ] Final demo recording completed using synthetic data only.
 - [ ] Recording excludes terminals, credentials, `.env.local`, notifications, personal information, and unrelated tabs.
-- [ ] Narrative does not claim unexecuted provider integrations — no provider is described as live, deployed, authenticated, or validated.
+- [ ] Narrative distinguishes historical provider evidence from the offline browser demo; no local fixture is described as a live provider result.
 
 ---
 
@@ -34,9 +34,9 @@
 
 | Provider | Recorded Status | Exact Safe Wording | Forbidden Claim |
 |---|---|---|---|
-| **Gemini** | GEM-01 executed via OpenRouter temporary path (`google/gemini-3.7-flash`). Evidence at `smoke-tests/gemini/results/`. Direct Gemini remains unexecuted. | `OpenRouter temporary path — not direct Gemini validation` | Direct Gemini was tested or passed. |
-| **Nosana** | Blocked before any network request. Evidence at `smoke-tests/nosana/results/2026-08-20T15-53-43Z/`. No reviewed workload, submission mechanism, target environment, endpoint, SDK/CLI, or deployment method exists. | `Synthetic local placeholder — not Nosana evidence` | Nosana was deployed, authenticated, executed, or validated. |
-| **Atlas** | Local fixtures and comparison adapter only. Not authenticated, not executed. Evidence at `smoke-tests/atlas/`. | `Synthetic local placeholder — not Atlas Sandbox evidence` | Atlas Sandbox was authenticated, executed, or validated. |
+| **Gemini** | Historical live evidence is preserved under `smoke-tests/extraction/`. The ready-made demo path performs no extraction and correctly shows MiniMax offline. | `Demo itinerary — local demo fixture` | The demo fixture is a live extraction response. |
+| **Nosana** | Historical evidence is reconciled. The current browser fixture is a permitted dry-run preview (`jobId: null`, `fallbackUsed: true`) and no current workload was submitted. | `Local fallback — not Nosana evidence` | The dry-run preview is a live workload result. |
+| **Atlas** | Historical Sandbox Search→Verify evidence returned 20 offers, then `PRICE_CONFIRMATION_REQUIRED`, with no write. The Aug 28 run was an environment-switch failure, not fresh evidence. | `Demo alternatives — local demo fixture` | The browser fixture is a live Atlas result. |
 
 ---
 
@@ -81,10 +81,10 @@ Complete this sequence before submission:
 
 The following items are explicitly open and must not be silently presented as completed integrations:
 
-- **Direct Gemini validation remains unexecuted.** Pass/fail for direct Gemini is intentionally blank. Only the OpenRouter temporary path has been tested (GEM-01). Direct Gemini requires separate human authorization, credentials, and execution.
-- **Nosana remains blocked before network access.** The project lacks the reviewed workload, submission mechanism, target environment, endpoint, SDK/CLI, and deployment method. The smoke-test attempt was intentionally stopped at the cost and safety gate. Six prerequisites must be completed before retrying (see `smoke-tests/nosana/results/2026-08-20T15-53-43Z/summary.md`).
-- **Atlas Sandbox remains unauthenticated and unexecuted.** No Atlas credential, SDK, endpoint, or request code exists. Sandbox search-only execution requires separate credentials and explicit human authorization.
-- **These open items must not be silently presented as completed integrations.** Any presentation, video, or document that implies Nosana or Atlas has been deployed, authenticated, or validated is inaccurate.
+- **No new provider run is authorized for this demo.** Historical evidence remains distinct from the active offline browser path.
+- **Nosana browser state is dry-run only.** The fixture has no submitted job ID and must never be labelled as a live workload result.
+- **Atlas browser state is local-fixture only.** Historical Sandbox evidence is read-only; no booking or other write exists.
+- **These boundaries must remain explicit.** Any presentation, video, or document that labels a local fixture as live evidence is inaccurate.
 
 ---
 
@@ -112,6 +112,6 @@ The following items are explicitly open and must not be silently presented as co
 
 - **Local-demo verdict: Ready.** The React/Vite demo passes type-check, production build, and browser walkthrough.
 - **Exact three evidence labels preserved** — no paraphrasing, no abbreviation.
-- **Nosana status: blocked.** Blocked before any network request. Not executed, not deployed, not authenticated.
-- **No provider status upgraded** — Gemini direct remains unexecuted, Nosana remains blocked, Atlas remains unauthenticated.
+- **Nosana status: dry-run preview.** The browser fixture is permitted and self-consistent (`jobId: null`, no submission); reconciled historical evidence remains separate.
+- **Historical evidence is not active-demo evidence** — Gemini evidence is under `smoke-tests/extraction/`; Atlas evidence is read-only Sandbox Search→Verify; the app stays offline.
 - **No unsupported dates, URLs, metrics, or performance claims added.**

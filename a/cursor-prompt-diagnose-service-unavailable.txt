@@ -1,0 +1,133 @@
+# StitchCheck — Diagnose "Live alternatives are unavailable. Service temporarily unavailable."
+# Cursor Agent — root-cause first. This is a DIFFERENT error message from the earlier
+# "Secure credential storage is unavailable" issue — do not assume it's the same known
+# flakiness without checking. The most recent change touched App.tsx extensively (MiniMax
+# visibility fix), so a real regression is plausible and must be ruled in or out explicitly.
+
+## Context
+
+User reports: "Live alternatives are unavailable. Service temporarily unavailable." on the
+Options screen. This is NOT the same error text as the previously diagnosed
+"Secure credential storage is unavailable" (macOS Keychain/keyring issue). This could be:
+
+1. A genuine, different Atlas Sandbox-side issue (rate limiting, timeout, upstream 5xx).
+2. A real regression introduced by the most recent MiniMax-visibility-fix change, which
+   modified `app/src/App.tsx` extensively (Welcome hierarchy, loading state, provenance
+   wiring) — it's plausible that change altered state/effect ordering, a shared variable, or
+   an error-handling branch that the live Atlas alternatives fetch also depends on.
+3. A retry/backoff exhaustion state surfacing a generic message rather than the specific
+   underlying cause.
+
+Do not assume which one it is. Diagnose with evidence before fixing.
+
+## Absolute constraints
+
+- Do not touch Nosana execution, extraction logic (beyond confirming it's unaffected), or
+  route-continuity snapshot logic unless the diagnosis proves the bug is actually there.
+- Do not weaken any existing test to force a pass.
+- Do not touch video/narration/subtitle files.
+- Do not commit/push.
+- If this is a genuine external Atlas/infra issue, do not "fix" it by masking the error or
+  auto-retrying silently in a way that could show fabricated data — report it honestly, same
+  as the credential-storage issue before.
+
+## Step 1 — Find the exact source of "Service temporarily unavailable"
+
+1. Grep the codebase for the literal string "Service temporarily unavailable" (and the
+   earlier-seen "SERVICE_TEMPORARILY_UNAVAILABLE" error code from the Verify-flow testing) to
+   find exactly which code path produces this message — is it from `atlas-proxy.mjs`, the
+   `atlas-flight` CLI itself, `atlasClient.ts`/`atlasAdapter.ts` error mapping, or a generic
+   catch-all fallback string in `App.tsx`/`LiveAlternativesList.tsx`?
+2. Reproduce it: restart the dev server (`DATA_MODE=live`), run the sample-itinerary or
+   screenshot-sample flow through to Options, and trigger the same failure. Capture the exact
+   network/CLI-level error underneath the UI message (check server-side console logs from the
+   Vite dev server / atlas-proxy middleware, not just the browser).
+3. Determine: does `atlas-flight doctor --json` (or equivalent Atlas CLI health check used in
+   the prior credential diagnosis) currently report healthy, or does it show a different
+   failure this time? Quote its exact output.
+
+## Step 2 — Rule the recent MiniMax-visibility-fix change in or out as the cause
+
+1. Review the diff to `app/src/App.tsx` from the MiniMax-visibility-fix implementation.
+   Specifically check:
+   - Did any state variable, effect dependency array, or function used by the live Atlas
+     Search/Verify call path get renamed, reordered, or conditionally gated in a way that
+     could now block or short-circuit the alternatives fetch?
+   - Did the new `extractionLoading` state, `itineraryInputMode` checks, or provider-bar
+     timing logic (`providerChecksStarted()`) accidentally wrap or gate the Atlas alternatives
+     fetch code in a condition it didn't have before?
+2. Temporarily (for diagnosis only, not as a fix) check out the commit/state immediately
+   before the MiniMax-visibility-fix change and confirm whether the same live alternatives
+   fetch succeeds or fails there too, using the same route/timing. This isolates whether the
+   regression is real or whether the underlying Atlas/infra issue is independent and would
+   have failed either way.
+3. Report which one it is with concrete evidence (e.g. "confirmed: this fails identically on
+   the pre-MiniMax-fix commit, so it is NOT a regression from that change" or "confirmed: this
+   passes on the pre-MiniMax-fix commit and fails on the current commit, so it IS a
+   regression — root cause: X").
+
+## Step 3 — Fix precisely, matching the actual root cause
+
+- If it's a genuine Atlas-side/infra issue (rate limit, timeout, transient 5xx): do not
+  change app code to mask it. Confirm the existing Retry button/error-state UI behaves
+  correctly (clicking Retry actually re-attempts the real call), and report this as an
+  environment condition, same as the credential-storage issue, with guidance on how to
+  verify Atlas is healthy again before a demo.
+- If it's a genuine regression from the MiniMax-visibility-fix change: fix the specific
+  introduced bug precisely — do not do a broad revert of that work; identify the exact line(s)
+  that broke the alternatives fetch and correct only those, preserving all of the
+  MiniMax-visibility-fix behavior (button hierarchy, loading state, provenance tag, offline
+  notice, provider-bar timing) exactly as already implemented and tested.
+- If it's a race condition (e.g. the new loading-state wiring now runs the Atlas fetch before
+  some other required state settles), fix the ordering/dependency issue directly.
+
+## Step 4 — Regression check
+
+```bash
+npm run typecheck
+npm run build
+```
+
+Re-run:
+- `smoke-tests/minimax-visibility-fix-offline-tests.mjs`
+- `smoke-tests/sample-itinerary-ui-tests.mjs`
+- `smoke-tests/sample-itinerary-screenshot-tests.mjs`
+- `smoke-tests/unbooked-ticket-preview-offline-tests.mjs`
+- `smoke-tests/cross-provider-invariant-tests.mjs`
+- `smoke-tests/traveller-flow-ui-tests.mjs`
+- `smoke-tests/live-app-integration-tests.mjs`
+- Full `smoke-tests/` suite, report pass/fail counts.
+
+## Step 5 — Live re-verification
+
+Restart the dev server and walk through both Welcome-screen paths (screenshot sample and
+ready-made sample) to Options. Confirm the live Atlas alternatives list actually loads
+successfully this time (quote real offers/prices observed), or, if it still fails, quote the
+exact current error and confirm it is a genuine external condition with Retry behaving
+correctly — do not claim success if it did not actually happen.
+
+## Final report
+
+Return:
+
+1. Exact source of the "Service temporarily unavailable" message (Step 1), with the
+   underlying error captured from server-side logs, not just the browser UI text.
+2. Definitive answer, with evidence, on whether this is a regression from the
+   MiniMax-visibility-fix change or an independent Atlas/infra condition (Step 2).
+3. The fix applied (if a real regression) or the honest environment-condition explanation (if
+   not), including exactly which lines changed and why, or confirmation nothing was changed.
+4. Regression test results.
+5. Typecheck/build results.
+6. Live re-verification result — real observed offers/prices if it now succeeds, or the exact
+   current error state if it still doesn't, with Retry-button behavior confirmed either way.
+
+End with:
+
+```text
+ROOT_CAUSE = <REGRESSION_FROM_MINIMAX_FIX: exact lines | PRE_EXISTING_ATLAS_INFRA_ISSUE | OTHER: description>
+FIX_APPLIED = <YES: description | NOT_NEEDED: infra issue, no code change | BLOCKED: reason>
+LIVE_ALTERNATIVES_WORKING_NOW = <YES, confirmed with real offers | NO: current error state | INTERMITTENT: describe>
+MINIMAX_FIX_BEHAVIOR_PRESERVED = <YES, unchanged | NO: what changed>
+ALL_REGRESSION_STATUS = <ALL_PASS | FAILURES: list>
+DEMO_READY = <YES | NOT_YET: reason>
+```

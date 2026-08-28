@@ -1,0 +1,95 @@
+# StitchCheck — Debug: Why the previously-working 3-provider live path is now inconsistent
+# (Cursor, model: Grok 4.6). DIAGNOSIS MODE FIRST. Do not fix anything until you've reported
+# root causes for my review. Do not trigger any live Atlas/Nosana/Gemini call during
+# diagnosis — read code, config, and historical evidence files only. This is the night before
+# Daytona HackSprint submission; I need an accurate root-cause map, not quick patches.
+
+## Background — what "previously worked" actually means
+
+At some earlier point, all three providers were exercised live and produced real evidence
+that still exists in this repo:
+
+- **Atlas**: `smoke-tests/atlas/results/sandbox-search-verify-2026-08-21T07-02-42-099Z.json`
+  — real Sandbox Search→Verify run, 20 offers KUL→SIN, carriers OD/TR/AK, prices USD
+  48.10–85.28, then `offer off_11db11bad81302c295da16f1` verified as
+  `PRICE_CONFIRMATION_REQUIRED` (price changed 64.38→203.99). Hard stop after Verify, no
+  write occurred. A separate Production Search evidence file also exists (8 offers SIN→BKK,
+  reference-price only) at `smoke-tests/live-demo-results/2026-08-21T05-37-31Z/atlas-live-result.md`.
+- **Gemini**: historical live extraction evidence exists (per `docs/evidence-status.md`),
+  originally via direct Gemini/Interactions API, later described as preserved under a
+  renamed `smoke-tests/extraction/` tree after a Gemini→"extraction" renaming pass.
+- **Nosana**: historical evidence exists and was described as "reconciled," referenced in
+  `Nosana_Live_Smoke_Prep` notes — but the CURRENT runtime fixture
+  (`app/public/nosana-risk-result.json`) shows `evidenceSource: "safety-gate-blocked"`,
+  `fallbackUsed: true`, which contradicts a genuinely live/reconciled state and was failing
+  6 test assertions as of tonight's audit (since patched, but the underlying mismatch pattern
+  is exactly what needs root-causing here).
+
+## What's confirmed broken/drifted as of tonight (8:38 PM)
+
+1. The local dev build was compiling with `DATA_MODE=live` baked in via `vite.config.ts` /
+   `.env.local`, meaning the DEFAULT app launch would trigger a live Atlas Search on
+   "Check my itinerary" — this has just been patched to default `offline`, but I need to
+   understand HOW it drifted to `live` in the first place, since that's a recurring risk.
+2. `app/public/nosana-risk-result.json` had drifted to a `safety-gate-blocked` /
+   `fallbackUsed: true` state that didn't match either a clean dry-run preview shape or the
+   "historical evidence reconciled" narrative in the docs — also just patched, but same
+   question: how did the runtime fixture drift out of sync with the documented historical
+   evidence?
+3. 8 documentation files contained stale claims like "Atlas unauthenticated and unexecuted,"
+   directly contradicted by the historical evidence files listed above existing in the same
+   repo — also just patched.
+4. The most recent (Aug 28) attempt at a fresh live Atlas run was reported as an
+   environment-switch failure, not successful fresh evidence — this one is NOT yet
+   root-caused or fixed.
+
+## Your task
+
+Investigate and report — do not fix yet — the following:
+
+1. **Timeline reconstruction**: using git log/blame on `vite.config.ts`, `.env.local` (if
+   tracked — note if it's gitignored and thus untraceable), `app/public/nosana-risk-result.json`,
+   and the docs listed above, reconstruct roughly when and by what change each of the four
+   drifts above was introduced. Was it a specific commit/session that flipped DATA_MODE to
+   live and never flipped it back? Was the Nosana fixture overwritten by a specific script run
+   (e.g. a safety-gate test run that writes its blocked-state result over the real fixture)?
+2. **Aug 28 environment-switch failure root cause**: investigate why the most recent live
+   Atlas attempt failed at the environment-switch step. Check the `atlas-flight` CLI version
+   installed, whether `.env.local` credentials are still valid/present, whether the CLI's
+   `environment use sandbox` command is the exact one being invoked, and whether anything in
+   `server/atlas-proxy.mjs` or `server/atlas-sandbox-writes.mjs` changed recently in a way that
+   could have broken this step. Report the exact error if you can reproduce it read-only
+   (checking logs/error output from the last attempt — do not re-trigger a live call to test).
+3. **Structural risk assessment**: identify WHY this kind of drift is easy to reintroduce —
+   e.g., is there no single source of truth for "is live mode currently safe," no test that
+   fails loudly when a runtime fixture diverges from its documented evidence, no CI check that
+   catches stale claims automatically? Propose (but do not yet implement) a lightweight
+   safeguard for each drift type so this doesn't recur between now and actual submission.
+4. **Current live-readiness for each of the 3 providers**, if I decide to attempt a live
+   capture run tonight: for each of Atlas, Gemini, and Nosana, state plainly whether its live
+   path is currently wired and credentialed correctly (config/code check only, no live call),
+   or whether something is broken that would cause a live attempt to fail predictably.
+
+## Constraints
+
+- Read-only. No live provider call. No code fix in this pass — diagnosis and a proposed fix
+  plan only, which I will review before you implement anything.
+- Do not print or log any credential value, even partially.
+- Do not modify git history, rebase, or alter any file.
+
+## Output format
+
+One section per numbered task above, with file paths, commit hashes/dates where found, and
+exact error text where reproducible from existing logs. End with a prioritized list of
+proposed fixes (not yet applied), each tagged `SAFE TO FIX NOW` or `NEEDS MY APPROVAL FIRST`.
+
+```text
+DATA_MODE_DRIFT_ROOT_CAUSE = <finding>
+NOSANA_FIXTURE_DRIFT_ROOT_CAUSE = <finding>
+STALE_DOCS_ROOT_CAUSE = <finding>
+AUG28_ATLAS_FAILURE_ROOT_CAUSE = <finding | UNABLE_TO_DETERMINE_READ_ONLY: what's needed to confirm>
+ATLAS_LIVE_READINESS = <READY | BLOCKED: reason>
+GEMINI_LIVE_READINESS = <READY | BLOCKED: reason>
+NOSANA_LIVE_READINESS = <READY | BLOCKED: reason>
+RECURRENCE_RISK_LEVEL = <LOW | MEDIUM | HIGH, with reasoning>
+```

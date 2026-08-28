@@ -1,0 +1,73 @@
+# StitchCheck — Debug MiniMax M3 Extraction Path (Cursor, Grok 4.6)
+# DIAGNOSIS MODE FIRST. Do not fix anything until you've reported root causes for my review.
+# Do not trigger any live extraction call during diagnosis — read code, config, and evidence
+# files only. This is the night before Daytona HackSprint; I need an accurate root-cause map,
+# not quick patches.
+
+## Context — what "MiniMax M3 extraction" actually means in this app
+
+The app's itinerary extraction path currently uses **OpenRouter with the `minimax/minimax-m3:free`
+model** as a temporary path, not direct Kimi API. The Welcome screen's "Try the screenshot sample
+— extract with MiniMax M3" button triggers this flow. When you get Kimi credits and switch to the
+Kimi API key, the app will use the direct Kimi API instead — but for tomorrow's demo, the
+MiniMax path via OpenRouter is what's wired and needs to be debugged.
+
+## What's known from prior work
+
+- **OpenRouter adapter exists:** `server/openrouter-extract.mjs` (or equivalent) is pinned to
+  `minimax/minimax-m3:free`.
+- **Credential present:** OpenRouter API key is in `.env.local` (value not to be printed).
+- **Extraction flow:** Upload/select screenshot → "Check my itinerary" → server calls OpenRouter
+  → MiniMax M3 returns structured JSON → UI renders editable itinerary cards.
+- **Prior evidence:** Historical live extraction evidence exists under `smoke-tests/extraction/`
+  or `smoke-tests/gemini/` (from earlier direct Gemini work), but the current runtime path is
+  MiniMax via OpenRouter.
+- **No direct Kimi API wired yet:** The app does not currently call the Kimi API directly — that's
+  a future switch once credits are available.
+
+## Your task
+
+Investigate and report — do not fix yet — the following:
+
+1. **Code path audit:** Trace the exact flow from the "Check my itinerary" button click on the
+   screenshot-sample path through to the rendered itinerary cards. Identify every file involved
+   (client component, server adapter, OpenRouter call, response parsing, UI rendering). Report
+   the exact file paths and line numbers for each step.
+2. **Current state verification:** Confirm whether the MiniMax M3 path is actually wired and
+   functional right now, or whether it's still a stub/mock. Check:
+   - Is `server/openrouter-extract.mjs` (or equivalent) actually imported and called on the
+     real flow, or only in tests/fixtures?
+   - Does the client call a local endpoint (e.g. `/api/extract`) that proxies to OpenRouter,
+     or does it call OpenRouter directly (it shouldn't — that would leak the key)?
+   - Is the OpenRouter API key actually loaded from `.env.local` and used in the call?
+3. **Evidence check:** Search for any existing evidence files from prior MiniMax M3 extraction
+   runs (JSON responses, sanitized logs, test fixtures). Report what you find — file paths,
+   timestamps, whether the response shape matches what the UI expects.
+4. **Failure modes:** Identify any known failure modes from prior runs (e.g. 429 rate-limit on
+   the free tier, timeout, schema mismatch between MiniMax output and the UI's expected shape).
+   Check error logs, test failures, or TODO comments in the extraction code.
+5. **Kimi switch readiness:** Determine what would need to change to switch from MiniMax M3
+   (OpenRouter) to direct Kimi API once credits are available. Is there already a Kimi adapter
+   scaffolded, or would that need to be built from scratch? Report the exact delta.
+
+## Constraints
+
+- Read-only. No live extraction call. No code fix in this pass — diagnosis and a proposed fix
+  plan only, which I will review before you implement anything.
+- Do not print or log any credential value, even partially.
+- Do not modify git history, rebase, or alter any file.
+
+## Output format
+
+One section per numbered task above, with file paths, line numbers, and exact error text where
+found. End with a prioritized list of proposed fixes (not yet applied), each tagged
+`SAFE TO FIX NOW` or `NEEDS MY APPROVAL FIRST`.
+
+```text
+CODE_PATH_AUDIT = <files/lines traced>
+CURRENT_STATE = <WIRED_FUNCTIONAL | STUB_ONLY | PARTIAL: what's missing>
+EVIDENCE_FOUND = <file paths, timestamps, response shape match: YES/NO>
+KNOWN_FAILURE_MODES = <list, or NONE_FOUND>
+KIMI_SWITCH_DELTA = <existing adapter | BUILD_FROM_SCRATCH | PARTIAL: what exists>
+RECURRENCE_RISK_LEVEL = <LOW | MEDIUM | HIGH, with reasoning>
+```

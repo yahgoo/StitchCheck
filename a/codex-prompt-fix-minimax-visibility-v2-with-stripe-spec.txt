@@ -1,0 +1,126 @@
+# StitchCheck — Make MiniMax M3 Extraction Visibly Real on the Primary Demo Path (v2)
+# Codex Agent — ANALYSIS + DESIGN SPEC ONLY. Do not write or modify application code.
+# Output: one new markdown design-spec document that Cursor will implement afterward.
+# v2: the prior Welcome-screen Stripe spec was never actually produced as a file — this
+# version inlines the full Stripe design reference directly so this prompt is self-contained.
+
+## Confirmed current-state behavior (from your own investigation)
+
+- "Upload itinerary" is the only primary-styled CTA on the Welcome screen today.
+- Among the two sample choices, the structured-data shortcut ("Try a sample itinerary")
+  appears first/more prominently.
+- The structured shortcut sets prebuilt itinerary data directly and marks MiniMax M3 offline
+  when the provider-status check runs — extraction never occurs on this path.
+- The screenshot-based sample ("Try sample itinerary screenshot") only runs real extraction
+  AFTER the user clicks "Check my itinerary" — not immediately on Welcome-screen selection.
+
+This confirms the core risk: a judge taking the more prominent, first-listed sample path will
+never see MiniMax do anything, and has no context to distinguish "intentionally skipped" from
+"broken."
+
+## Stripe design reference (inlined — use these exact values, do not invent new ones)
+
+Use this as the single-source design reference for this spec, since no prior spec file
+exists yet to reference:
+
+- **Color:** one brand accent, indigo `#533afd`, used sparingly for primary actions/focus
+  only. Background near-white (`#FFFFFF` / subtle cool gray `#F6F9FC`). Text in deep navy
+  (`#0A2540` or similar), never pure black. Secondary text in lighter slate gray.
+- **Spacing:** strict 8px-based grid (4, 8, 12, 16, 24, 32, 64px scale). Generous whitespace
+  is deliberate — restraint, not decoration.
+- **Corners/shadows:** low border-radius (4–6px), flat-to-minimal shadow, not heavy elevation.
+- **Typography:** humanist sans-serif, tight letter-spacing on headings, relaxed line-height
+  (~1.5) on body text, clear size hierarchy (large headline, smaller supporting text).
+- **Buttons — single-primary-CTA principle (preserve this exactly):** one clearly dominant
+  primary action per screen/section — never two competing filled buttons side by side in the
+  same visual band. Secondary actions styled as lower-emphasis (outline/ghost/text-link) so
+  hierarchy is unmistakable at a glance. This principle must be preserved even as you decide
+  which sample path deserves more visual prominence — "more prominent" for the extraction-
+  demo path should mean better secondary-tier styling and positioning, not necessarily a
+  second competing primary-filled button next to "Upload itinerary."
+- **Icons:** used sparingly and functionally (e.g. a small route/plane icon next to a route
+  string) — not decorative illustration.
+- **Trust cues:** short, plain-language reassurance text placed exactly where doubt would
+  arise, not buried in a generic footer.
+
+## Your task
+
+### Step 1 — Decide which sample path should get better positioning, within the single-primary-CTA rule
+
+"Upload itinerary" remains the one true primary CTA (it's the actual core product function).
+Both sample options are secondary-tier by definition. Your job is to decide the ORDER and
+RELATIVE EMPHASIS between the two secondary options — not to create a second primary button.
+
+Evaluate and recommend ONE of these approaches:
+
+**Option A — Reorder secondary options**: list "Try sample itinerary screenshot" (the one
+that demonstrates MiniMax) FIRST among the secondary options, with the structured shortcut
+listed second/below as an explicit fast-path alternative. Both remain secondary-tier styled;
+only their order and framing copy change.
+
+**Option B — Merge into one secondary action**: the single "Try a sample" secondary action
+always runs through real extraction (using the sample screenshot under the hood) rather than
+offering a separate instant structured-data shortcut at all. Evaluate whether this removes
+the fast-path option some users may want, versus guaranteeing every demo run shows MiniMax.
+
+**Option C — Keep both, same order, but fix the copy/labeling only**: relabel so it's
+impossible to miss which one shows AI extraction (e.g. "Try a sample itinerary — instant,
+skips AI extraction" vs. "Try a sample itinerary — watch MiniMax M3 extract it live"), and
+add an inline explanation wherever MiniMax shows "offline" on the fast path.
+
+State your recommendation with reasoning weighted toward eliminating any chance a judge
+reads a correct "offline" status as a bug — even at some cost to demo speed — while
+preserving the single-primary-CTA principle throughout.
+
+### Step 2 — Specify the exact UI changes for the recommended option
+
+1. Exact secondary-tier button copy, order, and styling tier for both sample options,
+   consistent with the single-primary-CTA rule above.
+2. Exact loading/progress copy while MiniMax is actually running post-"Check my itinerary"
+   on the screenshot path (e.g. "MiniMax M3 is reading your itinerary…") — must reflect REAL
+   extraction latency, never a fabricated delay.
+3. Exact copy for the moment extraction completes, showing a clear "Extracted by MiniMax M3"
+   (or equivalent) provenance tag on the review/correction screen.
+4. If the structured shortcut is retained (Options A or C), exact inline copy explaining why
+   "MiniMax M3: offline" is correct and expected there — e.g. a tooltip/note such as "Skipped
+   — this fast path loads a ready-made itinerary directly," so it can never read as a failure.
+5. Whether the compact "Live checks: N of 3 passed" bar's copy, timing, or placement should
+   change — e.g. should it withhold judgment or use different phrasing before a path capable
+   of exercising all 3 providers has actually run.
+
+### Step 3 — Non-negotiable honesty constraint
+
+MiniMax's status must always reflect what ACTUALLY happened. Never fake a "live" badge or a
+fabricated loading delay to make the demo look more convincing. State this constraint
+explicitly in the spec for Cursor to preserve.
+
+### Step 4 — Write the deliverable
+
+Create `docs/minimax-visibility-fix-spec-2026-08-28.md` containing:
+
+1. The confirmed current-state problem (already established above).
+2. Your recommended option (A, B, or C) with reasoning tied to judging risk.
+3. Exact copy, ordering, styling tier, loading-state copy, and provenance-tag copy (Step 2).
+4. The explicit honesty constraint (Step 3).
+5. A short "what a judge will now see, step by step" walkthrough proving the fix works —
+   narrate a judge clicking the (newly repositioned) sample option and seeing MiniMax visibly
+   do something, with realistic timing.
+6. Restate the full Stripe reference values inline in this doc too (color/spacing/typography/
+   button-hierarchy rules above) so this spec remains self-contained for whoever implements it
+   and for any future Welcome-screen work, since no separate Stripe spec file exists yet.
+
+## Constraints
+
+- Analysis and design-spec writing only. Do not modify, refactor, or write any application
+  code. Create exactly one new markdown file.
+- Preserve the single-primary-CTA principle — "Upload itinerary" remains the one true primary
+  action; do not propose demoting it or promoting a sample option to equal-primary status.
+- Do not recommend fabricating, hardcoding, or forcing a "live" MiniMax status under any
+  circumstance.
+- Do not propose changing what happens in Options/Recovery/Atlas — this is Welcome-screen and
+  extraction-visibility scope only.
+
+## Final output
+
+Return: the file path written, your recommended option (A/B/C) with a one-paragraph
+justification, and the "what a judge will now see" walkthrough as your executive summary.

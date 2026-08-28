@@ -43,9 +43,9 @@ Scene configuration is defined in `templates/scene-manifest.json` and validated 
 ## Evidence Labels
 
 Three exact labels must appear at specified scenes:
-- `OpenRouter temporary path — not direct Gemini validation`
-- `Synthetic local placeholder — not Nosana evidence`
-- `Synthetic local placeholder — not Atlas Sandbox evidence`
+- `Demo itinerary — local demo fixture`
+- `Local fallback — not Nosana evidence`
+- `Demo alternatives — local demo fixture`
 
 See `references/evidence-and-privacy.md` for placement rules and privacy constraints.
 

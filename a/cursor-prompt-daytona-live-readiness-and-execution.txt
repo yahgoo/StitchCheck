@@ -1,0 +1,114 @@
+# StitchCheck — Get Daytona live for tomorrow's Daytona HackSprint (Cursor, Grok 4.6)
+# Two phases: DIAGNOSIS first (read-only, no live sandbox), then ONE bounded live execution
+# ONLY after you present Approval Gate 1 and I explicitly type "approved". This mirrors the
+# existing Daytona_Atlas_Live_Animation_Spec pattern already designed for this project — reuse
+# its constraints exactly, don't invent new ones.
+
+## Why this matters more than Atlas/Nosana/Gemini tonight
+
+Tomorrow is Daytona HackSprint Singapore. Daytona itself — isolated, disposable sandbox
+execution — is the sponsor technology being judged, separate from Atlas/Nosana/Gemini as data
+providers. A demo that never actually creates a live Daytona sandbox undersells the one
+integration that matters most to this specific event.
+
+## PHASE 1 — Diagnosis (read-only, no sandbox created, no live call)
+
+1. Check whether a Daytona SDK is actually installed and importable: search `package.json`
+   for `@daytonaio/sdk` or similar, confirm it's in `node_modules`, and check for a
+   `DAYTONA_API_KEY` (name only, do not print value) in `.env.local` or elsewhere.
+2. Read `scripts/daytona-orchestrator.mjs` and `scripts/daytona-sandbox-plan.mjs` (or
+   equivalents) and determine: is this orchestrator currently wired to make a REAL
+   `daytona-sdk` sandbox-creation call, or is it still in "mock client" / offline-simulation
+   mode only? State this plainly — don't assume from file names.
+3. Check `workers/daytona-atlas-worker` and any `daytona-risk-worker` for whether they're
+   complete, runnable scripts or still scaffolds.
+4. Run the existing OFFLINE test suites for Daytona (`scripts/daytona-orchestrator-offline-tests.mjs`,
+   `scripts/daytona-worker-sanitize-tests.mjs` or equivalents) and report pass/fail — these are
+   safe, no live effect.
+5. Determine exactly what's missing between current state and a real
+   create-sandbox → execute-worker → download-result → destroy-sandbox cycle. Report a
+   concrete gap list, not a vague "some wiring needed."
+6. State your best estimate of how long closing that gap would take, given it's currently
+   [insert current time when you run this] the night before submission.
+
+## APPROVAL GATE 1 — present and wait for literal "approved"
+
+Present, in this exact structure (reusing the existing spec's wording pattern):
+
+```
+SANDBOX CREATION PLAN
+- Provider: Daytona
+- Image: [confirm from Expert/plan, e.g. node20-slim]
+- Resources: cpu 1, memory 2GB
+- Network: domainAllowList restricted to [only what's actually needed — PyPI mirrors if
+  Python-based, or npm registry if Node-based, plus sandbox.atriptech.com if the worker calls
+  Atlas]; networkBlockAll otherwise
+- Exec timeout: 90 seconds
+- TTL: 10 minutes hard cap, ephemeral: true
+- What the worker will actually do inside the sandbox: [state exactly — e.g. run one bounded
+  deterministic risk computation, or run one Atlas Search+Verify via CLI]
+- Confirmation: no order/booking/payment/ticket call possible from inside this worker, ever
+- Sandbox will be destroyed in a finally block after completion, success or failure
+```
+
+Do not create any sandbox without my literal "approved" reply matching this gate.
+
+## PHASE 2 — Bounded live execution (only after Gate 1 approval)
+
+1. Create exactly ONE Daytona sandbox this session.
+2. Execute the worker exactly once, bounded by the timeout above.
+3. Download the sanitized result.
+4. Destroy the sandbox in a `finally` block — this must run even if the worker fails or times
+   out. Confirm destruction explicitly.
+5. Wire the sanitized real result into `RecoveryPlanAnimation` via its existing typed data
+   prop (per `Daytona_Atlas_Live_Animation_Spec` Section 3) — do not fabricate any field the
+   real response doesn't provide; render `"not available from Sandbox response"` for those,
+   exactly as the existing spec requires.
+6. Apply the correct new provenance label (`ATLASUILABELS.daytonaSandboxReal` or the
+   project's existing equivalent constant) — do not blend this with the fixture-based label.
+
+## Hard constraints (from the existing spec — do not weaken any of these)
+
+1. Max ONE Daytona sandbox created, ever, this session.
+2. Max ONE Atlas Search call, max ONE Verify call, if the worker touches Atlas at all.
+3. Route/flight/fare data must be real, never fabricated — if the worker is a pure risk
+   computation, no Atlas call is needed at all; only create a network allowlist entry for
+   Atlas if the worker genuinely calls it.
+4. No order, booking, payment, or ticket issuance possible from inside the sandbox — hard-
+   disabled in the worker code, not just flag-gated.
+5. No secret value (`DAYTONA_API_KEY`, Atlas credentials) ever read, printed, logged, or
+   persisted.
+6. Sandbox destroyed in a finally block regardless of outcome; confirmation shown.
+7. Total sandbox lifetime capped at 10 minutes.
+8. No git commit, push, or upload.
+9. Never claim "Booked" or "Switched" — only the real verified outcome, if any.
+10. Animation never displays a fabricated value — missing fields render as
+    "not available from Sandbox response."
+
+## If Phase 1 reveals this can't realistically be closed tonight
+
+Say so plainly instead of forcing it. State exactly what's missing (SDK not installed? no API
+key? worker script incomplete?) and let me decide between: (a) spending remaining time closing
+the gap, (b) presenting the already-complete offline orchestrator + worker code as "built and
+tested, sandbox lifecycle validated offline, live execution reserved for the live demo
+tomorrow" — which is itself a legitimate way to show Daytona integration depth without a live
+call tonight, or (c) attempting a live cycle live during tomorrow's actual demo instead of
+tonight's prep.
+
+## Final report
+
+```text
+DAYTONA_SDK_INSTALLED = <YES/NO, version>
+DAYTONA_API_KEY_PRESENT = <YES/NO>
+ORCHESTRATOR_LIVE_WIRED = <YES | MOCK_ONLY | PARTIAL: gap>
+WORKER_SCRIPT_STATUS = <COMPLETE | SCAFFOLD_ONLY>
+OFFLINE_TEST_RESULTS = <pass/fail counts>
+GAP_TO_LIVE_CYCLE = <concrete list>
+ESTIMATED_TIME_TO_CLOSE_GAP = <estimate>
+GATE1_APPROVED = <YES, timestamp | NOT_REACHED>
+SANDBOX_CREATED = <YES, id (redacted to first 8 chars) | NO>
+WORKER_EXECUTION_RESULT = <success/error/timeout, summary>
+SANDBOX_DESTROYED = <YES, confirmed | N/A>
+ANIMATION_WIRED_WITH_REAL_DATA = <YES | NO, still fixture>
+RECOMMENDATION = <one sentence: attempt tonight / present offline-validated / attempt live tomorrow>
+```

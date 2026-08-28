@@ -17,7 +17,7 @@
     "running",
     "timed_out"
   ],
-  "runAt": "2026-08-21T15:58:34.907Z",
+  "runAt": "2026-08-28T13:36:51.436Z",
   "runs": [
     {
       "fixtureId": "nos-req-clean-two-leg",
@@ -30,20 +30,20 @@
         "NOS-10"
       ],
       "simulatedScenario": "success",
-      "startedAt": "2026-08-21T15:58:34.906Z",
-      "endedAt": "2026-08-21T15:58:34.907Z",
+      "startedAt": "2026-08-28T13:36:51.434Z",
+      "endedAt": "2026-08-28T13:36:51.435Z",
       "stateTransitions": [
         {
           "state": "pending",
-          "at": "2026-08-21T15:58:34.906Z"
+          "at": "2026-08-28T13:36:51.434Z"
         },
         {
           "state": "running",
-          "at": "2026-08-21T15:58:34.907Z"
+          "at": "2026-08-28T13:36:51.435Z"
         },
         {
           "state": "completed",
-          "at": "2026-08-21T15:58:34.907Z"
+          "at": "2026-08-28T13:36:51.435Z"
         }
       ],
       "simulatedStatesObserved": [
@@ -75,20 +75,20 @@
         "NOS-09"
       ],
       "simulatedScenario": "unavailable",
-      "startedAt": "2026-08-21T15:58:34.907Z",
-      "endedAt": "2026-08-21T15:58:34.907Z",
+      "startedAt": "2026-08-28T13:36:51.435Z",
+      "endedAt": "2026-08-28T13:36:51.435Z",
       "stateTransitions": [
         {
           "state": "pending",
-          "at": "2026-08-21T15:58:34.907Z"
+          "at": "2026-08-28T13:36:51.435Z"
         },
         {
           "state": "running",
-          "at": "2026-08-21T15:58:34.907Z"
+          "at": "2026-08-28T13:36:51.435Z"
         },
         {
           "state": "completed",
-          "at": "2026-08-21T15:58:34.907Z"
+          "at": "2026-08-28T13:36:51.435Z"
         }
       ],
       "simulatedStatesObserved": [
@@ -119,20 +119,20 @@
         "NOS-06"
       ],
       "simulatedScenario": "timeout",
-      "startedAt": "2026-08-21T15:58:34.907Z",
-      "endedAt": "2026-08-21T15:58:34.907Z",
+      "startedAt": "2026-08-28T13:36:51.435Z",
+      "endedAt": "2026-08-28T13:36:51.435Z",
       "stateTransitions": [
         {
           "state": "pending",
-          "at": "2026-08-21T15:58:34.907Z"
+          "at": "2026-08-28T13:36:51.435Z"
         },
         {
           "state": "running",
-          "at": "2026-08-21T15:58:34.907Z"
+          "at": "2026-08-28T13:36:51.435Z"
         },
         {
           "state": "timed_out",
-          "at": "2026-08-21T15:58:34.907Z"
+          "at": "2026-08-28T13:36:51.435Z"
         }
       ],
       "simulatedStatesObserved": [
@@ -163,20 +163,20 @@
         "NOS-07"
       ],
       "simulatedScenario": "failure",
-      "startedAt": "2026-08-21T15:58:34.907Z",
-      "endedAt": "2026-08-21T15:58:34.907Z",
+      "startedAt": "2026-08-28T13:36:51.436Z",
+      "endedAt": "2026-08-28T13:36:51.436Z",
       "stateTransitions": [
         {
           "state": "pending",
-          "at": "2026-08-21T15:58:34.907Z"
+          "at": "2026-08-28T13:36:51.436Z"
         },
         {
           "state": "running",
-          "at": "2026-08-21T15:58:34.907Z"
+          "at": "2026-08-28T13:36:51.436Z"
         },
         {
           "state": "failed",
-          "at": "2026-08-21T15:58:34.907Z"
+          "at": "2026-08-28T13:36:51.436Z"
         }
       ],
       "simulatedStatesObserved": [
@@ -207,16 +207,16 @@
         "NOS-05"
       ],
       "simulatedScenario": "rejected",
-      "startedAt": "2026-08-21T15:58:34.907Z",
-      "endedAt": "2026-08-21T15:58:34.907Z",
+      "startedAt": "2026-08-28T13:36:51.436Z",
+      "endedAt": "2026-08-28T13:36:51.436Z",
       "stateTransitions": [
         {
           "state": "pending",
-          "at": "2026-08-21T15:58:34.907Z"
+          "at": "2026-08-28T13:36:51.436Z"
         },
         {
           "state": "rejected",
-          "at": "2026-08-21T15:58:34.907Z"
+          "at": "2026-08-28T13:36:51.436Z"
         }
       ],
       "simulatedStatesObserved": [

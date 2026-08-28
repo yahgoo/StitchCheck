@@ -10,7 +10,7 @@
     "alternatives": [
       {
         "offerReference": "display-only-reference-a1",
-        "routeSummary": "AAA → BBB → CCC (synthetic)",
+        "routeSummary": "KUL → BKK → HAN",
         "departureTime": "08:30",
         "arrivalTime": "16:10",
         "duration": "7h 40m",
@@ -22,7 +22,7 @@
       },
       {
         "offerReference": "display-only-reference-a2",
-        "routeSummary": "AAA → CCC direct (synthetic)",
+        "routeSummary": "KUL → HAN direct",
         "departureTime": "09:15",
         "arrivalTime": "13:05",
         "duration": "3h 50m",

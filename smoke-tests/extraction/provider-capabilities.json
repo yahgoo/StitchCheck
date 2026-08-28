@@ -1,0 +1,39 @@
+{
+  "temporaryPhase": false,
+  "defaultProvider": "openrouter",
+  "providers": {
+    "openrouter": {
+      "approvedModelIdentifiers": ["minimax/minimax-m3:free"],
+      "approvedModelIdentifier": "minimax/minimax-m3:free",
+      "supportsImageInput": true,
+      "supportsStructuredJsonOutput": true,
+      "capabilityReviewStatus": "approved",
+      "capabilityReviewedBy": "human (hackathon team)",
+      "capabilityReviewDate": "2026-08-26",
+      "capabilitySource": "OpenRouter models API — minimax/minimax-m3:free lists text, image, video input modalities and response_format support",
+      "providerRouting": {
+        "allowModelFallback": false,
+        "allowProviderFallback": false,
+        "requireStructuredOutputParameters": true
+      },
+      "label": "Source: AI extraction (MiniMax M3 via OpenRouter) · live"
+    },
+    "gemini": {
+      "deprecated": true,
+      "deprecatedReason": "Superseded by OpenRouter extraction via minimax/minimax-m3:free",
+      "approvedModelIdentifier": "gemini-3.6-flash",
+      "targetModelIdentifier": "gemini-3.7-flash",
+      "capabilityReviewStatus": "deprecated",
+      "label": "Deprecated — direct Gemini path removed"
+    }
+  },
+  "deprecatedProviders": {
+    "google/gemini-3.7-flash": "historical OpenRouter temporary path only",
+    "google/gemini-3.6-flash": "historical OpenRouter slug — no longer active"
+  },
+  "rules": [
+    "Only minimax/minimax-m3:free is approved for live itinerary extraction.",
+    "If the approved model lacks image input or structured JSON output, stop without making a request.",
+    "Historical Gemini-era evidence files are never rewritten or relabelled."
+  ]
+}

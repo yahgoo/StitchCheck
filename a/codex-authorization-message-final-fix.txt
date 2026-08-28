@@ -1,0 +1,53 @@
+Execute the attached task specification now. This is your authorization to run it in full —
+treat it as a live debugging and fixing session on the actual project, not reference
+material to summarize.
+
+Specifically, proceed through all five steps automatically, without pausing for further
+confirmation between them:
+
+1. Step 1 — run `npm run typecheck` and `npm run build`. Confirm the dev server is running
+   at `http://localhost:5173/` with `DATA_MODE=live`; restart it cleanly if it isn't.
+
+2. Step 2 — walk BOTH Welcome-screen demo paths live, end to end, right now, while Atlas is
+   confirmed healthy:
+   - Path 1: "Use the ready-made sample — skips extraction" → Trip/Review → "Check my
+     itinerary" → Options → expand alternatives/details → Keep → Done.
+   - Path 2: "Try the screenshot sample — extract with MiniMax M3" → Trip/Review → "Check my
+     itinerary" → Options → expand alternatives/details → Switch → Submit switch request →
+     Done.
+   Capture real observed offers, prices, airport codes, MiniMax status, and browser console
+   output at each step for both paths.
+
+3. Step 3 — if anything is found broken during Step 2, diagnose the exact root cause with
+   evidence (file/line, real error, real stack trace) before fixing it, then apply the
+   minimal precise fix and add/extend test coverage. Do not broadly refactor working code.
+
+4. Step 4 — run the full `smoke-tests/` suite and report exact pass/fail counts for every
+   file, classifying any failure as pre-existing/unrelated or newly introduced.
+
+5. Step 5 — confirm whether the "Provider checks: N of 3 complete" bar can actually reach
+   "3 of 3" on at least one path right now, with real evidence.
+
+You have full authorization to run shell commands, restart the dev server, read and modify
+source files, run tests, and interact with the running app in the browser as needed to
+complete this. Do not ask for further permission at each step — proceed through the entire
+task and report back only once complete, using the exact final-status block format specified
+at the end of the attached document:
+
+```text
+BASELINE_STATUS = ...
+PATH_1_LIVE_DATA_STATUS = ...
+PATH_2_LIVE_DATA_STATUS = ...
+MINIMAX_LIVE_SUCCESS_CONFIRMED = ...
+AIRPORT_INTEGRITY_LIVE = ...
+PROVIDER_BAR_3_OF_3_CONFIRMED = ...
+BUGS_FIXED_THIS_SESSION = ...
+ALL_REGRESSION_STATUS = ...
+DEMO_READY = ...
+```
+
+If Atlas becomes unhealthy again partway through (it has been intermittent throughout this
+project), do not stop and ask what to do — note the exact moment it changed, characterize the
+failure the same way prior sessions did (exact error code/message, whether Retry recovers
+it), and continue with whatever parts of the task remain checkable in that state. Report the
+full picture at the end regardless of whether Atlas stayed healthy for the entire session.

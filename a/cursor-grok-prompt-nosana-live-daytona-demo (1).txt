@@ -1,0 +1,167 @@
+# StitchCheck — Build for live Nosana for tomorrow's Daytona demo (Cursor, Grok 4.6)
+# Context + implementation directive. This is a live, credit-spending job submission.
+# Read the entire context section before executing anything. If any gate fails, stop and
+# report — do not improvise around it.
+
+## Context — why this is needed and what's already known
+
+### Why this is required
+
+Daytona HackSprint judging requires projects to integrate sponsored products, including
+**live Nosana** for the demo. The app currently has a dry-run preview (`jobId: null`,
+`evidenceSource: "dry-run"`) — this pass replaces that with one real, bounded Nosana job
+whose result is honestly labeled and wired into the UI for tomorrow's 2-minute demo.
+
+### What's already known from prior Nosana live-readiness work
+
+A prior dedicated task (`Nosana_Live_Smoke_Prep_06dd063d.md`) already did the heavy lifting
+on Nosana live-readiness. Key findings from that work:
+
+**Package:** `@nosana/kit` v2.7.5 (Node 20.18 compatible) — not currently installed in any
+`package.json`, needs to be added to `smoke-tests/nosana/package.json` only (local to that
+directory, not root or app).
+
+**Auth:** API-key-only path is correct — `createNosanaClient({ network: 'mainnet', apiKey: ... })`
+is sufficient; no wallet/private key needed for this credit-funded job path.
+
+**Timeout:** Seconds, not milliseconds — default 3600s in docs, existing code uses 120s which
+is correct for this bounded workload.
+
+**8 concrete defects to fix offline (D1–D8):**
+
+- **D1:** `nosana-runjob.mjs:224` reads `job.id` / `job.jobId` — official Post response field
+  is `job.job`
+- **D2:** `nosana-runjob.mjs:273` calls `ipfs.get(hash)` — official method is `ipfs.retrieve(hash)`
+- **D3:** `nosana-runjob.mjs:242` compares uppercase `FAILED`/`COMPLETED` — official states
+  are lowercase `pending`/`running`/`completed`/`failed`/`stopped`
+- **D4:** `nosana-risk-runner.mjs:158-164` includes non-schema keys in `meta`
+  (`workloadVersion`, `syntheticDemo`, `nonPiiDeclaration`) — official strict validator only
+  allows `trigger` and `systemResources` in `meta`
+- **D5:** `validateJobDefinition` is a custom hand-rolled guard, NOT the official SDK
+  validator — SDK exports one returning `{ success, data }` or `{ valid: false, issues }`
+- **D6:** Live success path never runs `validateRiskResult` before labeling output as evidence
+- **D7:** Market address `7AtiX...` was self-flagged UNVERIFIED — needs read-only verification
+  via `client.api.markets.list` before live run
+- **D8:** No idempotency key on Post — docs provide `generateIdempotencyKey()` to prevent
+  double-spend on retry
+
+**Evidence gaps from prior security review:**
+
+- `creditsUsed` never captured
+- Status transitions not recorded with timestamps
+- Evidence written only to fixed paths, no timestamped dir for audit trail
+- Approval packet promised persisted job definition for hash verification
+
+**Existing test suites (all must pass before live):**
+
+- `smoke-tests/nosana/schema-validator.mjs`
+- `smoke-tests/nosana/nosana-client-offline-tests.mjs`
+- `smoke-tests/nosana/workload-skeleton.mjs`
+- `smoke-tests/cross-provider-invariant-tests.mjs`
+
+**Hard constraints from prior work:**
+
+- Exactly ONE job submission attempt — no retries, no second attempt if this fails
+- Max cost ceiling: US$10 hard stop
+- No PII in the workload — risk computation input must be non-PII, synthetic, already validated
+- No wallet/private key — API-key-only auth (`NOSANA_API_KEY` present in `.env.local`)
+- Idempotency key required — use `generateIdempotencyKey` from SDK
+- Evidence capture must include: `jobId`, `status` transitions with ISO timestamps, `latencyMs`,
+  `creditsUsed`, `market`, `ipfsHash`, `submittedAt`, `completedAt`, and sanitized result
+- No changes to UI code — existing labels flip based on `evidenceSource` and `fallbackUsed`
+  fields; the job is to make `app/public/nosana-risk-result.json` reflect the real live
+  result honestly
+
+## Implementation directive
+
+### Phase 1 — Offline fixes (do this first, verify before proceeding)
+
+1. **Package install:** Install `@nosana/kit` v2.7.5 into `smoke-tests/nosana/` (create a new
+   local `package.json` in that directory if it doesn't exist — do not touch root or app
+   `package.json`). Confirm the install succeeded and the SDK is importable.
+2. **Apply D1–D8 fixes** to `smoke-tests/nosana/nosana-runjob.mjs` and
+   `smoke-tests/nosana/nosana-risk-runner.mjs` exactly as documented in the prior task:
+   - D1: `const jobId = job.job`
+   - D2: `await nosanaClient.ipfs.retrieve(resultHash)`
+   - D3: Compare lowercase `failed`/`completed`; add `stopped` to terminal set
+   - D4: Sanitize `meta` to only `trigger` (move other fields into input payload)
+   - D5: Import and run official SDK `validateJobDefinition` before `ipfs.pin`
+   - D6: Call `validateRiskResult` on the built `riskResult` before labeling as evidence
+   - D7: Do NOT hardcode the market — this will be verified via read-only preflight
+   - D8: Pass `idempotencyKey: generateIdempotencyKey()` as 2nd arg to `api.jobs.list`
+3. **Evidence capture enhancement:** In the poll loop (`nosana-runjob.mjs:234-249`), extract
+   `creditsUsed` and `observedStates` each iteration, add them to every `emitResult` payload
+   along with existing fields.
+4. **Timestamped evidence dir:** In `run-risk-job.mjs`, in addition to existing fixed-path
+   writes (`results/nosana-risk-result.json`, `app/public/nosana-risk-result.json`), also
+   write a timestamped subdir (`results/<UTC-timestamp>/result.json`, `summary.md`,
+   `job-definition.json`) for full audit trail.
+5. **Run offline tests:** Execute all four test suites listed above. Confirm all pass. If any
+   fail, fix offline and re-run — do not proceed to live until these are green.
+
+### Phase 2 — Read-only preflight (credit/market check)
+
+1. Write a small script (or extend an existing one) that:
+   - Loads `NOSANA_API_KEY` from `.env.local` (do not print the value)
+   - Creates a Nosana client via the SDK
+   - Calls `client.api.credits.balance` — report the exact balance
+   - Calls `client.api.markets.list` — report available markets, confirm `7AtiX...` (or
+     cheapest verified market) is present and shows expected runtime/cost within US$10
+     ceiling
+2. Do NOT submit a job yet — this is just verification. Report the exact values.
+
+### APPROVAL GATE — present this and wait for my literal "approved"
+
+Present:
+- Package install confirmation (v2.7.5, import succeeded)
+- Offline test results (all pass)
+- Preflight credit balance and market ID/cost confirmation
+- The exact command you will run for the live job (should be exactly:
+  `cd smoke-tests/nosana && node run-risk-job.mjs` — no extra flags, no retries)
+- Confirmation that the job will write to both fixed paths and the timestamped subdir
+
+Do not proceed without my literal "approved" reply.
+
+### Phase 3 — Live run (only after approval)
+
+1. Run the single job: `cd smoke-tests/nosana && node run-risk-job.mjs`
+2. Capture the full output: job ID, status transitions with timestamps, final status,
+   `creditsUsed`, `latencyMs`, `ipfsHash`, market, and the sanitized result.
+3. Confirm the writes to both fixed paths and the timestamped evidence dir succeeded.
+4. Verify the UI label flips correctly: load the app, navigate to the Nosana panel (if
+   exposed), and confirm it now shows live evidence (not the dry-run label). If the UI
+   doesn't expose a dedicated Nosana panel, confirm the `app/public/nosana-risk-result.json`
+   file has the correct `evidenceSource: "live-nosana"` (or whatever the live label is) and
+   `fallbackUsed: false`.
+
+## Hard constraints (do not weaken any)
+
+- Exactly ONE job submission attempt — no retries, no second attempt if this one fails
+- Max cost ceiling: US$10 hard stop — if the preflight shows expected cost > US$10, do not
+  proceed, report instead
+- No PII in the workload — the risk computation input must be non-PII, synthetic, and
+  already validated by the existing offline tests
+- No wallet/private key needed — this path uses API-key-only auth (`NOSANA_API_KEY` present
+  in `.env.local`), not a wallet
+- Idempotency key required — use `generateIdempotencyKey` from the SDK to prevent double-spend
+- Evidence capture must include: `jobId`, `status` transitions with ISO timestamps, `latencyMs`,
+  `creditsUsed`, `market`, `ipfsHash`, `submittedAt`, `completedAt`, and the sanitized result
+- No changes to UI code — the existing labels flip based on `evidenceSource` and `fallbackUsed`
+  fields; your job is to make the runtime fixture reflect the real live result honestly
+
+## Final report
+
+```text
+PACKAGE_INSTALL = <SUCCESS | FAILED: reason>
+OFFLINE_TESTS = <all pass | FAILURES: list>
+PREFLIGHT_CREDITS = <balance value>
+PREFLIGHT_MARKET = <market ID, expected cost/runtime>
+GATE_APPROVED = <YES, timestamp | NOT_REACHED>
+LIVE_JOB_ID = <job ID or N/A>
+LIVE_JOB_STATUS = <completed/failed/stopped, final status>
+LIVE_JOB_CREDITS_USED = <value>
+LIVE_JOB_LATENCY_MS = <value>
+EVIDENCE_WRITTEN = <YES, paths | NO>
+UI_LABEL_FLIPPED = <YES | NO | N/A: no dedicated panel>
+FALLBACK_READY = <YES, app still works if live fails | NO>
+```

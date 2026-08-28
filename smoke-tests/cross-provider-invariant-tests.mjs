@@ -23,9 +23,9 @@ import {
   EXTRACTION_LABELS,
   createDisabledExtractionResult,
   createDisabledSourceStatus,
-} from "./gemini/extraction-contract.mjs";
+} from "./extraction/extraction-contract.mjs";
 
-import { directGeminiAdapter } from "./gemini/direct-gemini-adapter.mjs";
+import { openrouterExtractionAdapter } from "./extraction/openrouter-extraction-adapter.mjs";
 
 import {
   ATLAS_LABELS,
@@ -48,7 +48,7 @@ import {
 
 import {
   validateExtractionResult as validateGeminiExtractionResult,
-} from "./gemini/schema-validator.mjs";
+} from "./extraction/schema-validator.mjs";
 
 let passed = 0;
 let failed = 0;
@@ -176,8 +176,8 @@ test("Gemini schema validator enforces requiresUserConfirmation", () => {
 
 // ── Invariant 3: Disabled provider states remain disabled by default. ────────────
 
-test("Gemini adapter is disabled by default", () => {
-  assert.strictEqual(directGeminiAdapter.isEnabled(), false);
+test("Extraction adapter is disabled by default", () => {
+  assert.strictEqual(openrouterExtractionAdapter.isEnabled(), false);
 });
 
 test("Atlas disabled source status has enabled: false", () => {
@@ -193,10 +193,10 @@ test("Nosana client status is disabled in offline mode", () => {
 
 // ── Invariant 4: Exact evidence labels remain unchanged. ─────────────────────────
 
-test("Gemini OpenRouter temporary path label is exact", () => {
+test("Extraction live validation label is exact", () => {
   assert.strictEqual(
-    EXTRACTION_LABELS.openRouterTemporaryPath,
-    "OpenRouter temporary path — not direct Gemini validation"
+    EXTRACTION_LABELS.liveValidation,
+    "Source: AI extraction (MiniMax M3 via OpenRouter) · live",
   );
 });
 
@@ -223,10 +223,10 @@ test("Atlas synthetic local fallback label is exact", () => {
 
 // ── Invariant 5: No local placeholder is labelled as provider evidence. ──────────
 
-test("Gemini disabled result label is not direct Gemini validation", () => {
+test("Extraction disabled result label is not live validation", () => {
   const result = createDisabledExtractionResult("test");
-  assert.notStrictEqual(result.sourceStatus.label, EXTRACTION_LABELS.directGeminiValidation);
-  assert.notStrictEqual(result.label, EXTRACTION_LABELS.directGeminiValidation);
+  assert.notStrictEqual(result.sourceStatus.label, EXTRACTION_LABELS.liveValidation);
+  assert.notStrictEqual(result.label, EXTRACTION_LABELS.liveValidation);
 });
 
 test("Nosana result sourceType is not provider-evidence", () => {

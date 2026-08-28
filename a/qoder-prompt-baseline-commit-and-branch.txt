@@ -1,0 +1,50 @@
+# StitchCheck — Create baseline commit on master, then branch to feature/atlas-sandbox-mock-ticketing (Qoder Expert Mode)
+
+## Context
+
+The working tree is currently dirty on `master` (65 modified, 34 staged, 627 untracked files —
+tonight's fixes for Daytona/Nosana live wiring, docs reconciliation, deck export, etc., were
+never committed). The default branch is `master`, not `main`. The Atlas mock-ticketing branch
+spec requires a clean tree before branching, but nothing has been committed yet.
+
+## Task
+
+1. **Create one baseline commit on `master`** capturing tonight's verified state:
+   - Commit message: "Baseline: Daytona/Nosana live integrations, docs reconciliation, deck
+     export (Aug 28, 2026, pre-Atlas-ticketing)"
+   - Include all staged and modified files from tonight's work (the 65 modified + 34 staged).
+   - For the 627 untracked files: include only the implementation/evidence files that are part
+     of tonight's verified state (Daytona/Nosana live results, reconciled docs, deck PPTX, etc.).
+     Exclude any obvious temp/build artifacts (e.g. `node_modules/`, `dist/`, `.recordings/`,
+     `output/recordings/` if present, `.env.local` itself — keep the template `.env.example`
+     if it was updated).
+   - Do not push this commit anywhere — local only.
+
+2. **Verify the working tree is clean** after the commit (except for any files intentionally
+   left uncommitted, like `.env.local` if it's gitignored).
+
+3. **Create and switch to `feature/atlas-sandbox-mock-ticketing`** from this new baseline
+   commit on `master`.
+
+4. **Report back** with:
+   - The baseline commit hash (first 8 chars).
+   - Confirmation the working tree is clean on `master` before branching.
+   - Confirmation the new branch exists and is currently checked out.
+   - A count of files included in the baseline commit (modified + staged + selected untracked).
+
+## Constraints
+
+- Do not push anything to any remote.
+- Do not modify `.env.local` or any credential file — if it's gitignored, leave it ignored.
+- Do not touch any of tonight's verified fixes (Daytona/Nosana live wiring, docs, deck, etc.)
+  in the baseline commit — they should all be included as-is.
+
+## Final report
+
+```text
+BASELINE_COMMIT = <hash, first 8 chars>
+WORKING_TREE_CLEAN = <YES | NO: what's still dirty>
+NEW_BRANCH = <feature/atlas-sandbox-mock-ticketing, checked out: YES/NO>
+FILES_IN_BASELINE = <count: modified + staged + untracked included>
+READY_TO_PROCEED = <YES | NO: reason>
+```

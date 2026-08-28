@@ -1,0 +1,24 @@
+{
+  "eventType": "completed_success",
+  "recordedAt": "2026-08-28T13:40:14.373Z",
+  "liveAttemptMetadata": {
+    "jobId": "8CfUkxFgZnPpC5kxiphD1kozwiJeLYBC4KB33bKPAEp1",
+    "market": "7AtiXMSH6R1jjBxrcYjehCkkSF7zvYWte63gwEDBcGHq",
+    "ipfsHash": "QmPF9E4NZyfu44m2eNHuHZufJ4cccoAPBkidcrJs6QEQVm",
+    "resultIpfsHash": "QmXG2ZpA6AJYd2zTHxVCarGpPuY6RvtETKoNMYjV3vz6uG",
+    "platformTimeoutSec": 3600,
+    "submittedAt": "2026-08-28T13:39:46.019Z",
+    "completedAt": "2026-08-28T13:40:14.359Z",
+    "observedStates": [],
+    "creditsUsed": 44,
+    "costUsd": 0.044,
+    "reservationId": "737d1513-c2c9-423d-9ae9-88ca9d205ed0",
+    "project": "7LB623XexGGLN4b9nbiGvQXrQAnBaYeaJzaPtVfrL5fG",
+    "phase": "complete",
+    "errorCode": null
+  },
+  "childSuccess": true,
+  "childErrorCode": null,
+  "childError": null,
+  "childPhase": "complete"
+}

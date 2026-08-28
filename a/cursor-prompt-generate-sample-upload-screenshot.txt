@@ -1,0 +1,162 @@
+# StitchCheck — Generate a Sample Itinerary Screenshot from Real Atlas Data for Upload Demo
+# Cursor Agent — implement end to end, verify with a real extraction run
+
+## Context
+
+Today, "Try a sample itinerary" on the Welcome screen skips the extraction step entirely —
+it loads a pre-structured itinerary directly, which is why MiniMax M3 always shows "offline"
+in that path (there's no screenshot to extract from). This means judges/users never actually
+see the upload → extraction (MiniMax) → correction → confirm pipeline in action unless they
+manually create and upload their own screenshot.
+
+Add a second, complementary demo shortcut: a generated sample itinerary IMAGE, built from
+real Atlas Search data (not fabricated flight numbers/prices), that a user can click to
+auto-load into the actual upload flow — exercising real extraction, not skipping it. This
+directly demonstrates the multimodal extraction capability end to end for judges.
+
+## Goal
+
+Add a "Try sample itinerary screenshot →" (or similarly named) entry point on the Welcome
+screen that:
+1. Loads a pre-generated itinerary screenshot image (built once, ahead of time, from real
+   Atlas flight data already observed in this project's live runs — e.g. KUL→SIN AK701 and
+   SIN→BKK TR624, or similar real carrier/flight-number/price combinations already captured).
+2. Feeds that image through the EXACT SAME upload → extraction (MiniMax) → review/correction
+   → confirm pipeline used for a real user-uploaded screenshot — do not special-case or skip
+   extraction for this path.
+3. Results in MiniMax actually running and showing "live" (or "offline" only if genuinely
+   unavailable, honestly reported) — proving the extraction step actually works, unlike the
+   existing "Try a sample itinerary" shortcut.
+
+## Absolute constraints
+
+- The underlying flight data embedded in the generated image (carrier, flight number, route,
+  times, price) MUST be real data already observed from Atlas Sandbox in this project (reuse
+  values already captured in prior live runs, e.g. AK701 KUL→SIN USD 21.80, or TR624 SIN→BKK
+  USD 107.10) — do not invent fictitious flight numbers/prices for this new asset.
+- The generated image itself MUST be clearly a demo artifact, not a claim of a real booking —
+  follow the exact convention already used for the existing GEM-01 two-leg demo fixture
+  (check `app-fixture-contracts/` and any existing demo-screenshot assets for the established
+  labeling pattern, e.g. "Demo fixture" / "local demo fixture" language) so it's consistent
+  with existing provenance rules.
+- Do not claim this image is a real airline ticket, confirmation email, or booking receipt in
+  any UI copy — label it explicitly as a sample/demo itinerary image for testing extraction.
+- Do not touch Atlas write routes, Nosana execution, route-continuity snapshot logic, or the
+  existing "Try a sample itinerary" (structured-data) shortcut — this is a NEW, additional
+  entry point, not a replacement.
+- Do not fabricate a "live" extraction result if MiniMax is actually unavailable when this
+  runs — report the real status honestly, same as everywhere else in the app.
+- Do not weaken any existing test to force a pass.
+- Do not touch video/narration/subtitle files.
+- Do not commit/push.
+
+## Step 1 — Source real flight data for the sample image
+
+1. Search the repo for previously captured real Atlas Sandbox results (e.g.
+   `smoke-tests/atlas/results/*.json`, prior evidence files, or the values already used in
+   this session's live runs) to find 2 real flight legs with real carrier codes, flight
+   numbers, times, and prices — ideally the same KUL→SIN→BKK route already used elsewhere so
+   the demo stays consistent (e.g. AK701 KUL→SIN 06:10–07:15 USD 21.80, and a real SIN→BKK
+   leg such as TR624 08:20–09:55 USD 107.10, if those are genuinely from captured Atlas data).
+2. Confirm these are real captured values, not fixture-authored placeholders — check whether
+   they came from an actual `Atlas Sandbox · live` labeled response in a prior run's evidence
+   file, and cite the source file/timestamp you used.
+3. If no suitable prior real capture exists, note that and prefer running a fresh, minimal,
+   read-only Atlas Search (following the same safety gates already used elsewhere: max 1
+   Search, no write endpoints, credentials only from `.env.local`, sandbox-only) to obtain 2
+   real legs rather than inventing values — but only do this if explicitly instructed to; if
+   you can reuse existing captured data, do that instead and skip any new live calls.
+
+## Step 2 — Generate the sample itinerary image
+
+1. Build a script (e.g. `scripts/generate-sample-itinerary-image.mjs` or similar) that renders
+   a simple, realistic-looking flight itinerary/ticket layout (using an HTML-to-canvas
+   approach, SVG-to-PNG, or a lightweight canvas library already available in the project's
+   dependencies — check `package.json` before adding anything new) containing:
+   - The two real flight legs from Step 1 (carrier, flight number, route, date, times, price).
+   - A clear, visible "Sample / Demo itinerary — not a real ticket" watermark or label baked
+     directly into the image, consistent with the project's existing safety-labeling
+     conventions.
+2. Save the generated image to a stable path the app can reference (e.g.
+   `app/public/sample-itinerary-screenshot.png` or the existing fixture-images location used
+   by `GEM-01`).
+3. Keep the generation script itself in the repo (not just the output image) so it's
+   reproducible and so judges/reviewers can see exactly how the sample was built and that it
+   traces back to real Atlas data.
+
+## Step 3 — Wire the new Welcome-screen entry point
+
+1. Add a new button/link on the Welcome screen, e.g. "Try sample itinerary screenshot →",
+   distinct from the existing "Try a sample itinerary →" (structured-data) shortcut. Label
+   them clearly so a user understands the difference (e.g. subtext: "See the upload and
+   extraction step in action").
+2. On click, programmatically load the generated image into the same upload/extraction code
+   path used for a real user-uploaded screenshot — do not bypass MiniMax.
+3. Let the existing pipeline run normally: extraction → review/correction screen (showing
+   extracted fields, editable) → confirm → route-continuity snapshot → Options screen, exactly
+   as the real upload flow already works.
+4. Confirm the provider-status bar reflects genuine MiniMax status for this run (live or
+   honestly offline, not hardcoded).
+
+## Step 4 — Tests
+
+1. Test that the new entry point actually invokes the extraction pipeline (not the
+   structured-data shortcut) — e.g. assert `handleExtraction` or equivalent is called with
+   the generated image, not that the itinerary state is set directly.
+2. Test that the embedded flight data in the generated image matches the real captured Atlas
+   values used in Step 1 (a fixture/golden test comparing expected extracted fields).
+3. Test that the review/correction screen renders the extracted fields as editable, same as
+   the real upload path.
+4. Test that route-continuity still holds — whatever itinerary is extracted here is the same
+   one used downstream in Options, Recovery, and previews.
+5. Confirm no existing test regresses, especially `sample-itinerary-ui-tests.mjs`,
+   `traveller-flow-ui-tests.mjs`, `app-route-continuity-offline-tests.mjs`.
+
+## Step 5 — Full regression check
+
+```bash
+npm run typecheck
+npm run build
+```
+
+Run the full `smoke-tests/` suite and report pass/fail counts.
+
+## Step 6 — Live check
+
+Restart the dev server (`DATA_MODE=live`), and on the Welcome screen:
+
+1. Click the NEW "Try sample itinerary screenshot →" entry point.
+2. Confirm the extraction step actually runs (watch for a loading/extracting state) and
+   MiniMax's status reflects a real outcome — quote the exact status shown.
+3. Confirm the review/correction screen shows the two real flight legs as editable extracted
+   fields, matching the values embedded in the generated image.
+4. Confirm route-continuity, risk computation, and the Options screen all work normally from
+   this point, same as the existing "Try a sample itinerary" shortcut.
+5. Separately confirm the EXISTING "Try a sample itinerary →" shortcut still works unchanged.
+
+## Final report
+
+Return:
+
+1. The 2 real flight legs used, with their exact source (file/timestamp of the prior Atlas
+   capture, or confirmation of a fresh minimal live call if one was needed).
+2. The generation script and output image path.
+3. The new Welcome-screen entry point copy/label.
+4. Confirmation the extraction pipeline is genuinely invoked (not bypassed) — quote the real
+   MiniMax status observed live.
+5. Test results (new + regression).
+6. Typecheck/build results.
+7. Live confirmation of both entry points working independently.
+8. Confirmation the image and all related UI copy clearly label this as a sample/demo
+   artifact, not a real ticket or booking.
+
+End with:
+
+```text
+SAMPLE_IMAGE_GENERATED = <YES, path | BLOCKED: reason>
+REAL_ATLAS_DATA_SOURCED = <YES, source | BLOCKED: reason>
+EXTRACTION_PIPELINE_INVOKED_LIVE = <CONFIRMED, MiniMax status: X | GAP_FOUND: description>
+EXISTING_SHORTCUT_UNCHANGED = <YES | NO: what changed>
+ALL_REGRESSION_STATUS = <ALL_PASS | FAILURES: list>
+DEMO_READY = <YES | NOT_YET: reason>
+```

@@ -1,0 +1,26 @@
+{
+  "phase": "openrouter-extraction",
+  "providerSelection": "openrouter",
+  "selectionSource": "minimax-m3-free-default",
+  "extractionEnabled": true,
+  "pinnedModelIdentifier": "minimax/minimax-m3:free",
+  "approvedModelIdentifiers": ["minimax/minimax-m3:free"],
+  "allowModelFallback": false,
+  "allowProviderFallback": false,
+  "requireStructuredOutputParameters": true,
+  "labels": {
+    "openrouter": "Source: AI extraction (MiniMax M3 via OpenRouter) · live"
+  },
+  "retryPolicy": {
+    "initialAttempts": 1,
+    "maxRetriesAfterInitial": 0,
+    "preferRetryAfter": false,
+    "fallbackBackoff": "none",
+    "concurrentRequests": 0,
+    "note": "Single attempt only for free-tier models; no automatic retry on 429."
+  },
+  "deprecated": {
+    "directGeminiEnabled": "removed — use OpenRouter extraction with minimax/minimax-m3:free",
+    "providerSelectionGemini": "removed — providerSelection must be openrouter"
+  }
+}

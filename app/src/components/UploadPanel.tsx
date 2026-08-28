@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { getGeminiLabel } from '../data/labels';
+import { getExtractionProviderLabel } from '../data/labels';
 import { getDefaultExtraction } from '../data/fixtures';
 import { screenshotFixtures } from '../data/fixtures';
 import type { ScreenshotFixture } from '../data/fixtures';
@@ -22,7 +22,7 @@ export function UploadPanel({ selections, onSelect, onContinue, onRestart }: Pro
 
   function handleContinue() {
     if (!bothSelected) {
-      setError('Please select exactly two fictional test itinerary screenshots before continuing.');
+      setError('Please select exactly two demo itinerary screenshots before continuing.');
       return;
     }
     onContinue();
@@ -43,9 +43,9 @@ export function UploadPanel({ selections, onSelect, onContinue, onRestart }: Pro
           id={`screenshot-${slot}`}
           value={selectedId ?? ''}
           onChange={(e) => handleSelect(slot, e.target.value)}
-          aria-label={`Select fictional test itinerary screenshot for slot ${slot + 1}`}
+          aria-label={`Select demo itinerary screenshot for slot ${slot + 1}`}
         >
-          <option value="">— Select a fictional fixture —</option>
+          <option value="">— Select a demo fixture —</option>
           {screenshotFixtures.map((f) => (
             <option key={f.id} value={f.id}>
               {f.label}
@@ -56,7 +56,7 @@ export function UploadPanel({ selections, onSelect, onContinue, onRestart }: Pro
           <div className="sc-upload-preview">
             <img
               src={selected.src}
-              alt={`Fictional fixture: ${selected.label}`}
+              alt={`Demo fixture: ${selected.label}`}
               className="sc-upload-preview__img"
             />
             <span className="sc-upload-preview__caption">
@@ -69,14 +69,14 @@ export function UploadPanel({ selections, onSelect, onContinue, onRestart }: Pro
   }
 
   return (
-    <section className="sc-upload-panel" aria-label="Upload fictional test itineraries">
-      <h2>Upload Fictional Test Itineraries</h2>
+    <section className="sc-upload-panel" aria-label="Upload demo itineraries">
+      <h2>Upload Demo Itineraries</h2>
       <p className="sc-upload-panel__body">
-        Select exactly two fictional, unbooked flight-ticket or checkout
-        screenshots. These must be fictional images only — no real bookings, no
+        Select exactly two demo, unbooked flight-ticket or checkout
+        screenshots. These must be demo images only — no real bookings, no
         real passenger data.
       </p>
-      <p className="sc-source-label">{getGeminiLabel(getDefaultExtraction())}</p>
+      <p className="sc-source-label">{getExtractionProviderLabel(getDefaultExtraction())}</p>
 
       <div className="sc-upload-slots">
         {renderSlot(0)}

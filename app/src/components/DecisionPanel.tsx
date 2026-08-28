@@ -24,7 +24,7 @@ export function DecisionPanel({
           <p>{FINAL_STATEMENT}</p>
           <dl className="sc-meta-list">
             <dt>noOrderCreated:</dt><dd>true</dd>
-            <dt>syntheticDemo:</dt><dd>true</dd>
+            <dt>demoMode:</dt><dd>true</dd>
             <dt>externalCallsMade:</dt><dd>false</dd>
             <dt>decision:</dt><dd>{decision ?? 'none'}</dd>
           </dl>

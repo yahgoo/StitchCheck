@@ -1,0 +1,103 @@
+# StitchCheck — IMPLEMENT NOW: P0 + Must-Fix-Tonight items (Codex, Build Mode, Approved)
+
+APPROVAL GRANTED: this is explicit authorization to implement, not another spec pass. A prior
+read-only audit already identified the exact findings below. Do not re-audit from scratch —
+verify each finding still holds, then fix it. Execute all four steps now, in order, tonight.
+Daytona HackSprint submission is tomorrow (Aug 29); this must be done and verified before you
+stop. Do not trigger any live Atlas/Nosana/Gemini provider call at any point. No git commit
+or push — leave changes staged/unstaged for manual review.
+
+## Audit findings this prompt fixes
+
+- **P0**: local app compiles with DATA_MODE=live baked in via vite.config.ts /
+  .env.local. Clicking "Check my itinerary" on the real (non-sample) flow calls
+  performLiveSearchForConfirmed() → live Atlas Search. This must not be reachable in the
+  demo build.
+- **6 failing Nosana test assertions**, rooted in `app/public/nosana-risk-result.json`
+  currently showing `evidenceSource: "safety-gate-blocked"`, `fallbackUsed: true` —
+  inconsistent with the dry-run-preview shape the tests expect and with the honest
+  "no live workload executed" claim.
+- **8 docs** contain stale Atlas/Nosana/Gemini status claims ("unauthenticated and
+  unexecuted") contradicted by historical evidence that exists for all three providers.
+- **Submission manifest** is stale (records 1,565/0 passing checks, older build/video state).
+- **No deck export** exists — Markdown source only, no PDF/PPTX.
+
+## STEP 1 — P0: Force safe offline demo mode
+
+1. Confirm the exact source of DATA_MODE=live (vite.config.ts default, or `.env.local`
+   override) before changing anything — state which one it is.
+2. Fix so the demo/dev build defaults DATA_MODE to `offline` unless deliberately overridden.
+   If `.env.local` has `DATA_MODE=live` left over from prior live-evidence work, reset it to
+   `offline` and note why in your report.
+3. `npm run build`; grep the dist output to confirm no live-mode indicator or Atlas base URL
+   leaks into the bundle.
+4. Walk Welcome → ready-made sample → Confirm → Decision in-browser; confirm via network
+   panel that zero requests to `/api/atlas/*` or `sandbox.atriptech.com` occur.
+5. The fix must be that DATA_MODE itself is offline by default — not a UI-level suppression
+   of the live call while the underlying path remains reachable.
+
+## STEP 2 — Fix the 6 failing Nosana test assertions
+
+1. Determine root cause: read `app/public/nosana-risk-result.json` and the failing test
+   file(s) (`nosana-cost-unit-tests` and the runtime evidence-label reconciliation tests).
+   State plainly whether the fixture should represent a permitted dry-run preview (null
+   jobId) that got overwritten by a safety-gate-blocked state, or something else.
+2. Do not fabricate a live Nosana run. Correct the fixture (and/or the specific test
+   expectations, if they were asserting something that was never true — flag this explicitly
+   if so) to be honestly self-consistent with whichever real state actually applies.
+3. Run `npm run verify:offline`; confirm all 6 previously-failing assertions pass and nothing
+   else regresses.
+
+## STEP 3 — Reconcile stale claims in 8 flagged documents
+
+Files: `docs/atlas-adapter-offline-test-notes.md`, `docs/stitchcheck-preflight-checklist.md`,
+`docs/stitchcheck-final-submission-checklist.md`,
+`docs/gemini-integration-readiness-audit.md`,
+`docs/gemini-live-smoke-test-authorization-packet.md`,
+`docs/stitchcheck-submission-artifact-manifest.md`,
+`docs/stitchcheck-demo-narrative-video-plan.md`, `docs/local-rehearsal-runbook.md`.
+
+Replace "unauthenticated and unexecuted" / "remain unexecuted" / "not verified" claims with:
+- **Atlas**: historical Sandbox Search→Verify evidence exists (20 offers, then
+  `PRICE_CONFIRMATION_REQUIRED`, no write); most recent Aug 28 run was an environment-switch
+  failure, not fresh evidence — say this precisely.
+- **Nosana**: historical evidence exists and is reconciled; current runtime fixture reflects
+  whatever Step 2 corrected it to — state that exact outcome, not a guess.
+- **Gemini**: historical live evidence preserved under `smoke-tests/extraction/`; the active
+  ready-made demo path performs no extraction and correctly shows MiniMax offline — state
+  both facts without conflating them.
+
+Fix the specific internal contradiction in `stitchcheck-submission-artifact-manifest.md`
+(one section says no provider invoked, a later section says all three have historical
+evidence) into one consistent, accurate statement.
+
+## STEP 4 — Reconcile submission manifest and export a deck
+
+1. Regenerate `output/submission-manifest.json` (or its generating script) to reflect the
+   current pass/fail counts and build state from Steps 1–2.
+2. Export the Markdown deck source to PDF or PPTX using only tooling already available in
+   the project. If nothing suitable exists, report this as blocked rather than improvising a
+   fragile pipeline under time pressure.
+
+## Constraints
+
+- No live Atlas/Nosana/Gemini call triggered at any point.
+- No git commit or push.
+- Do not touch the voiceover proof video, the fallback caption-only video, or any evidence
+  JSON beyond the one Nosana fixture identified as wrong in Step 2.
+- Do not shorten or rewrite the demo script itself — that is a separate rehearsal task.
+
+## Final report — required, do not skip
+
+For each step: what was found, what was changed, verification results (test output,
+network-panel confirmation, doc diffs). End with:
+
+```text
+STEP1_LIVE_MODE_FIXED = <YES, confirmed no /api/atlas/* calls in demo flow | NO: reason>
+STEP2_NOSANA_TESTS_STATUS = <6/6 FIXED | PARTIAL: which remain, why>
+STEP3_DOCS_RECONCILED = <8/8 | count and list remaining>
+STEP4_MANIFEST_STATUS = <REGENERATED | BLOCKED: reason>
+STEP4_DECK_EXPORT_STATUS = <EXPORTED: format | BLOCKED: reason>
+FULL_REGRESSION_STATUS = <ALL_PASS | FAILURES: list>
+SAFE_FOR_TOMORROW_DEMO = <YES | NOT_YET: reason>
+```

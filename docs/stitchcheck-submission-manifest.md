@@ -1,8 +1,8 @@
 # StitchCheck — Final Submission Manifest
 
-> **Generated:** 2026-08-21
+> **Generated:** 2026-08-21 (updated 2026-08-24)
 > **Purpose:** Single-file inventory of everything included in this submission.
-> **Constraint:** No existing project files were created, modified, or deleted to produce this manifest.
+> **Constraint:** No application code, provider credentials, or test files were modified to produce this update.
 
 ---
 
@@ -112,11 +112,11 @@ A local React/Vite/TypeScript demo that helps budget travellers understand the h
 
 | Aspect | Status |
 |--------|--------|
-| Direct Gemini | **Not executed.** Pass/fail is intentionally blank. |
+| Direct Gemini 3.7 | **Live extraction validated.** `gemini-3.7-flash` via `ai.interactions.create`; outcome: success; schema-valid; `fallbackUsed: false`; latency ~4922 ms. Evidence: `smoke-tests/gemini/results/results-gemini-3.7-flash-success.json`. A later re-verification attempt returned a transient error and was not retried, per project safety rules. |
 | OpenRouter temporary path | GEM-01 executed successfully via `google/gemini-3.7-flash`. Labelled: `OpenRouter temporary path — not direct Gemini validation`. |
-| Extraction contract | Offline schema validation passes (92 offline tests, 0 failed). |
-| What is proven | The extraction contract, validator, and offline regression suite are correctly implemented. |
-| What is not proven | Direct Gemini API structured-output evidence does not exist. OpenRouter results are not transferable to the Gemini API. |
+| Extraction contract | Offline schema validation passes (165 offline tests, 0 failed). |
+| What is proven | Direct Gemini 3.7 live extraction succeeded via `ai.interactions.create`. The extraction contract, validator, and offline regression suite are correctly implemented. |
+| What is not proven | The browser walkthrough itself uses a local fixture and makes no provider call. A later re-verification attempt was inconclusive. |
 
 ---
 
@@ -139,25 +139,24 @@ A local React/Vite/TypeScript demo that helps budget travellers understand the h
 
 | Aspect | Status |
 |--------|--------|
-| Live execution | **Not executed, not deployed, not authenticated.** |
-| Smoke-test attempt | Intentionally blocked before any network request (2026-08-20T15:53:43Z). Blocked record: `smoke-tests/nosana/results/2026-08-20T15-53-43Z/`. |
+| Live execution | **One live job accepted and completed; result reconciled offline.** Job `BNZTHNoARu98EdaqPU5WiCaFWZAyU1e9NYCZJj2h1afY` on market `7AtiXMSH6R1jjBxrcYjehCkkSF7zvYWte63gwEDBcGHq`. `riskScore: 0.2895`, `riskBand: medium`, `simulationCount: 800`, `costUsd: 0.044`. Evidence: `smoke-tests/nosana/results/evidence/`. No new submission made during final polish. |
+| Smoke-test attempt | Earlier blocked attempt (2026-08-20T15:53:43Z) was intentionally blocked before any network request. Blocked record: `smoke-tests/nosana/results/2026-08-20T15-53-43Z/`. |
 | Offline boundary | Credential-free, read-only validation implemented. 75 offline tests passed. |
-| Local fixtures | All labelled `Synthetic local placeholder — not Nosana evidence`. |
-| What is proven | Offline request-envelope construction, fixture normalization, sanitization, mutation rejection, and credential-free validation. |
-| What is not proven | Authentication, deployment, funding, submission, polling, cancellation, network execution, or live provider behavior. |
-| Remaining gates | Six prerequisites: (1) confirm official Nosana documentation and submission method, (2) identify target environment, (3) design and deploy risk workload, (4) implement submission adapter, (5) obtain explicit human authorization, (6) verify wallet/compute prerequisites. |
+| Local fixtures | All labelled `Local fallback — not Nosana evidence`. |
+| What is proven | Live job submitted, completed, and reconciled through `opStates.logs.log` parser fix. Credential-free read-only validation, request-envelope construction, fixture normalization, sanitization, mutation rejection, offline tests (75 passed), workload portability tests (40 passed). |
+| What is not proven | No new submission was made during reconciliation. The browser walkthrough uses a local fallback fixture, not the live evidence. Reliable live execution beyond the single completed job. |
 
 ---
 
 ## 9. Known Limitations
 
-1. **Direct Gemini is not yet executed.** Only the OpenRouter temporary path has been tested (GEM-01).
-2. **Nosana smoke-test was blocked before any network request.** No reviewed workload, submission mechanism, target environment, endpoint, SDK/CLI, or deployment method exists.
-3. **Atlas ticketing activation is pending.** Authentication and one production search succeeded, but no booking, payment, ticket, or order was created.
-4. **All risk and alternatives scenarios in the demo are local placeholders.** They demonstrate UI states only and do not represent live service behaviour.
-5. **State resets on browser refresh.** All application state is in-memory; no persistence layer exists.
-6. **No automated unit-test runner is installed.** Validation relies on manual browser testing against the acceptance checklist.
-7. **Full voiceover video is produced.** `output/demo-artifacts/stitchcheck-video/stitchcheck-full-voiceover-proof.mp4` (131s, H.264 1920×1080, AAC 24kHz mono, ~4.0MB). Voiceover was synthesised locally by Kokoro ONNX v0.4.7 — no external TTS call. The original caption-only video (`stitchcheck-demo.mp4`) is preserved unchanged. |
+1. **Search and Verify only.** Atlas provides read-only flight Search and Verify. No booking, payment, order creation, or ticket issuance is performed or possible through this application.
+2. **Atlas Sandbox vs Production status:** Sandbox Search + Verify completed (read-only, `PRICE_CONFIRMATION_REQUIRED` at verify stage). Production searches returned reference-price offers only (`bookable: false`). Ticketing activation is pending human action. No production booking, payment, or ticketing was performed.
+3. **Direct Gemini 3.7 live extraction validated.** Evidence: `smoke-tests/gemini/results/results-gemini-3.7-flash-success.json`. A later re-verification attempt returned a transient error and was not retried. The browser walkthrough uses a local fixture.
+4. **Nosana live job completed.** Job `BNZTHNoARu98EdaqPU5WiCaFWZAyU1e9NYCZJj2h1afY` accepted and completed; result reconciled offline; `costUsd: 0.044`; risk output schema-valid. Browser demo uses local fallback fixture. No new submission made during final polish.
+5. **All risk and alternatives scenarios in the demo are local placeholders.** They demonstrate UI states only and do not represent live service behaviour.
+6. **State resets on browser refresh.** All application state is in-memory; no persistence layer exists.
+7. **Daytona** provides isolated execution where supported by current evidence. The browser demo uses a deterministic offline mock (`executionMode: "daytona-offline-mock"`, `isLive: false`).
 8. **Deck file is a placeholder.** The eight-slide final copy exists as markdown; the exported slide recording or PDF is to be provided separately.
 
 ---
@@ -166,11 +165,12 @@ A local React/Vite/TypeScript demo that helps budget travellers understand the h
 
 > **This submission demonstrates a review-first local workflow and offline contract safeguards. Provider execution status is reported separately and not overstated.**
 >
-> - **Gemini (direct):** Not executed. Pass/fail intentionally blank.
+> - **Gemini (direct 3.7):** Live extraction validated via `ai.interactions.create`. Schema-valid, `fallbackUsed: false`. A later re-verification attempt returned a transient error and was not retried. Evidence preserved in `smoke-tests/gemini/results/`.
 > - **Gemini (OpenRouter temporary path):** GEM-01 succeeded. Labelled `OpenRouter temporary path — not direct Gemini validation`. Not direct Gemini validation.
-> - **Nosana:** Not executed, not deployed, not authenticated. All risk data is synthetic local placeholder, labelled `Synthetic local placeholder — not Nosana evidence`.
-> - **Atlas:** Authentication and two production searches succeeded (PVG→NRT/HND: 5 offers; SIN→BKK: 8 offers via ATL-LIVE-01). All reference-price only. Ticketing activation pending. No booking, payment, ticket, or order was created. Atlas Sandbox Search + Verify (ATL-SBX-SV-01) partially succeeded: 20 offers KUL→SIN, verify returned PRICE_CONFIRMATION_REQUIRED; hard stop after Verify, no write call, environment restored to Production. All alternatives data in the demo UI is synthetic local placeholder, labelled `Synthetic local placeholder — not Atlas Sandbox evidence`.
-> - **No booking, payment, reservation, ticket, order, verification, cancellation, or other external action was created.** Confirmed by `noOrderCreated: true`, `syntheticDemo: true`. The demo app makes no external calls (`externalCallsMade: false`); live-demo results (OpenRouter GEM-LIVE-01, Atlas ATL-LIVE-01) are separate from the demo app and recorded at `smoke-tests/live-demo-results/2026-08-21T05-37-31Z/`.
+> - **Nosana:** One live job accepted and completed; result reconciled offline. `riskScore: 0.2895`, `riskBand: medium`, `costUsd: 0.044`. Browser demo uses local fallback fixture. No new submission made during final polish.
+> - **Atlas:** Authentication and two production searches succeeded (PVG→NRT/HND: 5 offers; SIN→BKK: 8 offers via ATL-LIVE-01). All reference-price only. Ticketing activation pending. No booking, payment, ticket, or order was created. Atlas Sandbox Search + Verify (ATL-SBX-SV-01) partially succeeded: 20 offers KUL→SIN, verify returned PRICE_CONFIRMATION_REQUIRED; hard stop after Verify, no write call, environment restored to Production. All alternatives data in the demo UI is synthetic local fixture.
+> - **Daytona:** Provides isolated execution where supported by current evidence. Browser demo uses deterministic offline mock (`executionMode: "daytona-offline-mock"`, `isLive: false`).
+> - **No booking, payment, reservation, ticket, order, verification, cancellation, or other external action was created.** Confirmed by `noOrderCreated: true`, `syntheticDemo: true`. The demo app makes no external calls (`externalCallsMade: false`).
 > - **No local placeholder is presented as a live provider result.**
 > - **No credential values are included in this repository.**
 > - **All fixtures are synthetic, fictional, and contain no PII.**
@@ -190,8 +190,8 @@ A local React/Vite/TypeScript demo that helps budget travellers understand the h
 - [ ] No credential or secret is included.
 - [ ] No PII or raw provider output is included.
 - [ ] No transaction capability is claimed.
-- [ ] Direct Gemini is described as not executed.
-- [ ] Nosana is described as not executed, not deployed, not authenticated.
+- [ ] Direct Gemini 3.7 is described as live extraction validated; browser uses local fixture.
+- [ ] Nosana is described as one live job completed; result reconciled offline; browser uses local fallback.
 - [ ] Atlas is described with ticketing activation pending; no booking created.
 - [ ] OpenRouter temporary path is labelled as not direct Gemini validation.
 - [ ] Atlas duplicate-booking guard is described as offline-only.
@@ -206,7 +206,8 @@ A local React/Vite/TypeScript demo that helps budget travellers understand the h
 
 | File | Action |
 |------|--------|
-| `docs/stitchcheck-submission-manifest.md` | **Created** (this file) |
-| All other files | **Not modified** |
+| `README.md` | **Modified** — updated description, core flow, provider status table, safety boundary, known limitations, video artifacts section |
+| `.env.example` | **Modified** — added `ATLAS_CLIENT_ID=`, `ATLAS_CLIENT_SECRET=`, `DATA_MODE=offline` placeholders |
+| `docs/stitchcheck-submission-manifest.md` | **Modified** — corrected Gemini, Nosana, and Daytona status; updated known limitations and disclosure |
 
-**Verification:** No existing project files were created, modified, or deleted. `.env.local` was not accessed. No provider calls were made.
+**Verification:** Only documentation and configuration placeholder files were modified. No application code (`app/src/**`), no test files, no provider credentials, no `.env.local` were accessed or changed. No provider calls were made.

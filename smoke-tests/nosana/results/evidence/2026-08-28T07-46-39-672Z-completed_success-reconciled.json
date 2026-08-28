@@ -1,0 +1,45 @@
+{
+  "_label": "RECONCILED live Nosana evidence — offline reprocessing of preserved artifact",
+  "_description": "This artifact was produced by offline reprocessing of the sanitized opStates fixture derived from the live Nosana job result. No new job was submitted. No network request was made. The fixed parser (opStates[].logs[].log path) successfully extracted the risk output.",
+  "_reconciledAt": "2026-08-28T07:46:39.671Z",
+  "_parserSource": "opStates.stitchcheck-risk-calc.logs[0].log:json-string",
+  "_fixturePath": "smoke-tests/nosana/fixtures/opstates-live-result-sanitized.json",
+  "evidenceSource": "nosana-evidence",
+  "fallbackUsed": false,
+  "riskOutput": {
+    "riskScore": 0.2895,
+    "riskBand": "medium",
+    "assumptions": [
+      "Historical average delay at BBB: 25 min",
+      "On-time rate: 0.72",
+      "Route miss rate: 0.28",
+      "Monte Carlo simulations: 800"
+    ],
+    "simulationCount": 800,
+    "explanation": "A 75-minute connection at BBB was evaluated against 800 historical records. Monte Carlo simulation (800 runs) estimated a 30.4% probability of tight connection. Combined with route miss rate, the heuristic risk score is 0.2895 (medium band). This is a heuristic indication only — not a prediction or guarantee."
+  },
+  "liveMetadata": {
+    "jobId": "BNZTHNoARu98EdaqPU5WiCaFWZAyU1e9NYCZJj2h1afY",
+    "market": "7AtiXMSH6R1jjBxrcYjehCkkSF7zvYWte63gwEDBcGHq",
+    "ipfsHash": "QmVtywQCBsMokSSnpjDDNAgGJR6dDa8rAHffpMwqmnq5Jg",
+    "resultIpfsHash": "QmbCmtmcbfwRKyU8vE6axGvTMZ6YA1AWkLzVVNpYPZrNHE",
+    "platformTimeoutSec": 3600,
+    "creditsUsed": 44,
+    "costUsd": 0.044,
+    "reservationId": "4a02696c-f4d5-429e-8b4a-e2f6cb3b1722",
+    "project": "7LB623XexGGLN4b9nbiGvQXrQAnBaYeaJzaPtVfrL5fG"
+  },
+  "billing": {
+    "creditsUsed": 44,
+    "costUsd": 0.044,
+    "_note": "creditsUsed is internal Nosana credit metadata; costUsd is the USD equivalent. They are distinct fields."
+  },
+  "safety": {
+    "noNewSubmission": true,
+    "noNetworkRequest": true,
+    "noCredentialExposed": true,
+    "inputWasFictional": true,
+    "dataWasSynthetic": true,
+    "noBookingPaymentOrWrite": true
+  }
+}

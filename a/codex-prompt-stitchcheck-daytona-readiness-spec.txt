@@ -1,0 +1,109 @@
+# StitchCheck — Daytona HackSprint Submission-Readiness Spec (Codex, Spec Mode Only)
+
+This is a planning-only deliverable. Spec Mode. Do NOT modify any file, run any write
+command, execute git commit/push, or start any live provider call (Atlas order/pay, Nosana
+job, direct Gemini). Read-only investigation and a written spec are the only outputs.
+Implementation happens later, in a separate build-mode pass, only after I approve this spec.
+
+## Context
+
+StitchCheck is being submitted to **Daytona HackSprint Singapore — August 2026**, an
+in-person hackathon tomorrow (Saturday, August 29). Format: full-day hacking 11:30 AM–4:30 PM,
+followed by **live demos, 2 minutes per team**, winners announced 5:30 PM. Sponsors/credit
+providers: Daytona, Kimi AI, Nosana. Submission will NOT include Atlas mock ticketing —
+ticketing is deferred to a separate branch pending Atlas's own ATRIP activation, which is
+outside this app's control. The demo must run on the already-working Atlas Sandbox
+Search→Verify path (real evidence: 20 offers, `PRICE_CONFIRMATION_REQUIRED`).
+
+## Your task
+
+Produce a single submission-readiness spec covering the five sections below. Investigate the
+actual current repository state before writing each section — do not assume prior specs or
+priority lists still reflect current code; verify against what's actually there now.
+
+### 1. Two-minute demo audit
+
+Given the hard 2-minutes-per-team constraint tomorrow:
+- Walk the full user flow (Welcome → Upload/sample → Review → Confirm → Risk → Alternatives
+  → Recovery animation → Decision) and time how long a clean, unhurried click-through actually
+  takes right now.
+- Identify exactly which steps are essential to show Daytona/Nosana/Atlas sponsors the tech
+  stack clearly, and which steps could be skipped or fast-forwarded in a 2-minute demo without
+  losing credibility.
+- Flag any step that requires waiting (loading states, polling, animation timers) that would
+  eat disproportionate time out of the 2-minute budget, and estimate each wait's duration.
+- Propose a demo script skeleton (not full copy, just section-by-section time budget) that
+  fits 2 minutes while still surfacing: the sample-itinerary shortcut, the honest
+  MiniMax/Atlas/Nosana provenance labeling, and the recovery-plan animation.
+
+### 2. Stale-claim and terminology audit
+
+Re-run the check described in prior reconciliation work: scan README, SUBMISSION.md, the
+slide deck, video narration/subtitle files, and all `docs/` files for:
+- Claims that no longer match current code state (e.g. "zero external calls," "Atlas
+  unauthenticated," "no provider executed" — these must not survive if any real provider call
+  now has executed).
+- Any remaining "synthetic," "fictional," or "mock" language in user-facing text, distinct from
+  the internal schema identifiers that are intentionally kept (`syntheticDemo` flag,
+  `daytona-offline-mock` literal, `provenanceMode` value, `SYNTHETIC_CANONICAL_LABELS` test
+  constants) — report only genuine user-facing violations, not the preserved internal ones.
+- Any place a button, label, or narration line implies booking, payment, ticketing, or a
+  completed switch without a real verified outcome.
+
+### 3. Functional and regression state
+
+- Run (read-only observation, not fixing) `npm run typecheck`, `npm run build`, and the full
+  smoke-tests/offline test suite. Report pass/fail counts and every failure verbatim.
+- Report current git status — uncommitted changes, current branch, anything that looks
+  mid-edit or unfinished.
+- Identify any TODO/FIXME/BLOCKED markers left in source that are relevant to tomorrow's
+  submission scope (ignore ones clearly tied to the deferred Atlas-ticketing branch).
+
+### 4. Evidence and provenance completeness
+
+- Confirm what real evidence currently exists (Atlas Sandbox Search→Verify JSON, any Nosana
+  or Gemini evidence files) and cross-check that each is correctly labeled in the UI with its
+  matching provenance string — no blended or mismatched labels.
+- List anything currently marked "prepared but not executed" (Nosana, direct Gemini) and give
+  a clear recommendation on whether attempting to execute either tonight is worth the risk
+  given the time remaining before tomorrow, based on what prerequisites are already satisfied
+  versus still open.
+
+### 5. Submission packaging checklist
+
+- Verify presence and playability metadata (do not re-render) of: final demo video, slide
+  deck export, contact sheet/screenshots, submission manifest.
+- Confirm the fallback video package (existing caption-only video) is untouched and available
+  as a backup.
+- List every remaining manual step a human must do before submitting (uploading, form fields,
+  team registration confirmation, etc.) based on what's referenced in existing docs.
+
+## Constraints
+
+- Do not propose scope expansion — no new features, no ticketing work, no deck redesign.
+- Do not recommend attempting more than one of (Nosana live run / direct Gemini live run)
+  tonight, consistent with prior time-budget guidance — and only if genuinely low-risk.
+- Flag anything you are uncertain about explicitly as `ASSUMED` vs `CONFIRMED`, matching the
+  classification style used in prior specs for this project.
+- If you find a genuine blocking bug (crash, broken flow) during the demo-flow walk, report
+  it clearly as a P0 finding even though this is spec mode — flag it, do not fix it.
+
+## Output format
+
+Structure the response as the five numbered sections above, each with concrete findings (file
+paths, line numbers, exact timings/counts where applicable), followed by a final prioritized
+action list ordered by risk-to-tomorrow's-demo, each item tagged `MUST FIX TONIGHT`,
+`NICE TO HAVE`, or `DEFER PAST TOMORROW`.
+
+End with:
+```text
+DEMO_TIME_ESTIMATE_CURRENT = <Xm Ys for full unhurried walkthrough>
+DEMO_FITS_2MIN_BUDGET = <YES | NO: by how much over>
+STALE_CLAIMS_FOUND = <count, list>
+P0_BUGS_FOUND = <count, list>
+TEST_SUITE_STATUS = <pass/fail counts>
+SUBMISSION_PACKAGE_COMPLETE = <YES | NO: missing items>
+RECOMMENDED_TONIGHT_FOCUS = <one sentence>
+```
+
+Await my approval before any implementation work begins.

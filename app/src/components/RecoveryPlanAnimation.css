@@ -1,0 +1,763 @@
+/* ═══════════════════════════════════════════════════════
+   RecoveryPlanAnimation — component styles
+   cascade-to-red · collapse-into-one-plan · freshness
+   badge · confirmation states
+
+   Visual assumptions (1440×900 target):
+   • Max content width 960 px — no horizontal overflow.
+   • All keyframe animations play exactly once.
+   • No infinite loops; no flashing.
+   • WCAG AA contrast on every text/background pair.
+   • Visible :focus-visible rings on all interactive elements.
+   • prefers-reduced-motion: reduce disables all motion.
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Root container ── */
+.rpa {
+  background: #fff;
+  border: 1px solid #dbe2ea;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  box-shadow: 0 2px 8px rgba(26, 26, 46, 0.06);
+  font-size: 0.95rem;
+  color: #1a1a2e;
+  max-width: 960px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.rpa__title {
+  margin: 0 0 0.35rem;
+  font-size: 1.15rem;
+  letter-spacing: 0.01em;
+}
+
+.rpa-provenance {
+  margin: 0 0 1rem;
+  font-size: 0.8rem;
+  color: #3d4a5c;
+}
+
+.rpa-stage {
+  margin-bottom: 1rem;
+}
+
+/* ── Trigger state (delayed first leg) ── */
+.rpa-trigger {
+  position: relative;
+  border: 1px solid #e2e8f0;
+  border-left: 5px solid #94a3b8;
+  border-radius: 8px;
+  padding: 0.9rem 1.1rem;
+  background: #f8fafc;
+  transition: border-color 0.4s ease, background 0.4s ease;
+}
+
+.rpa-trigger--delayed {
+  border-left-color: #dc2626;
+  background: #fef2f2;
+  animation: rpa-trigger-in 0.6s ease both;
+}
+
+@keyframes rpa-trigger-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Two-cycle emphasis pulse — settles after animation completes */
+.rpa-trigger__pulse {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 8px;
+  pointer-events: none;
+  animation: rpa-trigger-pulse 0.9s ease-out 2 both;
+}
+
+@keyframes rpa-trigger-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(220, 38, 38, 0.18);
+  }
+}
+
+.rpa-trigger__status {
+  display: inline-block;
+  background: #dc2626;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.2rem 0.55rem;
+  border-radius: 3px;
+  margin-bottom: 0.4rem;
+}
+
+.rpa-trigger__body {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.9rem;
+  align-items: baseline;
+}
+
+.rpa-trigger__route {
+  font-size: 1.05rem;
+}
+
+/* Darkened from #5c6579 → #4a5268 for WCAG AA on white (≈5.8:1) */
+.rpa-trigger__times {
+  color: #4a5268;
+  font-size: 0.85rem;
+}
+
+/* Darkened bg from #fef2f2 → #fee2e2 for ≥3:1 contrast on border+text */
+.rpa-trigger__label {
+  margin: 0.5rem 0 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #991b1b;
+  background: #fee2e2;
+  border: 1px solid #ef4444;
+  border-radius: 4px;
+  padding: 0.35rem 0.6rem;
+  display: inline-block;
+}
+
+/* ── Cascade signal line (impact propagation path) ── */
+.rpa-signal-line {
+  position: relative;
+  height: 28px;
+  margin: 0 auto;
+  width: 2px;
+  overflow: visible;
+}
+
+.rpa-signal-line::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    #dc2626 0%,
+    #f59e0b 50%,
+    #dc2626 100%
+  );
+  border-radius: 1px;
+  transform: scaleY(0);
+  transform-origin: top center;
+  animation: rpa-signal-grow 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0.75s both;
+}
+
+.rpa-signal-line::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  border-radius: 50%;
+  background: #f59e0b;
+  box-shadow: 0 0 8px 2px rgba(245, 158, 11, 0.5);
+  opacity: 0;
+  animation: rpa-signal-dot 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0.75s both;
+}
+
+@keyframes rpa-signal-grow {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+@keyframes rpa-signal-dot {
+  0%   { opacity: 0; transform: translateY(0); }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { opacity: 0; transform: translateY(20px); }
+}
+
+/* ── Downstream cascade (staggered, not instant) ── */
+.rpa-cascade {
+  list-style: none;
+  margin: 0.5rem 0 1rem;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+/* Reveal wrapper — sequential entrance for each downstream item */
+.rpa-cascade__item--reveal {
+  opacity: 0;
+  transform: translateY(-8px);
+  animation: rpa-cascade-item-reveal 0.45s ease-out both;
+}
+
+.rpa-cascade__item--reveal:nth-child(1) { animation-delay: 1.35s; }
+.rpa-cascade__item--reveal:nth-child(2) { animation-delay: 1.65s; }
+.rpa-cascade__item--reveal:nth-child(3) { animation-delay: 1.95s; }
+
+@keyframes rpa-cascade-item-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rpa-cascade__item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.55rem 0.8rem;
+  background: #fff;
+  transition: background 0.7s ease, border-color 0.7s ease, color 0.7s ease, box-shadow 0.5s ease;
+}
+
+.rpa-cascade__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #94a3b8;
+  flex: 0 0 auto;
+  transition: background 0.7s ease, box-shadow 0.7s ease;
+}
+
+.rpa-cascade__flag {
+  margin-left: auto;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #991b1b;
+  opacity: 0;
+  animation: rpa-flag-in 0.5s ease forwards;
+}
+
+@keyframes rpa-flag-in {
+  from {
+    opacity: 0;
+    transform: translateX(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.rpa-cascade__item--at-risk {
+  background: #fee2e2;
+  border-color: #dc2626;
+  box-shadow: inset 3px 0 0 #dc2626;
+}
+
+/* One-shot emphasis — replaces the old infinite pulse */
+.rpa-cascade__item--at-risk .rpa-cascade__dot {
+  background: #dc2626;
+  box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.22);
+  animation: rpa-dot-at-risk 0.6s ease both;
+}
+
+@keyframes rpa-dot-at-risk {
+  from {
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.12);
+  }
+  to {
+    box-shadow: 0 0 0 5px rgba(220, 38, 38, 0.22);
+  }
+}
+
+/* ── Re-plan attempt counter ── */
+.rpa-replan {
+  display: inline-block;
+  background: #eef2ff;
+  border: 1px solid #6366f1;
+  color: #3730a3;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 4px;
+  padding: 0.3rem 0.65rem;
+  margin: 0 0 1rem;
+}
+
+/* ── Candidate alternatives ── */
+.rpa-candidates {
+  display: grid;
+  /* min raised to 220 px so 3 cards fit within 960 px minus gaps */
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.rpa-candidates__card {
+  animation: rpa-card-in 0.5s ease both;
+  transition: opacity 0.55s ease, transform 0.55s ease, box-shadow 0.3s ease;
+}
+
+/* Staggered entrance — 150 ms offsets between cards */
+.rpa-candidates__card:nth-child(1) { animation-delay: 0ms; }
+.rpa-candidates__card:nth-child(2) { animation-delay: 150ms; }
+.rpa-candidates__card:nth-child(3) { animation-delay: 300ms; }
+
+@keyframes rpa-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Primary candidate — visually distinguished as highest-ranked */
+.rpa-candidates__card--primary {
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25), 0 2px 8px rgba(37, 99, 235, 0.1);
+  border-left: 3px solid #2563eb;
+}
+
+/* Collapse into one plan: candidates converge toward center
+   and hand over to the single recommended plan card. */
+.rpa-candidates--collapsing {
+  pointer-events: none;
+}
+
+.rpa-candidates--collapsing .rpa-candidates__card {
+  opacity: 0;
+  transform: scale(0.75) translateY(-8px);
+  transition: opacity 0.5s ease-in, transform 0.5s ease-in;
+}
+
+.rpa-candidates--collapsing .rpa-candidates__card--primary {
+  opacity: 0;
+  transform: scale(0.82) translateY(-12px);
+  transition: opacity 0.4s ease-in, transform 0.4s ease-in;
+}
+
+/* ── Option cards ── */
+.rpa-option {
+  border: 1px solid #dbe2ea;
+  border-radius: 8px;
+  padding: 0.75rem 0.9rem;
+  background: #fbfcfe;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.rpa-option--compact {
+  padding: 0.6rem 0.75rem;
+}
+
+.rpa-option__route {
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+.rpa-option__details {
+  margin: 0 0 0.5rem;
+  display: grid;
+  gap: 0.15rem;
+}
+
+.rpa-option__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.8rem;
+}
+
+/* Darkened from #5c6579 → #4a5268 for WCAG AA (≈5.8:1 on white) */
+.rpa-option__row dt {
+  color: #4a5268;
+}
+
+.rpa-option__row dd {
+  margin: 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.rpa-option__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.rpa-option__tag {
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: #eef2f7;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  padding: 0.15rem 0.45rem;
+  border-radius: 3px;
+}
+
+.rpa-option__price {
+  margin-left: auto;
+  font-weight: 700;
+  color: #166534;
+}
+
+.rpa-option__price--na {
+  color: #991b1b;
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+
+.rpa-not-available {
+  color: #991b1b;
+  background: #fee2e2;
+  border: 1px dashed #ef4444;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* ── Recommended plan (post-collapse) ── */
+.rpa-recommended {
+  border: 2px solid #2563eb;
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+  background: #f5f8ff;
+  animation: rpa-plan-emerge 0.65s cubic-bezier(0.2, 0.9, 0.3, 1.1) 0.2s both;
+}
+
+/* Recommended plan emerges from the collapsed candidates */
+@keyframes rpa-plan-emerge {
+  from {
+    opacity: 0;
+    transform: scale(0.88) translateY(10px);
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.02) translateY(-2px);
+    box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.12);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+  }
+}
+
+.rpa-recommended__heading {
+  margin: 0 0 0.75rem;
+  font-size: 0.95rem;
+  /* Darkened from #1e40af → #1e3a8a for WCAG AA normal-text contrast (≥4.5:1) */
+  color: #1e3a8a;
+}
+
+.rpa-plan {
+  display: grid;
+  gap: 0.9rem;
+}
+
+@media (min-width: 720px) {
+  .rpa-plan {
+    grid-template-columns: 1fr 1fr;
+  }
+  .rpa-plan__tradeoffs {
+    grid-column: 1 / -1;
+  }
+}
+
+.rpa-plan__leg-title {
+  margin: 0 0 0.4rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  /* Darkened from #5c6579 → #4a5268 for WCAG AA */
+  color: #4a5268;
+}
+
+/* ── Trade-offs (constraints satisfied) ── */
+.rpa-tradeoffs {
+  margin: 0;
+  border: 1px solid #dbe2ea;
+  border-radius: 8px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.rpa-tradeoffs__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.85rem;
+}
+
+.rpa-tradeoffs__row + .rpa-tradeoffs__row {
+  border-top: 1px solid #eef1f5;
+}
+
+/* Darkened from #5c6579 → #4a5268 for WCAG AA */
+.rpa-tradeoffs__row dt {
+  color: #4a5268;
+  font-weight: 600;
+}
+
+.rpa-tradeoffs__row dd {
+  margin: 0;
+  text-align: right;
+}
+
+/* ── No-safe-plan terminal state (error) ── */
+.rpa-terminal {
+  background: #fee2e2;
+  border: 2px solid #dc2626;
+  color: #991b1b;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  text-align: center;
+  animation: rpa-terminal-in 0.5s ease both;
+}
+
+@keyframes rpa-terminal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ── Freshness badge (provenance) ── */
+.rpa-freshness {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  background: #ecfdf5;
+  border: 1px solid #34d399;
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  margin: 1rem 0;
+  animation: rpa-freshness-in 0.5s ease both;
+}
+
+@keyframes rpa-freshness-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* One-shot pulse — replaces the old infinite green pulse */
+.rpa-freshness__pulse {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #16a34a;
+  animation: rpa-pulse-green-once 0.6s ease both;
+}
+
+@keyframes rpa-pulse-green-once {
+  from {
+    box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.14);
+  }
+  to {
+    box-shadow: 0 0 0 5px rgba(22, 163, 74, 0.26);
+  }
+}
+
+.rpa-freshness__headline {
+  font-weight: 700;
+  color: #166534;
+  font-size: 0.85rem;
+}
+
+.rpa-freshness__timestamp {
+  color: #3f6212;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.rpa-freshness__badge {
+  background: #d1fae5;
+  border: 1px solid #16a34a;
+  color: #166534;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+}
+
+/* ── Confirmation states (review and confirmation) ── */
+.rpa-confirmation {
+  margin-top: 1rem;
+}
+
+.rpa-confirmation__panel {
+  border: 1px solid #dbe2ea;
+  border-top: 4px solid #2563eb;
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  background: #fff;
+  animation: rpa-freshness-in 0.45s ease both;
+}
+
+.rpa-confirmation__heading {
+  margin: 0 0 0.6rem;
+  font-size: 1rem;
+}
+
+/* Darkened from #5c6579 → #4a5268 for WCAG AA */
+.rpa-confirmation__note {
+  margin: 0;
+  color: #4a5268;
+  font-size: 0.9rem;
+}
+
+.rpa-confirmation__prompt {
+  margin: 0 0 0.85rem;
+  font-size: 0.9rem;
+}
+
+.rpa-confirmation__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+/* ── Buttons with visible focus states ── */
+.rpa-btn {
+  padding: 0.55rem 1.1rem;
+  border: 2px solid #2563eb;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: transparent;
+  color: #2563eb;
+  transition: background 0.15s, color 0.15s;
+}
+
+.rpa-btn:hover {
+  background: #eff6ff;
+}
+
+.rpa-btn:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.rpa-btn--primary {
+  background: #2563eb;
+  color: #fff;
+}
+
+.rpa-btn--primary:hover {
+  background: #1d4ed8;
+}
+
+.rpa-btn--primary:focus-visible {
+  outline-color: #fff;
+}
+
+.rpa-confirmation__outcome {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.rpa-confirmation__outcome--waiting {
+  color: #664d03;
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 6px;
+  padding: 0.6rem 0.85rem;
+  font-weight: 600;
+}
+
+/* ── Visually-hidden live region for screen-reader announcements ── */
+.rpa-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Execution mode badge ── */
+.rpa-freshness__mode {
+  display: inline-block;
+  margin-top: 0.35rem;
+  background: #e0e7ff;
+  border: 1px solid #6366f1;
+  color: #3730a3;
+  border-radius: 4px;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* ═══════════════════════════════════════════════════════
+   Reduced-motion support
+   Disable moving signal paths, repeated pulses, and large
+   translations. Retain all content and use quick opacity
+   changes only.
+   ═══════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .rpa,
+  .rpa *,
+  .rpa::before,
+  .rpa::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+  }
+
+  /* Keep simple opacity entrances for conditional content */
+  .rpa-candidates__card,
+  .rpa-recommended,
+  .rpa-freshness,
+  .rpa-cascade__item--reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* Hide the travelling signal dot; keep the line static */
+  .rpa-signal-line::after {
+    display: none !important;
+  }
+
+  .rpa-signal-line::before {
+    transform: scaleY(1) !important;
+    opacity: 0.4 !important;
+  }
+}

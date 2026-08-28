@@ -47,18 +47,21 @@ const MAX_FLOW_RETRIES = 2;
 
 // ── Required evidence labels ──
 // The Nosana label has three valid variants depending on app state:
-//   1. "Synthetic local placeholder — not Nosana evidence" (base fixture)
-//   2. "Nosana unavailable — local fallback used; not Nosana evidence" (fallback)
-//   3. "Nosana evidence — remote job succeeded; …" (live evidence)
+//   1. "Local fallback — not Nosana evidence" (default local-fallback)
+//   2. "Nosana workload validated offline — local fallback used; not Nosana evidence" (offline validated)
+//   3. "Nosana evidence — remote job succeeded; result from decentralized GPU workload." (live evidence)
 // All contain "Nosana" and some form of "evidence" disclaimer.
 const EVIDENCE_LABELS = {
-  gemini: 'OpenRouter temporary path — not direct Gemini validation',
+  gemini: 'Fictional itinerary \u2014 local demo fixture',
   nosanaVariants: [
-    'Synthetic local placeholder — not Nosana evidence',
-    'Nosana unavailable — local fallback used; not Nosana evidence',
-    'Nosana evidence',
+    'Local fallback \u2014 not Nosana evidence',
+    'Nosana workload validated offline \u2014 local fallback used; not Nosana evidence',
+    'Nosana evidence \u2014 remote job succeeded; result from decentralized GPU workload.',
   ],
-  atlas: 'Synthetic local placeholder — not Atlas Sandbox evidence',
+  // Locked panel uses LABELS.atlasAlternatives (localFixture);
+  // post-confirmation panels use getAtlasLabel() which returns offlineFixture.
+  atlasLocked: 'Fictional alternatives \u2014 local demo fixture',
+  atlas: 'Offline fixture \u2014 not Atlas Sandbox evidence',
 };
 
 // ── Helpers ──
@@ -96,11 +99,69 @@ async function assertTextVariant(page, selector, variants, label) {
   return matched;
 }
 
-/** Take a screenshot with retry. */
+/**
+ * Wait for deterministic browser-ready state before capture.
+ * Implements the full stabilization protocol:
+ *   1. document.fonts.ready
+ *   2. All <img> complete
+ *   3. data-demo-ready="true" marker
+ *   4. Two requestAnimationFrame cycles
+ *   5. Short bounded stabilization delay
+ *   6. Scroll position reset
+ */
+async function waitBrowserReady(page, context = 'page') {
+  // 1. Fonts
+  await page.evaluate(() => document.fonts.ready);
+
+  // 2. All images complete
+  await page.evaluate(() => Promise.all(
+    [...document.images].map(img =>
+      img.complete ? Promise.resolve() :
+      new Promise(r => { img.onload = img.onerror = r; })
+    )
+  ));
+
+  // 3. App-specific ready marker with diagnostic timeout
+  try {
+    await page.waitForSelector('[data-demo-ready="true"]', { timeout: 15_000 });
+  } catch {
+    const debug = await page.evaluate(() => ({
+      readyMarker: document.querySelector('[data-demo-ready]')?.getAttribute('data-demo-ready'),
+      bodyChildCount: document.body.children.length,
+      rootId: document.querySelector('#root')?.id ?? null,
+      title: document.title,
+      url: location.href,
+    }));
+    throw new Error(
+      `[${context}] data-demo-ready="true" not set within 15s. Debug: ${JSON.stringify(debug)}`
+    );
+  }
+
+  // 4. Two requestAnimationFrame cycles after the ready marker
+  await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
+
+  // 5. Short bounded stabilization delay
+  await page.waitForTimeout(150);
+
+  // 6. Scroll position reset
+  await page.evaluate(() => window.scrollTo(0, 0));
+}
+
+/** Inject CSS to disable all transitions and animations during capture. */
+async function disableTransitionsForCapture(page) {
+  await page.addStyleTag({
+    content: '*, *::before, *::after { transition: none !important; animation: none !important; }',
+  });
+}
+
+/** Take a screenshot with retry, with viewport stabilization before each attempt. */
 async function screenshotWithRetry(page, filename, retries = MAX_RETRIES) {
   const filepath = resolve(OUT_DIR, filename);
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
+      await page.waitForTimeout(100);
       await page.screenshot({ path: filepath, fullPage: false });
       logOk(`${filename} captured`);
       return filepath;
@@ -172,9 +233,11 @@ async function ensureDevServer() {
 
 /** Navigate from initial load to the review step (safety → upload → review). */
 async function navigateToReview(page) {
-  await page.goto(APP_URL, { waitUntil: 'domcontentloaded', timeout: 15_000 });
+  await page.goto(APP_URL, { waitUntil: 'networkidle', timeout: 30_000 });
+  await waitBrowserReady(page, 'initial-load');
+  await disableTransitionsForCapture(page);
   await assertVisible(page, '.sc-safety-notice', 'nav-safety');
-  await page.getByRole('button', { name: 'I understand — continue with synthetic data' }).click();
+  await page.getByRole('button', { name: 'I understand — continue with demo itinerary' }).click();
 
   await assertVisible(page, '.sc-upload-panel', 'nav-upload');
   await page.selectOption('#screenshot-0', 'gem-01');
@@ -224,7 +287,7 @@ async function captureScene01_LockedState(page) {
 
   // Verify Atlas label in locked panel
   await assertText(page, 'section[aria-label="Safer alternatives"] p.sc-source-label',
-    EVIDENCE_LABELS.atlas, 'scene-01-atlas-label');
+    EVIDENCE_LABELS.atlasLocked, 'scene-01-atlas-label');
   logOk('Atlas alternatives label visible');
 
   // Scroll to show locked panels and screenshot
@@ -299,10 +362,13 @@ async function captureScene03_ConfirmedUnlocked(page) {
     EVIDENCE_LABELS.atlas, 'scene-03-atlas-label');
   logOk('Atlas alternatives label visible');
 
-  // Full-page screenshot
+  // Viewport-stabilized screenshot (never fullPage for video frames)
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
+  await page.waitForTimeout(100);
   const filepath = resolve(OUT_DIR, 'scene-03-confirmed-unlocked.png');
-  await page.screenshot({ path: filepath, fullPage: true });
-  logOk('scene-03-confirmed-unlocked.png captured (full page)');
+  await page.screenshot({ path: filepath, fullPage: false });
+  logOk('scene-03-confirmed-unlocked.png captured (viewport)');
 
   return { scene: '03-confirmed-unlocked', file: 'scene-03-confirmed-unlocked.png', status: 'pass' };
 }
@@ -531,14 +597,15 @@ async function main() {
     voiceMode: 'silent',
     voiceModeNote: 'Automated capture is silent by default. Narration uses browser-local Web Speech API and is opt-in only via the UI control. No external TTS or cloud service was called.',
     evidenceLabels: {
-      gemini: EVIDENCE_LABELS.gemini,
+      gemini: EVIDENCE_LABELS.gemini, // 'Fictional itinerary — local demo fixture' (matches core provenance)
       nosanaVariants: EVIDENCE_LABELS.nosanaVariants,
+      atlasLocked: EVIDENCE_LABELS.atlasLocked,
       atlas: EVIDENCE_LABELS.atlas,
     },
     scenes: results,
     gracefulFallback: {
       nosanaResultSource: results.find((r) => r.nosanaSource)?.nosanaSource || 'unknown',
-      note: 'If nosanaSource is "local-fallback", the app used synthetic fixture data. If "nosana-evidence", a live Nosana result was served from app/public/nosana-risk-result.json.',
+      note: 'If nosanaSource is "local-fallback", the app used local fallback fixture data. If "nosana-evidence", a live Nosana result was served from app/public/nosana-risk-result.json.',
     },
   };
 

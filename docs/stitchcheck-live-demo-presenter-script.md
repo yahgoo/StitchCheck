@@ -12,15 +12,15 @@
 
 ## Segment 1 — The Problem (0:00–0:18)
 
-**Screen action:** App loads. Safety notice is visible. Header reads "StitchCheck — Synthetic Demo — No Live Services."
+**Screen action:** App loads on the Welcome screen. Safety sentence visible: **Sample documents only. Do not upload real travel documents.** Header shows **StitchCheck** plus the compact **Live checks: N of 3** bar (details under **How this works** when live providers run).
 
 **Spoken narrative:**
 
 > "Budget travelers face a hidden trap. When you stitch two separately purchased flights to save money, each ticket is an independent contract. If the first flight is delayed and you miss the second, the second airline has no obligation to rebook, protect, or refund you. The savings are visible at checkout — the exposure is not.
 >
-> StitchCheck gives travelers a review-first way to understand itinerary risk before committing. This is a local demo with synthetic data; the demo walkthrough itself makes no external service calls."
+> StitchCheck gives travelers a review-first way to understand itinerary risk before committing. This demo uses sample documents and clearly tagged sources on each panel."
 
-**Visible proof:** Safety notice panel. "Synthetic Demo" badge in header. No live-service claims on screen.
+**Visible proof:** Welcome safety sentence. No global Synthetic Demo header badge. Provider status stays compact until checks run.
 
 ---
 
@@ -52,17 +52,17 @@
 
 ---
 
-## Segment 4 — Confirm Itinerary First (0:52–1:06)
+## Segment 4 — Check My Itinerary (0:52–1:06)
 
-**Screen action:** Scroll to show Risk and Alternatives panels in disabled state with lock icons and "Confirm itinerary first." Click "Confirm itinerary." Status banner appears. Panels unlock.
+**Screen action:** On the Review trip screen, click **Check my itinerary**. The app freezes the itinerary snapshot and advances to the consolidated **Your options** screen. Risk detail is under **See why this is risky**; alternatives show one recommended card first.
 
 **Spoken narrative:**
 
-> "Before confirmation, both the risk and alternatives panels are locked. They display: **Confirm itinerary first.** No risk calculation or alternative search begins until the user explicitly confirms.
+> "The traveller reviews the boarding-pass summary and clicks **Check my itinerary**. That action freezes the route snapshot used for every downstream check — risk, recovery, and Atlas Search all use the confirmed itinerary, not live extraction state afterward.
 >
-> The user clicks Confirm. The panels activate. The status banner states that no external service call was made. This confirmation gate keeps the traveler in control at every step."
+> The options screen opens with one recommended plan and section-level disclosures. Source tags appear on each panel where data is shown."
 
-**Visible proof:** Disabled panels with `Confirm itinerary first` and lock icons (before). Status banner: "Itinerary confirmed. No external service call was made." Panels unlocked with placeholder data (after).
+**Visible proof:** **Check my itinerary** button on Review trip. **Your options** screen with recommended card, **See why this is risky** disclosure, and per-panel source tags (not locked downstream panels).
 
 ---
 
@@ -72,11 +72,11 @@
 
 **Spoken narrative:**
 
-> "The risk panel displays a heuristic risk estimate — medium risk with a score of 0.42. The disclaimer is explicit: **Synthetic local placeholder — not Nosana evidence.**
+> "The risk panel displays a heuristic risk estimate — medium risk with a score of 0.42. The disclaimer is explicit: **Local fallback — not Nosana evidence.**
 >
-> Nosana's planned role is connection-risk analysis. In this demo, no Nosana workload has been executed or deployed. A smoke-test attempt was intentionally blocked before any network request due to missing infrastructure. What you see here is a local placeholder shape only."
+> "Nosana's planned role is connection-risk analysis. Nosana live job was completed and reconciled offline with a risk score of zero point two eight nine five. What you see here is a local fallback fixture, not the live Nosana evidence."
 
-**Visible proof:** Risk panel: medium band, score 0.42, heuristic disclaimer. Source label: `Synthetic local placeholder — not Nosana evidence`.
+**Visible proof:** Risk panel: medium band, score 0.42, heuristic disclaimer. Source label: `Local fallback — not Nosana evidence`.
 
 ---
 
@@ -86,11 +86,11 @@
 
 **Spoken narrative:**
 
-> "The alternatives panel shows synthetic options labelled: **Synthetic local placeholder — not Atlas Sandbox evidence.** These are local fixture shapes for UI demonstration.
+> "The alternatives panel shows synthetic options labelled: **Demo alternatives — local demo fixture.** These are local fixture shapes for UI demonstration.
 >
 > Separately, Atlas authentication has been completed through the official Atlas Flight Booking Skill. Two live read-only production searches returned real offers \u2014 five from Shanghai PVG to Tokyo NRT/HND, and eight from Singapore SIN to Bangkok BKK (ATL-LIVE-01). All offers carry reference-price status with ticketing activation pending. No booking, payment, or order was created from those searches. The demo panels you see now remain local placeholders."
 
-**Visible proof:** Alternatives panel: two options with source label `Synthetic local placeholder — not Atlas Sandbox evidence`. Comparison table visible showing original itinerary alongside a placeholder alternative.
+**Visible proof:** Alternatives panel: two options with source label `Demo alternatives — local demo fixture`. Comparison table visible showing original itinerary alongside a placeholder alternative.
 
 ---
 
@@ -131,9 +131,9 @@ All three exact labels must appear on screen at the indicated moments:
 
 | # | Exact label | Segment | Panel |
 |---|---|---|---|
-| 1 | `OpenRouter temporary path — not direct Gemini validation` | 2 | Itinerary review |
-| 2 | `Synthetic local placeholder — not Nosana evidence` | 5 | Risk panel |
-| 3 | `Synthetic local placeholder — not Atlas Sandbox evidence` | 6 | Alternatives panel |
+| 1 | `Demo itinerary — local demo fixture` | 2 | Itinerary review |
+| 2 | `Local fallback — not Nosana evidence` | 5 | Risk panel |
+| 3 | `Demo alternatives — local demo fixture` | 6 | Alternatives panel |
 
 ---
 
@@ -143,20 +143,20 @@ Before delivering this script, verify every spoken claim against the evidence re
 
 | Claim in script | Evidence source | Boundary |
 |---|---|---|
-| "Fictional itinerary — local demo fixture" | `app/src/data/labels.ts`, `app/src/data/fixtures.ts` | Browser walkthrough uses local fixture; direct Gemini 3.7 live-verified separately. |
+| "Demo itinerary — local demo fixture" | `app/src/data/labels.ts`, `app/src/data/fixtures.ts` | Browser walkthrough uses local fixture; direct Gemini 3.7 live-verified separately. |
 | "Direct Gemini 3.7 live extraction succeeded" | `smoke-tests/gemini/results/results-gemini-3.7-flash-success.json` | Verified via Interactions API; schema-valid, no fallback. |
-| "Nosana workload has been executed or deployed" — **negated** | `smoke-tests/nosana/results/2026-08-20T15-53-43Z/`, `README.md` | Blocked before any network request. No deployment, no execution. |
+| "Nosana workload has been executed or deployed" — **negated** | `smoke-tests/nosana/results/evidence/*-completed_success-reconciled.json`, `README.md` | Nosana live job completed and reconciled offline. Browser demo uses local fallback. |
 | "Atlas authentication completed through the official Atlas Flight Booking Skill" | `docs/stitchcheck-submission-evidence-index.md` Provider Status table | Authentication via official Skill and CLI only. |
-| "One live read-only search returned five real production offers" | `docs/stitchcheck-submission-evidence-index.md` Provider Status table, `smoke-tests/live-demo-results/2026-08-21T05-37-31Z/atlas-live-result.md` | Two production searches: PVG→NRT/HND (5 offers) and SIN→BKK (8 offers via ATL-LIVE-01). Reference prices only. |
-| "All five offers carry reference-price status with ticketing activation pending" | `docs/stitchcheck-submission-evidence-index.md` — `price_status: reference`, `bookable: false`, `TICKETING_ACTIVATION_REQUIRED` | No bookable offer. No booking, payment, ticket, or order created. |
+| "Two live read-only searches returned real production offers" | `docs/stitchcheck-submission-evidence-index.md` Provider Status table, `smoke-tests/live-demo-results/2026-08-21T05-37-31Z/atlas-live-result.md` | Two production searches: PVG→NRT/HND (5 offers) and SIN→BKK (8 offers via ATL-LIVE-01). Reference prices only. |
+| "All offers carry reference-price status with ticketing activation pending" | `docs/stitchcheck-submission-evidence-index.md` — `price_status: reference`, `bookable: false`, `TICKETING_ACTIVATION_REQUIRED` | No bookable offer. No booking, payment, ticket, or order created. |
 | "Demo panels remain local placeholders" | `app/src/data/labels.ts`, `app/src/data/fixtures.ts` | UI fixture shapes, not live Atlas output. |
 | "No booking, payment, reservation, ticket, order, verification, or other external action" | `app/src/App.tsx`, `app/src/data/labels.ts`, `docs/SPECS.md` | No UI handler, route, or button enables any write action. |
 
 ### Prohibited claims — do not add
 
-- Direct Gemini was called, validated, or produced results.
-- Nosana was executed, deployed, authenticated, or returned results.
-- Atlas Sandbox search was executed (the live search used production Atlas, not Sandbox).
+- Direct Gemini was not validated or produced results (it was validated — see `results-gemini-3.7-flash-success.json`).
+- Nosana was not executed at all (a live job was completed and reconciled offline; the browser demo uses a local fallback).
+- Atlas Sandbox search was not executed (it was — ATL-SBX-SV-01 completed with 20 offers KUL→SIN).
 - Any local placeholder is a live provider result.
 - Any booking, payment, reservation, ticket, order, or verification was created.
 - Credentials, PII, or raw provider output are shown.

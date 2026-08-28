@@ -1,0 +1,122 @@
+# StitchCheck — Persona-Based UX Critique of the Options Screen (v2, with full context)
+# Codex Agent — ANALYSIS ONLY, DO NOT WRITE OR MODIFY APPLICATION CODE
+# Output: one new markdown document with recommendations. No code diffs.
+
+## What StitchCheck is (read this first)
+
+StitchCheck is a hackathon project: a traveller uploads a flight screenshot (or uses a
+built-in sample itinerary), the app extracts the itinerary, evaluates whether a self-transfer
+connection is at risk of failing, and shows real flight alternatives sourced live from the
+Atlas Sandbox flight-search API — all strictly read-only. The app NEVER books, pays, or
+issues a ticket; every screen ends with "No booking, payment, reservation, or order created."
+The traveller's only actions are "Keep current itinerary" or "Switch to this plan" (which
+just submits a non-binding request, not an actual booking).
+
+Core architecture, so you have real file anchors (paths are relative to the app root — locate
+the actual current filenames yourself if these have moved, they may not be 100% exact):
+- `app/src/App.tsx` — main screen/step orchestration (Welcome → Review → Options/Answer →
+  Done).
+- `app/src/components/AlternativesPanel.tsx` (or similarly named live-alternatives component)
+  — renders the "Live Atlas alternatives (N)" list, currently unsorted.
+- `app/src/components/UnbookedTicketPreviewLegSection.tsx` — renders the per-leg "Verified
+  unbooked previews" sections (already has a "best option + See more verified options (N)"
+  collapse pattern implemented).
+- `app/src/atlas/unbooked-previews.ts` — contains `BEST_OPTION_SELECTION_RULE` and
+  `selectBestOptionCard`, the existing deterministic "pick the best offer" logic for the
+  preview sections (NOT yet applied to the raw 20-offer alternatives list).
+- `app/src/lib/atlasClient.ts` / `app/src/lib/atlasAdapter.ts` — typed Atlas Search/Verify
+  client and adapter mapping raw offers to UI types (fields include `totalPrice`, `currency`,
+  `departureTime`, `arrivalTime`, `carrier`, `flightNumber`, `bookable`/availability status).
+- `docs/how-the-app-works-live-walkthrough-2026-08-26.md` — an existing screen-by-screen
+  walkthrough doc from a live captured session, useful as ground truth for what each screen
+  actually shows today.
+- `docs/persona-ux-critique-2026-08-26.md` — if this file already exists from a prior pass,
+  read it first and build on/refine it rather than duplicating from scratch.
+
+Existing safety/UX rules already enforced elsewhere in the codebase that your recommendations
+MUST respect (do not suggest anything that violates these):
+- No fabricated data — any sort, filter, or badge must derive from real fields already
+  returned by Atlas (price, time, verify status), never an invented composite score without
+  showing its exact formula.
+- No permanent hiding of data — any "top N by default" pattern must have a working "show
+  all" expand, per the existing pattern in `UnbookedTicketPreviewLegSection.tsx`.
+- No claim of "Booked" or "Switched" anywhere without a real verified outcome — "Switch to
+  this plan" only ever results in "Request submitted, awaiting verified supplier outcome."
+- Compact provider-status bar ("Live checks: N of 3 passed") with detail hidden behind "How
+  this works" — raw provider names (MiniMax, Nosana, Atlas) must not appear in the primary
+  flow text.
+
+## Step 1 — Actually load the real screen before critiquing
+
+1. Confirm the dev server is running at `http://localhost:5173/` with `DATA_MODE=live` (start
+   it if not, `npm run dev` from the app directory).
+2. Walk through: Welcome → "Try a sample itinerary" → "Check my itinerary" → the combined
+   options screen.
+3. Read the actual rendered options screen end to end, including expanding "See more verified
+   options" on each leg and scrolling through the full "Live Atlas alternatives" list.
+4. Note the REAL current state you see — it may differ slightly from prior captures (offer
+   counts, exact prices, provider-bar status) since Atlas Sandbox data can vary run to run.
+   Use what you actually observe as your source of truth, not an assumed static screen.
+5. If the dev server cannot be started or live Atlas data is unavailable, fall back to reading
+   the component source files listed above directly to understand exact current behavior, and
+   state clearly in your output which parts were live-observed vs. code-inferred.
+
+## Step 2 — Roleplay as two personas, grounded in what you just saw
+
+### Persona 1 — Priya, price-conscious backpacker
+Budget-constrained, compares every option by price first, has used Skyscanner/AirAsia/12Go
+before and expects sort-by-price as a baseline feature. Gets frustrated scanning an unsorted
+list of many rows to manually find the cheapest.
+
+### Persona 2 — Marcus, time-pressed traveller
+Has about 90 seconds on his phone between commitments. Wants one clear recommendation with
+minimal taps and minimal scrolling, not a comprehensive comparison table. Dislikes two-step
+interactions (Verify, then Switch) per offer.
+
+For each persona, write a first-person walkthrough narrating exactly what they see, in order,
+referencing the REAL screen content you observed in Step 1 (exact prices, carriers, offer
+counts — not placeholders), and where they get stuck or irritated. End each with their top 3
+ranked frustrations.
+
+## Step 3 — Output document
+
+Write `docs/persona-ux-critique-2026-08-26.md` (overwrite/refine if it already exists) with:
+
+1. Priya's walkthrough + top 3 frustrations.
+2. Marcus's walkthrough + top 3 frustrations.
+3. Shared pain points — which issues hit both personas (highest priority) vs. persona-specific.
+4. Prioritized improvement list. For each item: one-sentence description, which persona(s) it
+   serves, the exact real data field it would use (price/departureTime/verify-status/etc,
+   citing the actual field name from `atlasAdapter.ts` if you can locate it), and an effort
+   tier (Small: pure reorder/sort; Medium: new component/state; Large: changes to the
+   Verify/Switch interaction flow). Cover at minimum:
+   - Default sort for the "Live Atlas alternatives" list (justify price-ascending vs.
+     alternatives).
+   - Collapse-by-default + expand for that list, reusing the existing pattern from
+     `UnbookedTicketPreviewLegSection.tsx` rather than inventing a new one — say explicitly
+     if you found and are reusing that exact pattern.
+   - Whether/how to reduce the Verify+Switch two-click flow, and the safety condition under
+     which merging them is still acceptable (no auto-booking, explicit confirmation retained).
+   - What to do about the RECOMMENDED card's blank "Arrival impact" / "We don't have this
+     yet" first-leg preview — de-emphasize, relabel, or explain, so it doesn't look broken.
+   - Any quick-glance aid (badge/highlight/default sort) letting either persona decide without
+     reading every row.
+5. What NOT to change — things already working well for one or both personas (e.g. the
+   individually-Verified per-leg cards, the no-booking footer, Keep/Switch framing) so a later
+   implementation pass doesn't regress them.
+
+## Constraints
+
+- Analysis only. Create exactly one new (or refined) markdown file. Do not modify, run
+  destructive commands against, or refactor any application code.
+- Every recommendation must cite a real, currently-existing data field or an already-built
+  pattern in the codebase (name the file/function) — no invented UI elements or backend
+  capabilities not evidenced by the actual code or the actual running app.
+- If you could not start the dev server or observe live data, say so explicitly and mark
+  which parts of your critique are code-inferred rather than live-observed.
+
+## Final output
+
+Return the file path written, whether the critique was based on live-observed data or
+code-inference (or both, itemized), and a 5-bullet executive summary of the top improvements
+ranked by (persona coverage) x (effort), lowest-effort/highest-coverage first.

@@ -1,0 +1,129 @@
+# StitchCheck — Post-Audit Cleanup: Missing Module + Stale Tests + Stale Docs
+# Cursor Agent — investigate before fixing; distinguish "real bug" from "test needs updating"
+
+## Context
+
+The final pre-demo audit found 5 failing smoke-test suites (32/37 fully pass) and a set of
+stale markdown docs describing the pre-consolidation UI. This pass resolves both, plus
+double-click race and back-button gaps flagged as low-severity.
+
+## Absolute constraints
+
+- Do not touch Atlas write routes, Nosana execution, or the route-continuity/best-option/
+  disclosure-dedup/screen-consolidation logic already verified working.
+- Do NOT touch video, narration, or subtitle files. Markdown docs (README, handover notes,
+  presenter scripts, rehearsal runbooks) ARE in scope — they are plain text, not the excluded
+  media files.
+- Do not weaken any test assertion just to force a pass — for each failure, first determine
+  whether the app is wrong or the test is stale, then fix the one that's actually wrong.
+- Do not commit/push.
+
+## Step 1 — Investigate the missing module (do this FIRST, before touching tests)
+
+Two suites fail because `direct-gemini-adapter.mjs` cannot be found:
+- `extraction/gemini-3.7-routing-regression-tests.mjs`
+- `extraction/interactions-api-offline-tests.mjs`
+
+1. Search the repo for every reference to `direct-gemini-adapter` (imports, requires, docs).
+2. Check git history / `.gitignore` to determine: was this file deleted, renamed, or never
+   committed? Is it still imported anywhere in `app/src` or `core/` at runtime (i.e. does the
+   live extraction path actually depend on it), or was it fully superseded by
+   `extraction/openrouter-extraction-adapter-offline-tests.mjs` (which passes 20/20)?
+3. Report which case it is. Only if the live app still depends on this module and it's
+   genuinely missing from disk is this a real bug requiring restoration — in that case, stop
+   and report before writing any replacement code (do not reconstruct a lost adapter from
+   guesswork). If it's dead code / superseded, update or remove the two orphaned test files
+   accordingly (do not just delete the tests silently — report why they're obsolete).
+
+## Step 2 — Fix `atlas/live-app-integration-tests.mjs` (3 failures)
+
+These fail because they expect `extraction` in Search params, from before the route-snapshot
+change (itinerary is now frozen at "Check my itinerary" and used everywhere, including Atlas
+Search). Read the 3 failing assertions, confirm they're checking pre-snapshot behavior, and
+update them to assert the correct current contract: Search params come from the frozen
+itinerary snapshot, not live extraction state. Do not weaken the assertions — make them check
+the new correct value precisely.
+
+## Step 3 — Fix `recovery-animation-accessibility-offline-tests.mjs` (1 failure)
+
+Test expects headline text `"Offline recovery plan computed"`; UI renders `"Recovery plan
+computed"`. Determine which is correct given current behavior (is the app sometimes offline,
+sometimes live, and should the headline reflect that distinction — e.g. `"Recovery plan
+computed"` when live, `"Offline recovery plan computed"` when running on fixtures?). If the
+UI dropped the "Offline" qualifier inappropriately when actually offline, fix the UI. If the
+test is asserting a stale exact string that no longer matches intended behavior, update the
+test. State which one you changed and why.
+
+## Step 4 — Fix `ui-simplification-offline-tests.mjs` (2 failures)
+
+Read the failing "demo footnote placement" assertions. Determine whether the footnote should
+still exist in its old position given the screen-consolidation changes, or whether it needs to
+move (e.g. into the "How this works" details panel or section-level disclosure area). Fix
+whichever side is actually wrong.
+
+## Step 5 — Low-severity UX gaps from the audit
+
+1. **Double-click race on "Check my itinerary":** add a disabled/pending state on the button
+   while the confirm transition is in flight, so a second click can't re-trigger navigation
+   before the first completes.
+2. **Browser back mid-flow:** at minimum, ensure back navigation doesn't leave the user on a
+   broken/blank `other` state — either wire up minimal history support for the main steps, or,
+   if that's too large for remaining time, intercept back navigation to redirect to Welcome
+   cleanly rather than an undefined state. Report which approach you took.
+
+## Step 6 — Update stale documentation (markdown only)
+
+For each flagged file/location, update the description to match the current consolidated UI
+(Welcome → Review → Answer/Options → Done; compact "Live checks: N of 3" bar with "How this
+works" details; single best-option card + "See more verified options"; section-level
+disclosure). Do this for:
+
+- docs/stitchcheck-cursor-kimi-k3-handover.md (lines ~183, 209)
+- docs/session-handoff-2026-08-25-gemini-nosana-live-gates.md (line ~84)
+- docs/session-handoff-2026-08-24-ui-verification.md (lines ~33, 117)
+- docs/stitchcheck-live-demo-presenter-script.md (line ~15, ~55-79)
+- docs/stitchcheck-tomorrow-rehearsal-pack.md (lines ~55, 76, 81, 134, 165-171)
+- docs/stitchcheck-live-demo-status-display.md (lines ~120-122)
+- docs/hackathon-demo-script.md (lines ~57-66, 72)
+- docs/local-rehearsal-runbook.md (line ~333)
+- Any other runbook still describing "Confirm itinerary first" locked panels or a "Synthetic
+  Demo" header inconsistent with current behavior — sweep for these phrases repo-wide in docs/.
+
+These are session-handoff/rehearsal docs, not narration/video/subtitle files, so they are in
+scope. Keep edits factual and minimal — describe what the UI actually does now, don't rewrite
+tone or add new sections.
+
+## Step 7 — Full regression re-run
+
+```bash
+npm run typecheck
+npm run build
+```
+
+Run every suite in `smoke-tests/` (all 37 files) and report full pass/fail counts. Target:
+37/37 passing, with any remaining failure explicitly justified (not silently left broken).
+
+## Final report
+
+Return, per step:
+
+1. Missing-module investigation result and resolution taken.
+2. The 3 corrected assertions in `atlas/live-app-integration-tests.mjs`, before/after.
+3. Which side (UI or test) was fixed for the recovery-animation headline mismatch, and why.
+4. Which side was fixed for the footnote-placement failures, and why.
+5. Double-click guard implementation.
+6. Back-button handling approach taken.
+7. List of all doc files edited with a one-line summary of the correction per file.
+8. Full 37-suite regression results.
+9. Typecheck/build results.
+
+End with:
+
+```text
+MISSING_MODULE_STATUS = <DEAD_CODE_REMOVED | RESTORED | BLOCKED: reason>
+STALE_TEST_FIXES_STATUS = <ALL_FIXED | PARTIAL: list | BLOCKED: reason>
+LOW_SEVERITY_UX_FIXES_STATUS = <IMPLEMENTED | PARTIAL: list>
+DOCS_UPDATED_STATUS = <ALL_UPDATED | PARTIAL: list>
+FULL_REGRESSION_STATUS = <37/37 | FAILURES: list with justification>
+DEMO_READY = <YES | NOT_YET: reason>
+```

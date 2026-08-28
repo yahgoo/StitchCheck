@@ -27,6 +27,10 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  buildRiskJobDefinition,
+  RISK_WORKLOAD_IMAGE,
+} from "./nosana-risk-runner.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const RESULTS_DIR = path.join(here, "results");
@@ -35,17 +39,27 @@ const APP_PUBLIC_DIR = path.join(here, "..", "..", "app", "public");
 
 // ── Load NOSANA_API_KEY from .env.local if not already in env ──────────────
 
+const ENV_KEYS = [
+  "NOSANA_API_KEY",
+  "NOSANA_MARKET",
+  "NOSANA_COST_CEILING_USD",
+  "NOSANA_ENABLED",
+  "NOSANA_LIVE_ENABLED",
+  "DEMO_MODE",
+];
+
 function loadEnvLocal() {
   const envLocalPath = path.join(here, "..", "..", ".env.local");
-  if (process.env.NOSANA_API_KEY) return; // already set
   try {
     const content = fs.readFileSync(envLocalPath, "utf8");
     for (const line of content.split("\n")) {
-      const match = line.match(/^NOSANA_API_KEY=(.+)$/);
-      if (match) {
-        process.env.NOSANA_API_KEY = match[1].trim();
-        return;
-      }
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith("#") || !trimmed.includes("=")) continue;
+      const eq = trimmed.indexOf("=");
+      const key = trimmed.slice(0, eq).trim();
+      const val = trimmed.slice(eq + 1).trim();
+      if (!ENV_KEYS.includes(key)) continue;
+      if (key && !(key in process.env)) process.env[key] = val;
     }
   } catch {
     // .env.local not found — that's fine, will use env or fallback
@@ -151,6 +165,78 @@ async function main() {
     "utf8",
   );
 
+  const utcTimestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const evidenceDir = path.join(RESULTS_DIR, utcTimestamp);
+  fs.mkdirSync(evidenceDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(evidenceDir, "result.json"),
+    JSON.stringify(result, null, 2) + "\n",
+    "utf8",
+  );
+
+  const summaryLines = [
+    `# StitchCheck Nosana Risk Workload — ${utcTimestamp}`,
+    "",
+    `- Evidence source: ${result.evidenceSource}`,
+    `- Evidence label: ${result.evidenceLabel}`,
+    `- Provider: ${result.provider}`,
+    `- Fallback used: ${result.usedFallback}`,
+    `- Latency: ${result.latencyMs}ms`,
+  ];
+  if (result.jobMetadata) {
+    summaryLines.push(
+      "",
+      "## Job Metadata",
+      "",
+      `- Job ID: ${result.jobMetadata.jobId}`,
+      `- Market: ${result.jobMetadata.market}`,
+      `- IPFS hash: ${result.jobMetadata.ipfsHash}`,
+      `- Observed states: ${(result.jobMetadata.observedStates || []).join(", ") || "N/A"}`,
+      `- Credits used: ${result.jobMetadata.creditsUsed ?? "N/A"}`,
+      `- Submitted at: ${result.jobMetadata.submittedAt ?? "N/A"}`,
+      `- Completed at: ${result.jobMetadata.completedAt ?? "N/A"}`,
+    );
+  }
+  if (result.riskResult) {
+    summaryLines.push(
+      "",
+      "## Risk Result",
+      "",
+      `- Risk band: ${result.riskResult.riskBand}`,
+      `- Risk score: ${result.riskResult.riskScore}`,
+      `- Simulation count: ${result.riskResult.simulationCount || "N/A"}`,
+    );
+  }
+  summaryLines.push(
+    "",
+    result.usedFallback
+      ? "> **Note:** No live Nosana job was submitted. This is a local fallback or dry-run result."
+      : "> **Note:** This is live Nosana evidence from a decentralized GPU workload.",
+    "",
+  );
+  fs.writeFileSync(path.join(evidenceDir, "summary.md"), summaryLines.join("\n") + "\n", "utf8");
+
+  let jobDefForArtifact = null;
+  try {
+    const histPath = path.join(here, "fixtures", "historical-delay-data.json");
+    const historicalData = JSON.parse(fs.readFileSync(histPath, "utf8"));
+    jobDefForArtifact = buildRiskJobDefinition(payload, historicalData);
+  } catch {
+    jobDefForArtifact = { error: "Could not rebuild job definition for audit trail" };
+  }
+  fs.writeFileSync(
+    path.join(evidenceDir, "job-definition.json"),
+    JSON.stringify({
+      _label: result.usedFallback
+        ? "LOCAL PREPARED DEFINITION — not submitted to Nosana"
+        : "SUBMITTED DEFINITION — posted to Nosana network",
+      _evidenceSource: result.evidenceSource,
+      _containerImage: RISK_WORKLOAD_IMAGE,
+      definition: jobDefForArtifact,
+    }, null, 2) + "\n",
+    "utf8",
+  );
+
   // Summary
   console.error("");
   console.error("────────────────────────────────────────────────────────────────");
@@ -183,6 +269,7 @@ async function main() {
   console.error("Result written to:");
   console.error("  smoke-tests/nosana/results/nosana-risk-result.json");
   console.error("  app/public/nosana-risk-result.json");
+  console.error(`  smoke-tests/nosana/results/${utcTimestamp}/ (result.json, summary.md, job-definition.json)`);
 }
 
 main().catch((err) => {

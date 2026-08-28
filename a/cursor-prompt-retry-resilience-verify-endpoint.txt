@@ -1,0 +1,97 @@
+# StitchCheck — Extend Automatic Retry-with-Backoff to the Verify Endpoint
+# Cursor Agent — addendum to the Search-endpoint retry-resilience work. A third Atlas call
+# site was found: the "Verify and select plan" button hits Atlas Verify directly, and is
+# NOT covered by the earlier retry-resilience prompt (which only covered the two Search call
+# sites). Extend the same bounded, honest retry treatment here.
+
+## Confirmed reproduction (just observed)
+
+On the raw "Live Atlas alternatives" list, selecting a leg (e.g. GEM-02 fixture, both legs),
+clicking "Verify and select plan" on a real offer (KUL → BKK, 1-stop, TR TR457, USD 77.76,
+offer `off_7d072a862691d1dd9d6d3dcf`) produced:
+
+```text
+Verify: error (SERVICE_TEMPORARILY_UNAVAILABLE)
+Service temporarily unavailable
+```
+
+This is the SAME transient Atlas CLI error code seen on Search calls all session — now
+confirmed to also occur on Verify calls. This is honest, correct failure-handling behavior
+(no silent selection occurred, per the existing safety gate) — it just needs the same
+automatic-retry resilience already being added to Search, so a transient failure here doesn't
+require a manual re-click during a demo either.
+
+## Absolute constraints
+
+- Do not weaken the existing safety gate: selection must still only happen after a genuinely
+  successful Verify response. Retries must happen BEFORE reporting failure to the user, not
+  as a way to eventually accept a failed result as success.
+- Do not touch the Search-side retry work already specified in the prior prompt — this is
+  additive, covering the separate Verify call path.
+- Do not touch Nosana, extraction, or route-continuity logic.
+- Do not weaken any existing test.
+- Do not touch video/narration/subtitle files. Do not commit/push.
+
+## Step 1 — Locate the Verify call path
+
+1. Find `handleVerifyOffer(offerId)` (or equivalent) in `app/src/App.tsx` and trace it to the
+   `/api/atlas/verify` proxy route in `app/server/atlas-proxy.mjs`.
+2. Confirm whether the existing proxy-side single-retry-on-5xx/timeout logic already covers
+   this route, and whether `SERVICE_TEMPORARILY_UNAVAILABLE` is currently classified as
+   retryable there (likely the same gap as the Search endpoint — check explicitly, don't
+   assume).
+
+## Step 2 — Add bounded automatic retry, consistent with the Search-side fix
+
+1. Classify `SERVICE_TEMPORARILY_UNAVAILABLE` and `SECURE_STORE_UNAVAILABLE` as retryable for
+   the Verify call, same as done for Search.
+2. Use the same bounded attempt count and backoff timing already established for Search (2-3
+   total attempts, exponential backoff, capped around 8-10 seconds total) — reuse the same
+   retry helper/utility if one was created for the Search fix, rather than duplicating logic.
+3. While retrying, the "Verify and select plan" button should show an honest in-progress
+   state (e.g. "Verifying…" or reuse whatever loading copy already exists for this action)
+   rather than immediately showing the error on the first failed attempt.
+4. Only after all automatic retries are exhausted, show the current honest error state
+   exactly as today (`Verify: error (SERVICE_TEMPORARILY_UNAVAILABLE)` / "Service temporarily
+   unavailable"), with whatever manual retry affordance already exists for this action.
+5. Selection must still only occur on an eventual genuine success — if all retries fail,
+   selection must not happen, exactly as today.
+
+## Step 3 — Tests
+
+1. Test that a mocked transient Verify failure (first N attempts fail, then succeed) resolves
+   automatically without a manual re-click, selecting the plan only on the eventual success.
+2. Test that after exhausting retries on a mocked sustained failure, the honest error state
+   still renders and no selection occurs.
+3. Confirm no regression in the existing Verify+Select merge tests from the persona-critique
+   implementation (the ones testing honest-failure-does-not-select behavior).
+
+## Step 4 — Full regression + live check
+
+```bash
+npm run typecheck
+npm run build
+```
+
+Run the full `smoke-tests/` suite. Live: retry the exact reproduction scenario (GEM-02 both
+legs → raw alternatives list → "Verify and select plan" on a real offer) a few times and
+confirm whether the automatic retry now resolves transient failures without requiring a
+manual click in most cases.
+
+## Final report
+
+1. Confirmation `SERVICE_TEMPORARILY_UNAVAILABLE`/`SECURE_STORE_UNAVAILABLE` are now
+   retryable on the Verify path, with attempt count/backoff used.
+2. Confirmation the safety gate (selection only on genuine success) is unchanged.
+3. Test results (new + regression).
+4. Typecheck/build results.
+5. Live evidence from re-attempting the exact reproduction scenario a few times.
+
+End with:
+
+```text
+VERIFY_RETRY_STATUS = <IMPLEMENTED, bounded to N attempts/~Ns | BLOCKED: reason>
+SAFETY_GATE_PRESERVED = <YES | NO: what changed>
+ALL_REGRESSION_STATUS = <ALL_PASS | FAILURES: list>
+DEMO_RISK_REDUCED = <YES, evidence from repeated live attempts | UNCERTAIN: reason>
+```

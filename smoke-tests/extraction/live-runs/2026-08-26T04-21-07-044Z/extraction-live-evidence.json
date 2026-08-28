@@ -1,0 +1,24 @@
+{
+  "provider": "openrouter",
+  "model": "minimax/minimax-m3:free",
+  "status": "live-success",
+  "executed": true,
+  "transport": "openrouter",
+  "requestFormat": "json_object",
+  "visionSupportConfirmed": true,
+  "schemaValidated": true,
+  "failurePoint": "none",
+  "fieldsExtracted": [
+    "origin",
+    "destination",
+    "flightNumber",
+    "departureTime",
+    "arrivalTime"
+  ],
+  "correlationId": "extract-1787718067043",
+  "httpStatus": 200,
+  "latencyMs": 4592,
+  "rawTextLength": 811,
+  "extractionStatus": "success",
+  "timestamp": "2026-08-26T04:21:07.043Z"
+}

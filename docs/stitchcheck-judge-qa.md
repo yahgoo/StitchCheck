@@ -2,7 +2,7 @@
 
 ## 30-Second Answer
 
-StitchCheck converts itinerary screenshots into editable, user-confirmed structured data, keeping risk and alternatives locked until the user explicitly confirms the itinerary. The current submission demonstrates a local review-first workflow with offline contract safeguards, using synthetic fixture data. The demo walkthrough makes no external service calls. OpenRouter was used for GEM-01 and GEM-LIVE-01 (temporary path); Atlas production authentication succeeded with two live read-only searches returning reference-price offers. Nosana remains unexecuted.
+StitchCheck converts itinerary screenshots into editable, user-confirmed structured data, keeping risk and alternatives locked until the user explicitly confirms the itinerary. The current submission demonstrates a local review-first workflow with offline contract safeguards, using synthetic fixture data. The demo walkthrough makes no external service calls. Direct Gemini 3.7 live extraction succeeded via the Interactions API. Nosana live job was completed and reconciled offline. Atlas production authentication succeeded with two live read-only searches and one Sandbox Search + Verify returning reference-price offers.
 
 ## Core Questions
 
@@ -24,11 +24,11 @@ Gemini's role is structured itinerary extraction from synthetic screenshots into
 
 ### Q5. What do Nosana and Atlas do?
 
-Nosana's planned role is a connection-risk workload that accepts a non-PII itinerary summary and returns a heuristic risk band/score with visible workload status. Atlas's planned role is read-only alternative search for safer flight options. Nosana is represented by local fixtures and offline-tested adapters only and has not been executed or authenticated. Atlas production authentication succeeded via the official Skill CLI with two live read-only searches returning real offers (all reference-price only, ticketing activation pending). Offline tests (Nosana: 75 passed, 0 failed; Atlas: 89 passed, 0 failed) confirm contract shapes and safety boundaries.
+Nosana's planned role is a connection-risk workload that accepts a non-PII itinerary summary and returns a heuristic risk band/score with visible workload status. Atlas's planned role is read-only alternative search for safer flight options. Nosana live job was completed and reconciled offline (`riskScore: 0.2895`, `riskBand: medium`, `costUsd: 0.044`); the browser demo uses a local fallback fixture. Atlas production authentication succeeded via the official Skill CLI with two live read-only searches returning real offers (all reference-price only, ticketing activation pending) and one Sandbox Search + Verify. Offline tests (Nosana: 75 passed, 0 failed; Atlas: 89 passed, 0 failed) confirm contract shapes and safety boundaries.
 
 ### Q6. Which services have actually been executed?
 
-Direct Gemini 3.7 live extraction succeeded via the Interactions API; schema-valid, no fallback. The browser walkthrough uses a fictional local fixture. Nosana workload validated offline; live execution was not verified; the demo uses local fallback. Atlas production authentication succeeded via the official Skill CLI with two live read-only searches (PVG→NRT/HND: 5 offers; SIN→BKK: 8 offers via ATL-LIVE-01), all reference-price only with ticketing activation pending; Atlas Sandbox was verified read-only. GEM-01 was also executed via a historical OpenRouter temporary path and is labelled accordingly. The OpenRouter path is historical and not the active provider.
+Direct Gemini 3.7 live extraction succeeded via the Interactions API; schema-valid, no fallback. The browser walkthrough uses a fictional local fixture. Nosana live job was completed and reconciled offline (`riskScore: 0.2895`, `riskBand: medium`, `costUsd: 0.044`); the demo uses a local fallback fixture. Atlas production authentication succeeded via the official Skill CLI with two live read-only searches (PVG→NRT/HND: 5 offers; SIN→BKK: 8 offers via ATL-LIVE-01), all reference-price only with ticketing activation pending; Atlas Sandbox Search + Verify also completed (20 offers KUL→SIN; verify returned PRICE_CONFIRMATION_REQUIRED). GEM-01 was also executed via a historical OpenRouter temporary path and is labelled accordingly. The OpenRouter path is historical and not the active provider.
 
 ### Q7. What does the OpenRouter evidence mean?
 
@@ -65,9 +65,9 @@ These are offline contract and local verification results. They do not constitut
 
 ## Evidence Labels
 
-- `OpenRouter temporary path — not direct Gemini validation`
-- `Synthetic local placeholder — not Nosana evidence`
-- `Synthetic local placeholder — not Atlas Sandbox evidence`
+- `Demo itinerary — local demo fixture`
+- `Local fallback — not Nosana evidence`
+- `Demo alternatives — local demo fixture`
 
 ## Difficult Questions
 
@@ -77,7 +77,7 @@ The local demo proves the review-first workflow, the confirmation gate, and the 
 
 ### 2. Why are all providers not live?
 
-Each provider requires separate human authorization, credentials, cost review, and a bounded smoke-test plan before any live call can be made. Nosana's smoke-test attempt was intentionally blocked before any network request because no reviewed workload, submission mechanism, or target environment existed. Direct Gemini requires its own credential and authorization gate. Atlas Sandbox was not used (no Sandbox switch command in CLI v0.3.12); production Atlas was authenticated and searched but ticketing activation is pending. We chose to stop safely on Nosana rather than make uncontrolled external calls.
+Each provider requires separate human authorization, credentials, cost review, and a bounded smoke-test plan before any live call can be made. Nosana's live job was completed and reconciled offline. Direct Gemini 3.7 live extraction succeeded; a subsequent re-verification returned a transient error and was not retried. Atlas Sandbox Search + Verify completed; production Atlas was authenticated and searched but ticketing activation is pending.
 
 ### 3. What is the strongest evidence available today?
 
@@ -85,7 +85,7 @@ The strongest evidence is that the local demo passes type-check, production buil
 
 ### 4. What is the biggest remaining risk?
 
-The biggest risk is that no provider has been validated against live behaviour. The offline tests confirm that contracts and safety boundaries are correctly implemented, but they cannot prove that Gemini will extract accurately, that Nosana will return usable risk bands, or that Atlas will return valid alternatives under real conditions. Until each provider passes its own separately authorized smoke test, the integration remains unproven.
+The biggest risk is that while Direct Gemini 3.7, Nosana, and Atlas have each produced live evidence, the browser demo itself uses local fixtures. The offline tests confirm that contracts and safety boundaries are correctly implemented, but the live demo walkthrough does not invoke any provider in real time.
 
 ### 5. How would you measure success after live authorization?
 

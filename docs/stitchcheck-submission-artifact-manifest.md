@@ -20,7 +20,7 @@ This is a human-review manifest for the local demo and submission documents. It 
 | Artifact | Purpose | Status | Evidence Boundary |
 |----------|---------|--------|-------------------|
 | `docs/stitchcheck-demo-readiness-report.md` | Demo readiness verification report | Present | Service evidence status recorded |
-| `docs/gemini-contract-alignment-record.md` | Gemini contract corrections and alignment | Present | Direct Gemini unexecuted |
+| `docs/gemini-contract-alignment-record.md` | Gemini contract corrections and alignment | Present | Historical Gemini evidence preserved under `smoke-tests/extraction/`; active demo extraction is offline |
 | `docs/nosana-integration-boundary.md` | Nosana offline boundary documentation | Present | The documented label applies |
 | `docs/cross-provider-invariant-test-record.md` | Cross-provider invariant test record | Present | All invariants verified offline |
 | `docs/stitchcheck-preflight-checklist.md` | Preflight checker documentation | Present | Read-only verification |
@@ -48,10 +48,10 @@ These results do not prove live provider availability, deployment, authenticatio
 
 | Provider | Verified Statement | Not Proven |
 |----------|-------------------|------------|
-| Gemini | The documented label applies; direct Gemini remains unexecuted. | Live Gemini API execution, validation, or accuracy. |
-| Nosana | Offline boundary and fixtures only; live execution and deployment remain unperformed. | Nosana deployment, authentication, job execution, or live risk assessment. |
-| Atlas | Local fixtures and adapter only; authentication and execution remain unperformed. | Atlas Sandbox authentication, live search execution, or real alternative offers. |
-| OpenRouter | Temporary path only; it is not direct Gemini evidence. | Direct Gemini validation, model routing guarantees, or provider equivalence. |
+| Gemini | Historical live evidence is preserved under `smoke-tests/extraction/`. The active ready-made demo does no extraction and correctly shows MiniMax offline. | Fresh-run reliability, accuracy across diverse inputs, or production readiness. |
+| Nosana | Historical evidence is reconciled. The current browser runtime fixture is a permitted dry-run preview (`jobId: null`, fallback true), not a submitted workload. | Additional job submissions, current live risk assessment, or production readiness. |
+| Atlas | Historical Sandbox Search→Verify evidence returned 20 offers and then `PRICE_CONFIRMATION_REQUIRED`, with no write. The most recent Aug 28 run was an environment-switch failure, not fresh evidence. | Booking, payment, ticketing, or reliability. |
+| OpenRouter | Historical temporary path only; it is not direct Gemini evidence. | Direct Gemini validation, model routing guarantees, or provider equivalence. |
 
 ## Exact Evidence Labels
 
@@ -78,12 +78,11 @@ Before submitting, the human reviewer must:
 
 ## Limitations
 
-This manifest does not prove:
+This manifest distinguishes historical provider evidence from the active offline demo. It does not prove:
 
-- Live provider execution.
-- Direct Gemini validation.
-- Nosana deployment or authentication.
-- Atlas authentication or execution.
+- A fresh provider run during this submission build.
+- Current provider availability, deployment, or authentication state.
+- Any booking, payment, ticketing, order, or other external write.
 - Provider accuracy, latency, cost, or availability.
 - Production readiness.
 - Successful final submission.

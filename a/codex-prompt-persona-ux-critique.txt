@@ -1,0 +1,157 @@
+# StitchCheck — Persona-Based UX Critique of the Options Screen
+# Codex Agent — ROLE-PLAY AS TWO TRAVELLER PERSONAS, DO NOT WRITE CODE YET
+# This is an analysis/recommendations task only. Output a markdown document.
+
+## Context
+
+Below is the exact content of the current live options screen from a real captured run
+(sample itinerary KUL → SIN → BKK, 2026-10-01). Read it carefully — this is what a traveller
+actually sees today, top to bottom, including the full scroll.
+
+```text
+StitchCheck
+Live checks: 2 of 3 passed
+Your connection is at risk
+Itinerary checked. Live alternatives ready for review.
+
+RECOMMENDED
+KUL -> SIN  Type: nonstop
+Onward: SIN -> BKK
+Arrival impact: [blank]
+[Switch to this plan]
+[See why this is risky]
+
+Verified unbooked previews
+-- First flight (unbooked previews, up to 5): KUL -> SIN
+   "We don't have this yet"
+-- Second flight (unbooked previews, up to 5): SIN -> BKK
+   Unbooked preview - Not a real ticket - No booking, payment, or reservation created
+   Featured: SIN -> DMK (FD FD356) nonstop 1440-1620, Verified just now, Atlas Sandbox live
+   [How this works]
+
+   (on expand, 4 more offers for this leg:)
+   Offer off0f47cd... SIN->BKK TR TR626 nonstop 1800-1935  Search price USD 104.85  Verified price USD 104.85
+   Offer off75031a... SIN->BKK TR TR624 nonstop 0820-0955  Search price USD 107.10  Verified price USD 107.10
+   Offer off161c9a... SIN->BKK TR TR610 nonstop 1615-1750  Search price USD 107.57  Verified price USD 107.57
+   Offer offce0ac2... SIN->BKK TR TR608 nonstop 0630-0805  Search price USD 114.11  Verified price USD 114.11
+   Offer off90b685... SIN->BKK TR TR6xx nonstop [time]      Search price USD 119.39  Verified price USD 119.39
+   Source: Atlas Sandbox live (5 offers verified individually)
+
+Live Atlas alternatives (20) -- KUL -> SIN, UNSORTED, spans ~3 screen-heights of scroll:
+   OD OD805  nonstop 1930-2030  USD 38.60   [Verify offer] [Switch to this plan]
+   AK AK727  nonstop 0910-1010  USD 35.55   [Verify offer] [Switch to this plan]
+   AK AK701  nonstop 0610-0715  USD 21.80   [Verify offer] [Switch to this plan]
+   TR TR457  nonstop 0705-0830  USD 31.81   [Verify offer] [Switch to this plan]
+   AK AK705  nonstop 0830-0940  USD 35.88   [Verify offer] [Switch to this plan]
+   OD OD810  nonstop 0740-0845  USD 39.19   [Verify offer] [Switch to this plan]
+   TR TR473  nonstop 1825-1930  USD 31.83   [Verify offer] [Switch to this plan]
+   AK AK719  nonstop 1850-2000  USD 30.00   [Verify offer] [Switch to this plan]
+   OD OD807  nonstop 1500-1600  USD 47.97   [Verify offer] [Switch to this plan]
+   AK AK717  nonstop 1645-1805  USD 36.26   [Verify offer] [Switch to this plan]
+   TR TR475  nonstop 1400-1525  USD 48.05   [Verify offer] [Switch to this plan]
+   OD OD803  nonstop 1030-1130  USD 41.60   [Verify offer] [Switch to this plan]
+   TR TR467  nonstop 2245-0005  USD 29.80   [Verify offer] [Switch to this plan]
+   AK AK721  nonstop 1925-2045  USD 31.29   [Verify offer] [Switch to this plan]
+   AK AK703  nonstop 0720-0830  USD 26.14   [Verify offer] [Switch to this plan]
+   AK AK715  nonstop 1425-1540  USD 44.54   [Verify offer] [Switch to this plan]
+   TR TR469  nonstop 1915-2030  USD 36.26   [Verify offer] [Switch to this plan]
+   AK AK707  nonstop 1020-1135  USD 27.11   [Verify offer] [Switch to this plan]
+   TR TR451  nonstop 1135-1250  USD 41.52   [Verify offer] [Switch to this plan]
+   AK AK711  nonstop 1155-1300  USD 49.35   [Verify offer] [Switch to this plan]
+   Source: Atlas Sandbox live
+
+Your choice: [Keep current itinerary]  [Switch to this plan]
+
+StitchCheck: No booking, payment, reservation, or order created.
+```
+
+Also note: the RECOMMENDED card's "Arrival impact" field is blank, and the first-leg preview
+says "We don't have this yet" — meaning the top recommendation is not fully backed by
+verified data yet, while five separate SIN->BKK offers ARE individually Atlas-Verified further
+down the page.
+
+## Your task — DO NOT WRITE OR MODIFY ANY CODE
+
+You are being asked to produce a written critique only, roleplaying as two distinct real
+travellers looking at this exact screen for the first time on a phone, mid-trip-planning,
+under time pressure. Do not jump to implementation. Output a single markdown document.
+
+### Persona 1 — Priya, the price-conscious backpacker
+
+- Budget-constrained, comparing every option by price first, willing to accept less
+  convenient times if it saves money.
+- Has used budget OTA apps (Skyscanner, AirAsia app, 12Go) before and expects sort-by-price
+  and filter controls as table stakes.
+- Gets frustrated by having to manually scan 20 unsorted rows to find the cheapest one.
+
+### Persona 2 — Marcus, the time-conscious business-adjacent traveller
+
+- Has 90 seconds on his phone between meetings to make a decision, not for browsing.
+- Wants the app to make the decision easy, not comprehensive — one clear recommendation,
+  minimal taps, minimal scrolling.
+- Actively dislikes seeing 20 near-identical rows and having to click twice per option
+  (Verify, then Switch).
+
+## Required output structure
+
+Write `docs/persona-ux-critique-2026-08-26.md` with these sections:
+
+### 1. Priya's walkthrough (price-conscious)
+In first person, narrate exactly what she sees, in what order, and where she gets stuck or
+irritated, referencing the actual screen content above line by line where relevant. End with
+her top 3 specific frustrations, ranked.
+
+### 2. Marcus's walkthrough (time-conscious)
+Same format, first person, referencing actual screen content, ending with his top 3 specific
+frustrations, ranked.
+
+### 3. Shared pain points
+Cross-reference both personas' frustrations and identify which issues affect BOTH (these are
+the highest-priority fixes) versus which are persona-specific.
+
+### 4. Concrete, prioritized improvement list
+For each recommended improvement, state:
+- What it is, in one sentence.
+- Which persona(s) it serves.
+- Why it's derivable from real data already present (no fabrication) — reference the exact
+  field it would sort/filter/badge by (price, departureTime, verify status).
+- Rough effort tier: Small (pure UI reorder/sort), Medium (new component/state), Large
+  (behavior change to Verify/Switch flow).
+
+Cover at minimum:
+- Default sort order for the 20-offer list (and why price-ascending is the sensible default
+  given both personas skew price- or speed-of-decision-oriented, not luxury-oriented).
+- Reducing the always-visible offer count (collapse-by-default + expand), consistent with
+  the pattern already used for the 5-card verified-preview sections — do not invent a new
+  pattern if reusing the existing one solves it.
+- Whether "Verify offer" and "Switch to this plan" should be combined into fewer taps, and
+  under what safety condition that would still be acceptable (no auto-booking, still
+  requires explicit confirmation).
+- What to do about the RECOMMENDED card's blank "Arrival impact" and missing first-leg
+  preview data — should it be de-emphasized, relabeled, or paired with a "why this is
+  incomplete" note so it doesn't look broken to either persona.
+- Any quick-glance visual aid (badge, highlight, sort default) that would let either persona
+  make a decision without reading all 20 rows.
+
+### 5. What NOT to change
+List anything in the current screen that already works well for one or both personas and
+should be left alone, so a future implementation pass doesn't accidentally regress it (e.g.
+the individually-verified SIN->BKK cards, the "no booking/payment" footer, the Keep/Switch
+framing itself).
+
+## Constraints on this task
+
+- This is analysis only. Do not propose code diffs, do not touch any files besides creating
+  the one new markdown doc.
+- Every recommendation must be traceable to real data already shown on this screen (price,
+  time, verify status, offer count) — no invented metrics like a composite "best value
+  score" unless you explicitly define its exact formula from existing fields.
+- Stay grounded in the actual screen content given above — do not invent UI elements that
+  aren't described, and do not assume backend capabilities that aren't evidenced (e.g. don't
+  assume a loyalty-program filter exists).
+
+## Final output
+
+Return the created file path and a short 5-bullet executive summary of the top improvements
+ranked by (persona coverage) x (effort), so the highest-value, lowest-effort items are
+listed first.

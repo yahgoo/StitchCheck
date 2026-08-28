@@ -107,13 +107,9 @@ The offline tests do **not** prove that:
 
 ## Atlas Sandbox Status
 
-**Atlas Sandbox remains unauthenticated and unexecuted.**
+**Historical Atlas Sandbox Search→Verify evidence exists.** The recorded read-only run returned 20 offers and then `PRICE_CONFIRMATION_REQUIRED`; it created no booking, payment, ticket, order, or other write. The most recent Aug 28 attempt was an environment-switch failure, not fresh provider evidence.
 
-- No Atlas SDK has been installed
-- No Atlas credential has been configured
-- No live request has been made to Atlas
-- No Atlas environment has been selected
-- No Atlas capability has been approved
+The demo build is deliberately offline. Its local alternatives fixture is not presented as Atlas output.
 
 The adapter boundary is implemented and tested offline, but **live execution requires separate human authorization** after reviewing:
 
@@ -181,4 +177,4 @@ npm run build
 
 ## Conclusion
 
-The read-only Atlas adapter boundary is implemented and tested offline. All safety gates, operation allowlists, and evidence boundaries are enforced. Atlas Sandbox integration remains unauthenticated and unexecuted, requiring separate human authorization before any live execution.
+The read-only Atlas adapter boundary is implemented and tested offline. All safety gates, operation allowlists, and evidence boundaries are enforced. Historical Sandbox Search→Verify evidence is retained separately; any new live execution still requires explicit authorization.

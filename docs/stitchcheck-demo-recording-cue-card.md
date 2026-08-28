@@ -26,9 +26,9 @@
 
 **Do:** Acknowledge the safety notice. Open the upload panel. Select GEM-01. Wait for extracted fields to appear.
 
-**Say:** "We pick from pre-built synthetic fixtures — GEM-01, a clear two-leg itinerary. The extraction label reads: OpenRouter temporary path — not direct Gemini validation. Gemini is represented only within this documented evidence boundary; direct Gemini remains unexecuted."
+**Say:** "We pick from pre-built synthetic fixtures — GEM-01, a clear two-leg itinerary. The extraction label reads: Demo itinerary — local demo fixture. Direct Gemini 3.7 was verified separately via the Interactions API; the browser walkthrough uses a local fixture."
 
-**Must show:** Upload panel with fixture slots. GEM-01 selected. Label `OpenRouter temporary path — not direct Gemini validation` visible on the extraction result.
+**Must show:** Upload panel with fixture slots. GEM-01 selected. Label `Demo itinerary — local demo fixture` visible on the extraction result.
 
 ---
 
@@ -56,9 +56,9 @@
 
 **Do:** Point to the Risk panel (medium, 0.42). Point to the Alternatives panel (two synthetic options). Open the comparison view.
 
-**Say:** "The risk panel shows a heuristic estimate — medium, score 0.42 — labelled as a synthetic local placeholder, not Nosana evidence. Nosana is blocked before any network request. The alternatives panel shows two synthetic options labelled as Atlas Sandbox placeholders. Atlas is unauthenticated and unexecuted."
+**Say:** "The risk panel shows a heuristic estimate — medium, score 0.42 — labelled as a local fallback, not Nosana evidence. Nosana is blocked before any network request. The alternatives panel shows two synthetic options labelled as local demo fixtures. Atlas production authentication succeeded with two read-only searches; the demo panels remain local placeholders."
 
-**Must show:** Risk panel with `Synthetic local placeholder — not Nosana evidence`. Alternatives panel with `Synthetic local placeholder — not Atlas Sandbox evidence`. Comparison table visible.
+**Must show:** Risk panel with `Local fallback — not Nosana evidence`. Alternatives panel with `Demo alternatives — local demo fixture`. Comparison table visible.
 
 ---
 

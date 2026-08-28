@@ -51,7 +51,7 @@ do not paraphrase.
 |---|---|
 | **Badge** | `BLOCKED` |
 | **Title** | `Nosana` |
-| **Evidence label** | `Synthetic local placeholder — not Nosana evidence` |
+| **Evidence label** | `Local fallback — not Nosana evidence` |
 | **Visual state** | Red badge, muted/greyed-out card body. |
 | **When shown** | Segment 5 (1:06–1:22) while the risk panel is visible. |
 | **Footnote** | `Smoke-test attempt intentionally blocked before any network request. No workload deployed, no execution, no authentication. Blocked evidence record: smoke-tests/nosana/results/2026-08-20T15-53-43Z/.` |
@@ -116,9 +116,9 @@ tooltip, console overlay, or screen capture during the live demo.
 | 1 — The Problem | 0:00–0:18 | None (safety notice and header badge only). |
 | 2 — Extraction | 0:18–0:36 | Card 1 (`LOCAL FIXTURE — Fictional itinerary — local demo fixture`). |
 | 3 — Human Correction | 0:36–0:52 | Card 1 (remains visible). |
-| 4 — Confirm Itinerary | 0:52–1:06 | Card 1 (fades after segment transition). |
-| 5 — Risk Panel | 1:06–1:22 | Card 3 (`BLOCKED — Nosana`). |
-| 6 — Alternatives | 1:22–1:40 | Card 4 (`LOCAL PLACEHOLDER`) and optionally Card 2 (`LIVE SEARCH — Atlas production data`). |
+| 4 — Check itinerary | 0:52–1:06 | Per-panel source tags; compact Live checks bar. |
+| 5 — Risk / recovery detail | 1:06–1:22 | Card 3 (`BLOCKED — Nosana`) when shown in **How this works**; recovery animation under **See why this is risky**. |
+| 6 — Alternatives | 1:22–1:40 | Recommended card + **See more verified options** (live) or local alternatives disclosure. |
 | 7 — Close | 1:40–2:00 | All cards collapse into a single summary strip: `LOCAL FIXTURE: Gemini · LOCAL FALLBACK: Nosana · LOCAL FIXTURE: Atlas · Live providers verified separately` |
 
 ---

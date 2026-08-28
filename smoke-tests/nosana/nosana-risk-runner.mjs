@@ -41,6 +41,107 @@ const FALLBACK_MESSAGE =
 const NOSANA_EVIDENCE_LABEL =
   "Nosana evidence — remote job succeeded; result from decentralized GPU workload.";
 
+// ── Nosana safety-gate helpers ──────────────────────────────────────────────
+//
+// The live Nosana execution path requires ALL of the following:
+//   1. NOSANA_ENABLED=true
+//   2. NOSANA_LIVE_ENABLED=true
+//   3. Explicit live invocation (dryRun=false, i.e. --live CLI flag)
+//   4. NOSANA_API_KEY present (credential detected by name only)
+//   5. Cost-ceiling validation passes (enforced in nosana_run_job.mjs)
+//   6. No skip/dry-run protections blocking execution
+//
+// When either flag is disabled or unset, the runner must:
+//   - Make no Nosana API call
+//   - Perform no IPFS pin
+//   - Submit no job
+//   - Return a structured refusal / offline-fallback result
+//   - Preserve honest provenance
+//   - Never emit "nosana-evidence" or a live label
+//   - Keep externalWriteOccurred: false
+
+/**
+ * Checks whether the Nosana feature flags permit live execution.
+ * Reads DEMO_MODE, NOSANA_ENABLED and NOSANA_LIVE_ENABLED from the environment.
+ *
+ * DEMO_MODE gate (safety-first):
+ *   - Unset DEMO_MODE defaults to "local" and BLOCKS all live execution.
+ *   - DEMO_MODE=local BLOCKS all live execution regardless of Nosana flags.
+ *   - Only non-local modes (daytona, atlas) allow the Nosana flags to be evaluated.
+ *
+ * Both NOSANA_ENABLED and NOSANA_LIVE_ENABLED must be explicitly "true" AND
+ * DEMO_MODE must be non-local to permit execution.
+ *
+ * @param {Record<string, string | undefined>} [env]
+ * @returns {{ nosanaEnabled: boolean, nosanaLiveEnabled: boolean, demoMode: string, permitted: boolean }}
+ */
+export function isNosanaLivePermitted(env = process.env) {
+  const demoMode = String(env.DEMO_MODE || "local").trim().toLowerCase();
+
+  const nosanaEnabled =
+    demoMode !== "local" && env.NOSANA_ENABLED === "true";
+
+  const nosanaLiveEnabled =
+    demoMode !== "local" && env.NOSANA_LIVE_ENABLED === "true";
+
+  return {
+    nosanaEnabled,
+    nosanaLiveEnabled,
+    demoMode,
+    permitted: nosanaEnabled && nosanaLiveEnabled,
+  };
+}
+
+/**
+ * Builds a structured refusal result when the safety gate blocks execution.
+ * No network call, IPFS pin, or job submission is performed.
+ * Provenance is honestly labelled; no live evidence is claimed.
+ */
+function buildGateBlockedResult(itineraryPayload, startedAt, gateInfo, extraReason) {
+  const latencyMs = Date.now() - startedAt;
+  const reason = extraReason ||
+    `Nosana live execution blocked by safety gate: ` +
+    `DEMO_MODE=${gateInfo.demoMode}, ` +
+    `NOSANA_ENABLED=${gateInfo.nosanaEnabled}, ` +
+    `NOSANA_LIVE_ENABLED=${gateInfo.nosanaLiveEnabled}`;
+  return {
+    success: true,
+    provider: "none",
+    tierUsed: "none",
+    usedFallback: true,
+    evidenceSource: "safety-gate-blocked",
+    evidenceLabel: "Nosana live execution blocked by safety gate — not Nosana evidence.",
+    externalWriteOccurred: false,
+    latencyMs,
+    jobMetadata: null,
+    riskResult: {
+      correlationId: itineraryPayload.correlationId,
+      workloadStatus: "blocked",
+      jobOrServiceReference: null,
+      riskBand: "unavailable",
+      riskScore: null,
+      heuristicDisclaimer: `${HEURISTIC_DISCLAIMER} ${PLACEHOLDER_LABEL}`,
+      failureCascadeExplanation: reason,
+      datasetVersion: itineraryPayload.staticHistoricalDatasetVersion,
+      fallbackUsed: true,
+      errorCode: "NOSANA_SAFETY_GATE_BLOCKED",
+      errorMessage: reason,
+      evidenceSource: "safety-gate-blocked",
+      evidenceLabel: "Nosana live execution blocked by safety gate — not Nosana evidence.",
+      simulationCount: 0,
+      assumptions: [],
+      latencyMs,
+    },
+    output: null,
+    safetyGate: {
+      demoMode: gateInfo.demoMode,
+      nosanaEnabled: gateInfo.nosanaEnabled,
+      nosanaLiveEnabled: gateInfo.nosanaLiveEnabled,
+      permitted: gateInfo.permitted,
+    },
+  };
+}
+
 // ── Python risk script (runs inside the Nosana container) ──────────────────
 //
 // This script is embedded in the job definition's command field.
@@ -277,6 +378,17 @@ export function localRiskCalculation(itineraryPayload, historicalData) {
  */
 export async function runNosanaRiskWorkload(itineraryPayload, options = {}) {
   const startedAt = Date.now();
+
+  // ── Nosana safety gate ──────────────────────────────────────────────
+  // BOTH feature flags must be explicitly true before any live execution.
+  // This check occurs before any data loading, job definition building,
+  // or network interaction. When blocked, a structured refusal is returned
+  // with honest provenance and zero external writes.
+  const gateInfo = isNosanaLivePermitted();
+  if (!gateInfo.permitted) {
+    return buildGateBlockedResult(itineraryPayload, startedAt, gateInfo);
+  }
+
   // Platform timeout: 3600000ms (3600s) — the Nosana platform minimum for
   // credit-paid jobs. This is passed to the Nosana API in the job definition.
   // The workload itself completes in seconds, but the platform enforces this.

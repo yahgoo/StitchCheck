@@ -1,0 +1,178 @@
+# StitchCheck — Build the MiniMax M3 Visibility Fix (Option A)
+# Cursor Agent — implement Codex's spec exactly; do not add your own visual direction
+
+## Context
+
+Codex investigated why judges could mistake a correct "MiniMax M3: offline" status for a
+bug, and produced a full spec at `docs/minimax-visibility-fix-spec-2026-08-28.md`. Read that
+file in full before writing any code. It recommends Option A: reorder the two secondary
+Welcome-screen sample options so the screenshot-extraction sample is first/emphasized, keep
+the structured-data shortcut as a clearly labelled fast path below it, and add explicit
+loading/provenance/explanatory copy throughout. Implement it exactly as specified — every
+copy string, styling tier, and constraint below is taken directly from that spec.
+
+## Absolute constraints
+
+- Read `docs/minimax-visibility-fix-spec-2026-08-28.md` FIRST. Use its exact copy strings
+  verbatim (quoted below for convenience, but the file is the source of truth if anything
+  differs).
+- "Upload itinerary" remains the ONLY primary-styled (filled indigo) CTA. Do not give either
+  sample option filled/primary styling under any circumstance.
+- The screenshot-sample action must be styled as "emphasized-secondary" (indigo outline,
+  indigo text, white background, no solid fill) — visually stronger than the structured
+  shortcut's "tertiary-secondary" (subdued text link / neutral ghost button) styling, but
+  never equal to or competing with the primary CTA.
+- Do not touch Options, Recovery, Atlas, or any downstream product behavior — Welcome screen
+  and extraction-visibility copy/state only.
+- MiniMax's status and the "Extracted by MiniMax M3" tag must ONLY ever reflect a real,
+  actually-completed MiniMax extraction call. Never hardcode it, never show it after a
+  failure/timeout/skip, never add an artificial minimum-dwell delay to the loading state.
+- The "Provider checks: N of 3 complete" bar must not render at all before any provider
+  check has actually started, and must never use the word "passed" for an incomplete check.
+- Do not weaken any existing test to force a pass.
+- Do not touch video/narration/subtitle files.
+- Do not commit/push.
+
+## Step 1 — Reorder and restyle the Welcome-screen secondary options
+
+Implement in this exact order and styling tier:
+
+1. **Upload itinerary** — unchanged, primary filled indigo CTA, first.
+2. **"Try the screenshot sample — extract with MiniMax M3"** — emphasized-secondary
+   (indigo outline/text, white background, no fill), positioned directly below Upload
+   itinerary. Helper text directly beneath it, exact copy:
+   > "Use a sample itinerary screenshot. On the next step, select 'Check my itinerary' to
+   > start MiniMax M3 extraction."
+3. **"Use the ready-made sample — skips extraction"** — tertiary-secondary (subdued text
+   link / neutral ghost button, less visual weight than #2), positioned below #2's helper
+   text. Helper text directly beneath it, exact copy:
+   > "Fast preview with itinerary data already loaded."
+
+Both sample buttons must click through to their existing, unchanged downstream flows —
+only the copy, order, and styling tier change, not the functional routing.
+
+## Step 2 — Real MiniMax loading state (screenshot path only)
+
+When the user clicks "Check my itinerary" on the screenshot-sample path and the actual
+MiniMax extraction request is genuinely in flight, show:
+
+> "MiniMax M3 is reading your itinerary…"
+
+with an activity indicator, for exactly the real request's in-flight duration — no minimum
+dwell time, no scripted stages, no simulated progress. Tie this directly to the real
+extraction call's promise/request lifecycle (locate the existing extraction call site — check
+components/hooks handling the screenshot-sample flow from the prior session's implementation).
+
+## Step 3 — Provenance tag on successful extraction
+
+When that request completes successfully, show a compact tag at the top of the review/
+correction screen, adjacent to the extracted-itinerary summary:
+
+> "Extracted by MiniMax M3"
+
+Style as a small outlined pill with a functional check icon (not a large promotional badge).
+This tag renders ONLY when this visit's extraction result genuinely came from MiniMax M3.
+On failure, timeout, skip, or any other provider/path, render an accurate alternative status
+instead — never reuse or leave behind the MiniMax tag in that case.
+
+## Step 4 — Ready-made shortcut's honest offline explanation
+
+On the structured shortcut path, keep the accurate status:
+
+> "MiniMax M3: offline"
+
+and place this exact inline note immediately next to or directly beneath it (not hidden in a
+tooltip-only interaction):
+
+> "Expected for this fast path — a ready-made itinerary was loaded directly, so no MiniMax
+> M3 extraction request was made."
+
+## Step 5 — Provider-check bar timing and copy
+
+1. Do not render the compact provider-check bar at all before any provider check has
+   actually started for the current run.
+2. While checks are genuinely running, use exactly:
+   > "Provider checks: N of 3 complete"
+   incrementing `N` only as each real check actually completes — never "passed."
+3. After all checks finish, keep the same wording with `3`, and show each provider's actual
+   individual result separately (reuse/extend the existing "How this works" detail pattern
+   for the per-provider breakdown — do not duplicate that logic).
+4. Keep this bar's counting logic entirely separate from the MiniMax loading/provenance copy
+   in Steps 2–3 — they are different UI elements tracking different things.
+
+## Step 6 — Apply the Stripe reference values
+
+Use exactly: indigo `#533afd` for primary actions only; near-white background (`#FFFFFF` /
+`#F6F9FC`); deep-navy text (`#0A2540`, never pure black); slate gray secondary text; 8px
+spacing scale (4/8/12/16/24/32/64px); 4–6px border radius; minimal/flat shadow; humanist
+sans-serif with tight heading letter-spacing and ~1.5 body line-height. Do not invent
+alternate values.
+
+## Step 7 — Tests
+
+1. Test the new button order/copy/styling-tier renders correctly and both buttons still route
+   to their correct existing downstream flows.
+2. Test the MiniMax loading copy appears only while a real extraction request is in flight,
+   and disappears/resolves based on the actual promise settling (mock the extraction call in
+   the test to control timing, assert no artificial delay is added on top of it).
+3. Test the "Extracted by MiniMax M3" tag renders only on a genuinely successful extraction
+   result, and does NOT render on a failed/skipped/timeout mock outcome.
+4. Test the ready-made shortcut always pairs "MiniMax M3: offline" with the exact explanatory
+   note, every time, with no path where it appears without the note.
+5. Test the provider-check bar does not render before checks start, uses "complete" not
+   "passed," and increments correctly as checks resolve one by one (mock staggered
+   completions).
+6. Confirm no regression in `sample-itinerary-ui-tests.mjs`, `traveller-flow-ui-tests.mjs`,
+   `provider-status-model-offline-tests.mjs`, and any Welcome-screen-specific tests already
+   in place.
+
+## Step 8 — Full regression check
+
+```bash
+npm run typecheck
+npm run build
+```
+
+Run the full `smoke-tests/` suite and report pass/fail counts.
+
+## Step 9 — Live check
+
+Restart the dev server and manually confirm:
+
+1. Welcome screen shows the 3-tier hierarchy exactly as specified (primary, emphasized-
+   secondary, tertiary-secondary) with the exact copy strings.
+2. Clicking the screenshot sample → "Check my itinerary" shows the real MiniMax loading copy
+   for the actual request duration, then "Extracted by MiniMax M3" on the review screen with
+   real extracted data.
+3. Clicking the ready-made sample shows "MiniMax M3: offline" always paired with its
+   explanatory note.
+4. The provider-check bar does not appear before checks start, uses "complete" phrasing, and
+   updates correctly as real checks finish.
+5. Both paths still lead to their correct, unchanged downstream Options/Recovery flow.
+
+## Final report
+
+Return:
+
+1. Files changed.
+2. Confirmation every copy string matches the spec exactly (quote each one as implemented).
+3. Confirmation the MiniMax provenance tag and loading state are tied to real request
+   lifecycles, with no artificial timing added — describe how you verified this.
+4. Confirmation the provider-check bar never renders before checks start and never uses
+   "passed."
+5. Test results (new + regression).
+6. Typecheck/build results.
+7. Live confirmation of both Welcome-screen paths end to end.
+
+End with:
+
+```text
+SPEC_FOLLOWED = <YES | PARTIAL: gaps and how resolved>
+BUTTON_HIERARCHY_STATUS = <IMPLEMENTED | BLOCKED: reason>
+MINIMAX_LOADING_STATE_STATUS = <IMPLEMENTED, tied to real request | BLOCKED: reason>
+PROVENANCE_TAG_STATUS = <IMPLEMENTED, real-only | BLOCKED: reason>
+OFFLINE_EXPLANATION_STATUS = <IMPLEMENTED | BLOCKED: reason>
+PROVIDER_BAR_TIMING_STATUS = <IMPLEMENTED | BLOCKED: reason>
+ALL_REGRESSION_STATUS = <ALL_PASS | FAILURES: list>
+DEMO_READY = <YES | NOT_YET: reason>
+```

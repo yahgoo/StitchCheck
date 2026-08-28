@@ -1,0 +1,31 @@
+{
+  "provider": "gemini",
+  "status": "live-failed",
+  "executed": true,
+  "fallbackUsed": true,
+  "model": "gemini-3.6-flash",
+  "dataMode": "live",
+  "correlationId": "gemini-1787669747902",
+  "schemaValidated": false,
+  "extractionStatus": "error",
+  "providerHttpCode": 401,
+  "providerStatusString": "UNAUTHENTICATED",
+  "providerErrorReason": "ACCESS_TOKEN_TYPE_UNSUPPORTED",
+  "providerErrorSummary": "Google v1beta GenerateContent returned 401 UNAUTHENTICATED (reason ACCESS_TOKEN_TYPE_UNSUPPORTED): 'Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential'. Method google.ai.generativelanguage.v1beta.GenerativeService.GenerateContent, service generativelanguage.googleapis.com. Sanitized capture — no key/token material present; help URL already redacted by server sanitizer.",
+  "missingFields": ["all — authentication failed"],
+  "fieldConfidence": { "overall": "none", "note": "provider authentication failed" },
+  "uiLabelObserved": "Gemini · unavailable",
+  "providerStatus": {
+    "status": "live-failed",
+    "executed": true,
+    "fallbackUsed": true,
+    "evidenceSource": "local-fallback",
+    "retrievedAt": "2026-08-25T14:55:47.902Z"
+  },
+  "latencyMs": 277,
+  "retryAttempted": false,
+  "attemptCount": 1,
+  "userCorrectionApplied": false,
+  "timestamp": "2026-08-25T14:55:47.902Z",
+  "notes": "Second and final authorized attempt (user authorization 2B). Diagnosis: credential type rejected by Google — either the key is invalid/expired or the auth scheme (API-key header vs OAuth Bearer) mismatches the credential type. No further attempts without new explicit approval. Exactly one POST /api/gemini/extract (HTTP 200 proxy-wrapped); failed extraction correctly not applied to the itinerary; no live label displayed. No keys, tokens, authorization headers, raw image bytes, or raw model responses are included in this file."
+}

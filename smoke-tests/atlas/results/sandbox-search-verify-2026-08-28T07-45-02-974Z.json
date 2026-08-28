@@ -1,0 +1,26 @@
+{
+  "testId": "ATL-SBX-SV-01",
+  "startedAt": "2026-08-28T07:45:02.764Z",
+  "steps": [
+    {
+      "step": "environment_switch",
+      "command": "atlas-flight environment use sandbox --json",
+      "exitCode": 30,
+      "responseCode": "INTERNAL_ERROR",
+      "sanitized": {
+        "schema_version": "1",
+        "status": "terminal_error",
+        "code": "INTERNAL_ERROR",
+        "message": "Atlas Flight Booking CLI could not complete the request",
+        "retryable": false,
+        "data": {},
+        "details": {}
+      }
+    }
+  ],
+  "evidenceLabel": "Atlas Sandbox — failure state (environment switch failed)",
+  "hardStop": "AFTER_VERIFY — no Order, Payment, Ticketing, or any write",
+  "result": "FAILURE",
+  "failureStep": "environment_switch",
+  "failureDetail": "Atlas Flight Booking CLI could not complete the request"
+}

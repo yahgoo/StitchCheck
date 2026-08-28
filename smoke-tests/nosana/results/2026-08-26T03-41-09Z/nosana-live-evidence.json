@@ -1,0 +1,38 @@
+{
+  "provider": "nosana",
+  "status": "live-success",
+  "executed": true,
+  "jobId": "4qTsAw8T4kohbXEZmhreujC6qxEDmMgKfxHrk68afUp8",
+  "market": "7AtiXMSH6R1jjBxrcYjehCkkSF7zvYWte63gwEDBcGHq",
+  "observedStates": [
+    { "state": "post_accepted", "timestamp": "2026-08-26T03:41:01.523Z" },
+    { "state": "polling", "timestamp": "2026-08-26T03:41:01.524Z" },
+    { "state": "completed", "timestamp": "2026-08-26T03:41:09.155Z" }
+  ],
+  "latencyMs": 11072,
+  "creditsUsed": 44,
+  "costUsd": 0.044,
+  "ipfsHash": "QmbxA6DzaedX2kxMrm35daS7nCu5Vumgf1AzwjkNpW3mB6",
+  "jobDefinitionIpfsHash": "QmcuD42uM333hG6AgQXE5QXDku3zfgYiVABeuGnsgfQudS",
+  "resultSchemaValidated": true,
+  "validateJobDefinition": {
+    "preSubmissionCheck": "sdk-official (@nosana/kit v2.7.5)",
+    "runtimeRunnerCheck": "local-custom mirror (also passed; SDK pre-check confirmed before submission)"
+  },
+  "attemptPolicy": "single attempt, zero automatic retry",
+  "platformTimeoutSec": 3600,
+  "localWatchdogMs": 180000,
+  "localWatchdogFired": false,
+  "sanitizedResult": {
+    "riskScore": 0.2895,
+    "riskBand": "medium",
+    "simulationCount": 800,
+    "assumptions": [
+      "Historical average delay at BBB: 25 min",
+      "On-time rate: 0.72",
+      "Route miss rate: 0.28",
+      "Monte Carlo simulations: 800"
+    ]
+  },
+  "timestamp": "2026-08-26T03:41:09.157Z"
+}

@@ -65,7 +65,7 @@ npm run verify:offline
 
 ## Known Limitations
 
-1. **Direct Gemini 3.7 live extraction validated.** Evidence: `smoke-tests/gemini/results/results-gemini-3.7-flash-success.json`. `ai.interactions.create` succeeded, schema-validated, `fallbackUsed: false`. Gemini 3.6 was live-verified previously. GEM-01 was executed via a historical OpenRouter temporary path.
+1. **Direct Gemini 3.7 live extraction validated.** Evidence: `smoke-tests/gemini/results/results-gemini-3.7-flash-success.json`. `ai.interactions.create` succeeded, schema-validated, `fallbackUsed: false`. A subsequent re-verification attempt returned a transient error and was not retried. Gemini 3.6 was live-verified previously. GEM-01 was executed via a historical OpenRouter temporary path.
 2. **Nosana live job completed.** Job `BNZTHNoARu98EdaqPU5WiCaFWZAyU1e9NYCZJj2h1afY` accepted and completed; result recovered from `opStates.logs.log`; `costUsd: 0.044`; risk output schema-valid. Browser demo still uses local fallback fixture.
 3. **Atlas ticketing activation-gated.** Search and verify completed successfully. Ticketing/booking is blocked pending human activation.
 4. **Browser demo risk and alternatives panels use offline fixtures.** Risk and alternatives panels display local fixtures, not live provider results.

@@ -1,0 +1,86 @@
+{
+  "evidenceType": "atlas-live-app-run",
+  "timestamp": "2026-08-24T06:30:00Z",
+  "dataMode": "live",
+  "atlasEnvironment": "sandbox",
+  "provenance": {
+    "evidenceSource": "atlas-sandbox",
+    "provider": "atlas",
+    "executed": true,
+    "fallbackUsed": false,
+    "label": "Atlas Sandbox — live Search + Verify, read-only"
+  },
+  "search": {
+    "commandType": "search",
+    "route": "KUL → SIN",
+    "depart": "2026-09-15",
+    "adults": 1,
+    "currency": "USD",
+    "responseCode": "FLIGHT_SEARCHED",
+    "searchId": "srch_6022478d0fa041211b88ee9e",
+    "offerCount": 20,
+    "carriers": ["OD", "TR", "AK"],
+    "carrierNames": ["Malindo Air (OD)", "Scoot (TR)", "AirAsia (AK)"],
+    "priceRange": {
+      "min": 29.28,
+      "max": 56.56,
+      "currency": "USD"
+    },
+    "sampleOffers": [
+      {
+        "offerId": "off_f853c4064bae74a1bfc1f76a",
+        "carrier": "OD",
+        "flightNumber": "OD807",
+        "route": "KUL → SIN",
+        "departure": "15:00",
+        "arrival": "16:00",
+        "duration": "1h",
+        "price": 45.90,
+        "currency": "USD"
+      },
+      {
+        "offerId": "off_2f739e171b615995084390d6",
+        "carrier": "TR",
+        "flightNumber": "TR457",
+        "route": "KUL → SIN",
+        "departure": "07:10",
+        "arrival": "08:35",
+        "duration": "1h 25m",
+        "price": 38.79,
+        "currency": "USD"
+      },
+      {
+        "offerId": "off_8f29226fbe535938fbb2856c",
+        "carrier": "OD",
+        "flightNumber": "OD801",
+        "route": "KUL → SIN",
+        "departure": "08:15",
+        "arrival": "09:20",
+        "duration": "1h 5m",
+        "price": 29.28,
+        "currency": "USD"
+      }
+    ]
+  },
+  "verify": {
+    "commandType": "verify",
+    "offerId": "off_f853c4064bae74a1bfc1f76a",
+    "responseCode": "OFFER_VERIFIED",
+    "status": "success",
+    "message": "Offer verified",
+    "currentPrice": 45.90,
+    "currency": "USD"
+  },
+  "noWriteConfirmation": {
+    "bookingCreated": false,
+    "orderCreated": false,
+    "paymentMade": false,
+    "ticketIssued": false,
+    "reservationMade": false,
+    "cancellationMade": false,
+    "refundMade": false
+  },
+  "browserUrl": "http://localhost:5173/",
+  "dataModeConfirmed": "live",
+  "retrievalTime": "2026-08-24T06:30:04Z"
+}

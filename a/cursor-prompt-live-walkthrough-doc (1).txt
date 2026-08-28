@@ -1,0 +1,79 @@
+# StitchCheck — Generate a Screen-by-Screen "How It Works" Walkthrough Doc
+# Cursor Agent — run the live app, capture real state per screen, write an explanatory doc
+
+## Context
+
+The user (project owner) wants to deeply understand how the app actually behaves before
+continuing to code tonight. This is not a code-fix task — it's a documentation/explanation
+task grounded in the live running app, not assumptions.
+
+## Absolute constraints
+
+- Do not modify any application code, tests, or the already-verified behavior.
+- Do not touch video/narration/subtitle files.
+- Do not commit/push.
+- The output is a single new markdown file; everything else stays untouched.
+
+## Step 1 — Confirm the dev server
+
+Confirm `http://localhost:5173/` is running with `DATA_MODE=live` (it should already be up
+from the prior session). If not, start it and confirm with a 200 response before proceeding.
+
+## Step 2 — Walk the app screen-by-screen and capture real state
+
+For each screen/state below, actually load it in the running app (via whatever browser
+automation or manual click-through Cursor has available, or by reading the exact component
+code paths triggered) and record:
+- What triggers entry into this screen (button click, automatic transition, async completion).
+- What data is shown, with a REAL example value captured from this run (not a hypothetical) —
+  e.g. the actual route codes, actual price, actual provider statuses seen.
+- What state it reads from (which variable/snapshot/hook) so the explanation is accurate to
+  the code, not just visual guesswork.
+- What the user can click/expand from here, and what each leads to.
+
+Cover, in order:
+1. Welcome screen (both entry paths: manual upload vs. "Try a sample itinerary")
+2. Review screen (the itinerary-confirmation snapshot moment)
+3. The "Check my itinerary" transition (loading state, double-click guard behavior)
+4. The combined Answer/Options screen: risk headline, featured recommended card, Keep/Switch
+   buttons, "Checking live alternatives…" loading state
+5. "See why this is risky" expanded (recovery-plan animation) — describe what the graph
+   actually shows using this run's real data
+6. "How this works" expanded — capture the real per-provider status line values from this run
+7. Each leg's preview section: the featured card, the section-level disclosure text, "See more
+   verified options (N)" expand behavior, and what the additional cards show
+8. Keep path all the way to Done
+9. Switch path all the way to Done (separate run)
+
+## Step 3 — Write the explanatory document
+
+Produce `docs/how-the-app-works-live-walkthrough-2026-08-26.md` structured as:
+
+- One section per screen/state from Step 2.
+- For each: a short "What triggers this" line, a short "What you're looking at" explanation
+  in plain language (assume the reader is the developer but wants a refresher, not a stranger),
+  the real captured example data, and "What state/code this reads from" with the actual
+  file/variable names (e.g. `confirmedItinerarySnapshot`, `selectBestOptionCard`,
+  `BEST_OPTION_SELECTION_RULE`) so it doubles as an architecture reference.
+- End with a short "Known rough edges" section listing the browser-back limitation, the
+  double-click guard behavior, and the intermittent Atlas-credentials error observed in
+  earlier sessions, so the user isn't surprised by them tonight.
+
+## Final report
+
+Return:
+1. Confirmation the dev server was live and which screens were actually exercised live vs.
+   inferred from code (be honest about which is which).
+2. The real example data captured at each step.
+3. Confirmation the new doc was created at the specified path, with a brief summary of its
+   section headers.
+4. Confirmation no application code was changed.
+
+End with:
+
+```text
+DEV_SERVER_STATUS = <RUNNING | BLOCKED: reason>
+WALKTHROUGH_DOC_STATUS = <CREATED at docs/how-the-app-works-live-walkthrough-2026-08-26.md | BLOCKED: reason>
+SCREENS_LIVE_VERIFIED = <list of screens actually exercised in the running app>
+SCREENS_CODE_INFERRED = <list of screens only described from code reading, if any>
+```

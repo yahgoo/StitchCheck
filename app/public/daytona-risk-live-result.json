@@ -1,0 +1,169 @@
+{
+  "envelopeVersion": 1,
+  "correlationId": "daytona-live-4154dfd5-500d-4fb3-a458-2ba3d8f3f7d7",
+  "startedAt": "2026-08-28T13:01:45.410Z",
+  "finishedAt": "2026-08-28T13:01:59.259Z",
+  "sandboxIdFirst8": "bdd69d6d",
+  "sandboxDestroyed": true,
+  "destroyError": null,
+  "cycleError": null,
+  "execExitCode": 0,
+  "success": true,
+  "missingFieldLabel": "not available from Sandbox response",
+  "workerResult": {
+    "resultId": "risk-itin-daytona-live-001--977280271",
+    "correlationId": "itin-daytona-live-001",
+    "workloadStatus": "success",
+    "jobOrServiceReference": "bdd69d6d",
+    "riskBand": "medium",
+    "riskScore": 54,
+    "heuristicDisclaimer": "Computed result — not live provider evidence",
+    "failureCascadeExplanation": "Risk score 54 (medium) drives downstream cascade across 4 nodes",
+    "datasetVersion": "daytona-risk-worker-v1",
+    "fallbackUsed": false,
+    "errorCode": null,
+    "errorMessage": null,
+    "evidenceSource": "daytona-sandbox",
+    "provider": "daytona-risk-worker",
+    "executed": true,
+    "evidenceLabel": "Daytona live risk computation — read-only, sandboxed",
+    "simulationCount": 7,
+    "assumptions": [
+      "Risk score derived from deterministic seed and itinerary structure",
+      "No live provider data used — all values are computed",
+      "Multi-leg itinerary increases downstream dependency chain"
+    ],
+    "latencyMs": 6,
+    "dependencyGraph": {
+      "nodes": [
+        {
+          "id": "trigger-first-leg-delayed",
+          "label": "First leg delayed: KUL → SIN",
+          "kind": "onward-leg",
+          "status": "at-risk",
+          "cascadeDelayMs": 0,
+          "dependsOn": [],
+          "cascadeOrder": 0,
+          "dependencyReason": "Initial delay trigger — upstream disruption"
+        },
+        {
+          "id": "connection-window",
+          "label": "Connection window at SIN",
+          "kind": "connection-window",
+          "status": "at-risk",
+          "cascadeDelayMs": 550,
+          "dependsOn": [
+            "trigger-first-leg-delayed"
+          ],
+          "cascadeOrder": 1,
+          "dependencyReason": "Delay on first leg reduces available connection time"
+        },
+        {
+          "id": "onward-leg",
+          "label": "Onward leg SIN → BKK",
+          "kind": "onward-leg",
+          "status": "at-risk",
+          "cascadeDelayMs": 1100,
+          "dependsOn": [
+            "connection-window"
+          ],
+          "cascadeOrder": 2,
+          "dependencyReason": "Connection window risk propagates to onward flight"
+        },
+        {
+          "id": "hotel-checkin",
+          "label": "Pre-booked hotel check-in (cutoff: 2026-09-15T18:00:00Z)",
+          "kind": "hotel-checkin",
+          "status": "ok",
+          "cascadeDelayMs": 1650,
+          "dependsOn": [
+            "onward-leg",
+            "connection-window"
+          ],
+          "cascadeOrder": 3,
+          "dependencyReason": "Onward delay propagates to hotel check-in cutoff"
+        }
+      ],
+      "rootTriggerId": "trigger-first-leg-delayed",
+      "edges": [
+        {
+          "sourceId": "trigger-first-leg-delayed",
+          "destinationId": "connection-window",
+          "reason": "First-leg delay propagates to connection window"
+        },
+        {
+          "sourceId": "connection-window",
+          "destinationId": "onward-leg",
+          "reason": "Tight connection threatens onward leg viability"
+        },
+        {
+          "sourceId": "onward-leg",
+          "destinationId": "hotel-checkin",
+          "reason": "Delay cascade from onward-leg threatens hotel check-in window"
+        },
+        {
+          "sourceId": "connection-window",
+          "destinationId": "hotel-checkin",
+          "reason": "Delay cascade from connection-window threatens hotel check-in window"
+        }
+      ]
+    },
+    "scenariosEvaluated": 7,
+    "constraintViolations": [
+      "Candidate viability score (51) below threshold (64)"
+    ],
+    "recoveryPlan": {
+      "replacementFirstLeg": {
+        "offerReference": "opt-2",
+        "routeSummary": "KUL → SIN",
+        "departureTime": null,
+        "arrivalTime": null,
+        "duration": null,
+        "connectionType": "1-stop",
+        "priceDisplay": null,
+        "currency": null,
+        "availabilityLabel": null
+      },
+      "onwardOption": {
+        "offerReference": null,
+        "routeSummary": "SIN → BKK",
+        "departureTime": null,
+        "arrivalTime": null,
+        "duration": null,
+        "connectionType": null,
+        "priceDisplay": null,
+        "currency": null,
+        "availabilityLabel": null
+      },
+      "affectedDownstreamCommitments": [],
+      "constraintsSatisfied": [
+        "Candidate opt-2 satisfies constraints with viability score 80",
+        "Route summary derived from candidate input"
+      ],
+      "tradeoffs": {
+        "arrivalImpactMinutes": null,
+        "connectionBufferMinutes": null,
+        "fareDelta": null,
+        "fareDeltaCurrency": null
+      }
+    },
+    "rePlanAttemptCount": 0,
+    "maxRePlanAttempts": 2,
+    "recoveryExplanation": "Selected candidate opt-2: Candidate opt-2 satisfies constraints with viability score 80",
+    "executionEnvironment": "daytona-live-risk",
+    "executionTimestamp": "2026-08-28T13:01:57.553Z",
+    "timeoutMs": 5000,
+    "failureState": null,
+    "provenance": {
+      "evidenceSource": "daytona-sandbox",
+      "provider": "daytona-risk-worker",
+      "executed": true,
+      "fallbackUsed": false,
+      "readOnly": true,
+      "label": "Daytona live risk computation — read-only, sandboxed",
+      "sandboxDestroyed": true
+    },
+    "externalWriteOccurred": false,
+    "sanitized": true
+  }
+}

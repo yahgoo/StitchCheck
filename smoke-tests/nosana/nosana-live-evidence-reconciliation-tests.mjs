@@ -7,9 +7,9 @@
 //   3. costUsd: 0.044 is retained.
 //   4. creditsUsed: 44 remains internal-credit metadata.
 //   5. evidenceSource becomes live only after validation.
-//   6. Browser local fixture remains labelled local, not live.
-//   7. Gemini live evidence label is correct.
-//   8. Atlas live Sandbox label is correct.
+//   6. Offline browser fixture stays local; runtime file is a permitted dry-run preview.
+//   7. Gemini live evidence remains honestly live-failed (NOT_CONFIRMED).
+//   8. Atlas live reconciliation evidence is correct (CONFIRMED_LIVE).
 //   9. Nosana live label is correct only for the reconciled live result.
 //  10. Fallback labels remain correct.
 //  11. No secrets appear in the reconciled artifact.
@@ -31,7 +31,9 @@ import {
 } from "./nosana-risk-runner.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(here, "..");
+const REPO_ROOT = path.resolve(here, "..", "..");
+const OFFLINE_BROWSER_FIXTURE = path.join(here, "fixtures", "browser-local-fallback-result.json");
+const RUNTIME_BROWSER_RESULT = path.join(REPO_ROOT, "app", "public", "nosana-risk-result.json");
 
 let passed = 0;
 let failed = 0;
@@ -171,61 +173,92 @@ assert(extracted.jobId === "BNZTHNoARu98EdaqPU5WiCaFWZAyU1e9NYCZJj2h1afY", "extr
 assert(extracted.costUsd === 0.044, "extracted metadata has correct costUsd");
 assert(extracted.creditsUsed === 44, "extracted metadata has correct creditsUsed");
 
-// ── Section 6: Browser local fixture remains labelled local ──────────────────
+// ── Section 6: Offline browser fixture vs dry-run runtime file ─────────────
 
-section("Section 6: Browser local fixture remains labelled local, not live");
+section("Section 6: Offline browser fixture stays local; runtime file is dry-run");
 
-const nosanaResultPath = path.join(ROOT, "app", "public", "nosana-risk-result.json");
-if (fs.existsSync(nosanaResultPath)) {
-  const browserResult = JSON.parse(fs.readFileSync(nosanaResultPath, "utf8"));
+const offlineBrowserResult = JSON.parse(fs.readFileSync(OFFLINE_BROWSER_FIXTURE, "utf8"));
+assert(
+  offlineBrowserResult.evidenceSource === "local-fallback",
+  `Offline browser fixture has evidenceSource "local-fallback" (got: ${offlineBrowserResult.evidenceSource})`,
+);
+assert(
+  offlineBrowserResult.usedFallback === true || offlineBrowserResult.riskResult?.fallbackUsed === true,
+  "Offline browser fixture has fallbackUsed=true",
+);
+
+if (fs.existsSync(RUNTIME_BROWSER_RESULT)) {
+  const runtimeResult = JSON.parse(fs.readFileSync(RUNTIME_BROWSER_RESULT, "utf8"));
   assert(
-    browserResult.evidenceSource === "local-fallback",
-    `Browser nosana-risk-result.json has evidenceSource "local-fallback" (got: ${browserResult.evidenceSource})`,
+    runtimeResult.evidenceSource === "dry-run",
+    `Runtime app/public/nosana-risk-result.json reflects a dry-run preview (got: ${runtimeResult.evidenceSource})`,
   );
   assert(
-    browserResult.usedFallback === true || browserResult.riskResult?.fallbackUsed === true,
-    "Browser nosana-risk-result.json has fallbackUsed=true",
-  );
-} else {
-  assert(true, "Browser nosana-risk-result.json not present (skipped — no false claim possible)");
-}
-
-// ── Section 7: Gemini live evidence label ────────────────────────────────────
-
-section("Section 7: Gemini live evidence label is correct");
-
-const geminiResultPath = path.join(ROOT, "smoke-tests", "gemini", "results", "results-gemini-3.7-flash-success.json");
-if (fs.existsSync(geminiResultPath)) {
-  const geminiResult = JSON.parse(fs.readFileSync(geminiResultPath, "utf8"));
-  assert(
-    geminiResult.evidenceSource === "gemini-live" || geminiResult.provider === "gemini",
-    "Gemini result has gemini-live evidence source or gemini provider",
-  );
-  assert(
-    geminiResult.fallbackUsed === false,
-    "Gemini result has fallbackUsed=false",
+    runtimeResult.usedFallback === true && runtimeResult.riskResult?.fallbackUsed === true,
+    "Runtime browser result has fallbackUsed=true because no job was submitted",
   );
 } else {
-  assert(true, "Gemini result file not present (skipped)");
+  assert(true, "Runtime app/public/nosana-risk-result.json not present (skipped)");
 }
 
-// ── Section 8: Atlas live Sandbox label ──────────────────────────────────────
+// ── Section 7: Gemini live evidence label is honest (NOT_CONFIRMED) ────────
+
+section("Section 7: Gemini live evidence label is honest (not falsely live)");
+
+const geminiLiveEvidencePath = path.join(
+  REPO_ROOT,
+  "smoke-tests",
+  "gemini",
+  "live-runs",
+  "2026-08-25T14-55-47Z",
+  "gemini-live-evidence.json",
+);
+if (fs.existsSync(geminiLiveEvidencePath)) {
+  const geminiLive = JSON.parse(fs.readFileSync(geminiLiveEvidencePath, "utf8"));
+  assert(
+    geminiLive.status === "live-failed",
+    `Gemini live evidence records live-failed status (got: ${geminiLive.status})`,
+  );
+  assert(
+    geminiLive.fallbackUsed === true,
+    "Gemini live evidence has fallbackUsed=true",
+  );
+  assert(
+    geminiLive.status !== "live-success",
+    "Gemini must not be labelled live-success while NOT_CONFIRMED",
+  );
+} else {
+  assert(true, "Gemini live evidence file not present (skipped)");
+}
+
+// ── Section 8: Atlas live Sandbox label is correct ───────────────────────────
 
 section("Section 8: Atlas live Sandbox label is correct");
 
-const atlasSandboxPath = path.join(ROOT, "smoke-tests", "atlas", "results", "sandbox-search-verify-2026-08-21T07-02-42-099Z.json");
-if (fs.existsSync(atlasSandboxPath)) {
-  const atlasResult = JSON.parse(fs.readFileSync(atlasSandboxPath, "utf8"));
+const atlasReconciliationPath = path.join(
+  REPO_ROOT,
+  "smoke-tests",
+  "atlas",
+  "live-app-runs",
+  "2026-08-24T17-03-17Z",
+  "atlas-reconciliation.json",
+);
+if (fs.existsSync(atlasReconciliationPath)) {
+  const atlasResult = JSON.parse(fs.readFileSync(atlasReconciliationPath, "utf8"));
   assert(
-    atlasResult.sourceEnvironment === "sandbox" || atlasResult.evidenceSource === "atlas-sandbox",
-    "Atlas Sandbox result has sandbox environment or atlas-sandbox evidence source",
+    atlasResult.environment === "sandbox" || atlasResult.dataMode === "live",
+    "Atlas reconciliation has sandbox environment or live dataMode",
   );
   assert(
-    atlasResult.fallbackUsed === false,
-    "Atlas Sandbox result has fallbackUsed=false",
+    atlasResult.search?.executed === true && atlasResult.verify?.executed === true,
+    "Atlas reconciliation records successful read-only search and verify",
+  );
+  assert(
+    atlasResult.readOnlyGate === true,
+    "Atlas reconciliation confirms readOnlyGate=true",
   );
 } else {
-  assert(true, "Atlas Sandbox result file not present (skipped)");
+  assert(true, "Atlas reconciliation file not present (skipped)");
 }
 
 // ── Section 9: Nosana live label only for reconciled result ──────────────────
@@ -238,16 +271,24 @@ assert(
   "Reconciled artifact qualifies for Nosana live evidence label",
 );
 
-// The browser fixture should NOT have the live evidence label
-if (fs.existsSync(nosanaResultPath)) {
-  const browserResult = JSON.parse(fs.readFileSync(nosanaResultPath, "utf8"));
-  const browserSource = browserResult.evidenceSource ?? browserResult.riskResult?.evidenceSource;
+// The dedicated offline browser fixture must NOT qualify for a live label
+const offlineBrowserSource = offlineBrowserResult.evidenceSource
+  ?? offlineBrowserResult.riskResult?.evidenceSource;
+assert(
+  offlineBrowserSource !== "nosana-evidence" || offlineBrowserResult.riskResult?.fallbackUsed === true,
+  "Offline browser fixture does not qualify for Nosana live evidence label",
+);
+
+// The runtime file is a dry-run preview and must not qualify for a live label.
+if (fs.existsSync(RUNTIME_BROWSER_RESULT)) {
+  const runtimeResult = JSON.parse(fs.readFileSync(RUNTIME_BROWSER_RESULT, "utf8"));
+  const runtimeSource = runtimeResult.evidenceSource ?? runtimeResult.riskResult?.evidenceSource;
   assert(
-    browserSource !== "nosana-evidence" || browserResult.riskResult?.fallbackUsed === true,
-    "Browser fixture does not qualify for Nosana live evidence label",
+    runtimeSource === "dry-run" && runtimeResult.usedFallback === true && runtimeResult.jobMetadata?.jobId === null,
+    "Runtime browser result is a dry-run preview with no submitted job ID",
   );
 } else {
-  assert(true, "Browser fixture not present (cannot falsely claim live label)");
+  assert(true, "Runtime browser result not present (cannot verify live label)");
 }
 
 // ── Section 10: Fallback labels remain correct ───────────────────────────────

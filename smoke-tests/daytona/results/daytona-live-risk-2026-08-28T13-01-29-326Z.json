@@ -1,0 +1,14 @@
+{
+  "envelopeVersion": 1,
+  "correlationId": "daytona-live-dcc3ca7e-2d24-4599-b0e6-1e7cfe6e50e2",
+  "startedAt": "2026-08-28T13:01:29.194Z",
+  "finishedAt": "2026-08-28T13:01:29.326Z",
+  "sandboxIdFirst8": null,
+  "sandboxDestroyed": false,
+  "destroyError": null,
+  "cycleError": "Cannot add property code-toolbox-language, object is not extensible",
+  "execExitCode": null,
+  "success": false,
+  "missingFieldLabel": "not available from Sandbox response",
+  "workerResult": null
+}

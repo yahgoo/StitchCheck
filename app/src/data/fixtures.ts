@@ -1,5 +1,5 @@
 /* ── Local fixture adapter ──
- * Imports synthetic demo data and fixture shapes from the repo.
+ * Imports demo data and fixture shapes from the repo.
  * No external calls. No live service data. All content is local placeholder. */
 
 import demoData from '../../../app-fixture-contracts/stitchcheck-ui-demo-data.json';
@@ -25,6 +25,11 @@ import type {
   AlternativesScenario,
 } from './types';
 
+import type {
+  DaytonaEvidenceEnvelope,
+  AtlasEvidenceEnvelope,
+} from '../../../core/contracts/envelopes';
+
 /* ── Re-export raw demo data ── */
 export { demoData };
 
@@ -36,11 +41,11 @@ export interface ScreenshotFixture {
 }
 
 export const screenshotFixtures: ScreenshotFixture[] = [
-  { id: 'gem-01', label: 'GEM-01: Clear fictional two-leg itinerary', src: '../../../smoke-tests/gemini/fixtures/gem-01-two-leg-clean.png' },
-  { id: 'gem-02', label: 'GEM-02: Fictional itinerary, one optional field absent', src: '../../../smoke-tests/gemini/fixtures/gem-02-two-leg-missing-optional.png' },
-  { id: 'gem-03', label: 'GEM-03: Fragmented fictional layout', src: '../../../smoke-tests/gemini/fixtures/gem-03-two-leg-fragmented.png' },
-  { id: 'gem-04', label: 'GEM-04: Fictional image, not a flight itinerary', src: '../../../smoke-tests/gemini/fixtures/gem-04-non-itinerary.png' },
-  { id: 'gem-05', label: 'GEM-05: Fictional itinerary, one unreadable field', src: '../../../smoke-tests/gemini/fixtures/gem-05-unreadable-field.png' },
+  { id: 'gem-01', label: 'GEM-01: Clear demo two-leg itinerary', src: '../../../smoke-tests/extraction/fixtures/gem-01-two-leg-clean.png' },
+  { id: 'gem-02', label: 'GEM-02: Demo itinerary, one optional field absent', src: '../../../smoke-tests/extraction/fixtures/gem-02-two-leg-missing-optional.png' },
+  { id: 'gem-03', label: 'GEM-03: Fragmented demo layout', src: '../../../smoke-tests/extraction/fixtures/gem-03-two-leg-fragmented.png' },
+  { id: 'gem-04', label: 'GEM-04: Demo image, not a flight itinerary', src: '../../../smoke-tests/extraction/fixtures/gem-04-non-itinerary.png' },
+  { id: 'gem-05', label: 'GEM-05: Demo itinerary, one unreadable field', src: '../../../smoke-tests/extraction/fixtures/gem-05-unreadable-field.png' },
 ];
 
 /* ── Risk fixture lookup ── */
@@ -60,7 +65,7 @@ export function getRiskFixture(scenario: RiskScenario): RiskResult {
  * Attempts to load the result from a real Nosana risk workload run.
  * If the file exists and carries evidenceSource === 'nosana-evidence',
  * the UI labels it as Nosana evidence. Otherwise, falls back to the
- * local synthetic fixture.
+ * local demo fixture.
  */
 export async function loadNosanaRiskResult(): Promise<RiskResult | null> {
   try {
@@ -99,12 +104,46 @@ export function getDecisionData(): DecisionData {
   return demoData.uiStates.comparisonAndDecision.decision as unknown as DecisionData;
 }
 
+/* ── Daytona evidence loader ──
+ * Attempts to load the Daytona sandbox evidence envelope.
+ * If the file exists and is valid, the UI labels it as Daytona sandbox evidence.
+ * Otherwise, returns null (caller should use local fallback). */
+export async function loadDaytonaEvidence(): Promise<DaytonaEvidenceEnvelope | null> {
+  try {
+    const res = await fetch('/daytona-evidence.json', { cache: 'no-store' });
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (data && data.envelopeVersion === 1 && data.sanitized === true) {
+      return data as DaytonaEvidenceEnvelope;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/* ── Atlas evidence loader ──
+ * Attempts to load the Atlas evidence envelope.
+ * If the file exists and is valid, the UI labels it as Atlas evidence.
+ * Otherwise, returns null (caller should use local fallback). */
+export async function loadAtlasEvidence(): Promise<AtlasEvidenceEnvelope | null> {
+  try {
+    const res = await fetch('/atlas-evidence.json', { cache: 'no-store' });
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (data && data.envelopeVersion === 1) {
+      return data as AtlasEvidenceEnvelope;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 /* ── Default extraction (unconfirmed itinerary) ──
- * The GEM-01 fixture data is fictional (AAA/BBB/CCC, SC-101, etc.).
- * Direct Gemini 3.7 live extraction was verified separately via
- * ai.interactions.create (evidence: smoke-tests/gemini/results/results-gemini-3.7-flash-success.json),
- * but the browser walkthrough itself uses this local fixture and makes no provider call.
- * Provenance is labelled accordingly: local-fixture, not gemini-live. */
+ * The fixture data uses a coherent KUL → BKK → HAN route.
+ * The browser walkthrough itself uses this local fixture and makes no provider call.
+ * Provenance is labelled accordingly: local-fixture. */
 export function getDefaultExtraction(): ExtractionResult {
   const base = demoData.uiStates.itineraryUnconfirmed.extractionResult as unknown as ExtractionResult;
   return {
@@ -114,6 +153,5 @@ export function getDefaultExtraction(): ExtractionResult {
     executed: false,
     fallbackUsed: true,
     validationOutcome: 'valid',
-    provenanceMode: 'fictional-local',
   };
 }

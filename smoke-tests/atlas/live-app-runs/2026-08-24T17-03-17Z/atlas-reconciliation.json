@@ -1,0 +1,99 @@
+{
+  "provider": "atlas",
+  "scope": "read-only-search-verify",
+  "environment": "sandbox",
+  "dataMode": "live",
+  "readOnlyGate": true,
+  "search": {
+    "executed": true,
+    "httpStatus": 200,
+    "responseCode": "FLIGHT_SEARCHED",
+    "searchId": "srch_5e7b31ade8e7bec5be1c063b",
+    "offerCount": 20,
+    "timestamp": "2026-08-24T16:48:17.160Z",
+    "itinerary": { "origin": "KUL", "destination": "BKK", "depart": "2026-09-15", "adults": 1, "currency": "USD" }
+  },
+  "verify": {
+    "executed": true,
+    "httpStatus": 200,
+    "offerId": "off_827ffcb2b3a62884cb0dd007",
+    "code": "OFFER_VERIFIED",
+    "status": "success",
+    "priceChanged": false,
+    "timestamp": "2026-08-24T16:48:52.516Z"
+  },
+  "writeRoutesTested": true,
+  "writeRoutesBlocked": true,
+  "credentialsExposed": false,
+  "fallbackUsed": false,
+  "timestamp": "2026-08-24T17:03:17Z",
+  "browserFlow": {
+    "requests": {
+      "search": { "method": "POST", "path": "/api/atlas/search", "count": 1, "httpStatus": 200 },
+      "verify": { "method": "POST", "path": "/api/atlas/verify", "count": 1, "httpStatus": 200 },
+      "writeRequests": 0
+    },
+    "rendering": {
+      "liveOffersRendered": 20,
+      "sourceLabelObserved": "Source: Atlas Sandbox · live",
+      "verifiedOfferPriceUsd": 69.33,
+      "verifiedOfferPriceChanged": false
+    },
+    "writeRoutesProbed": [
+      { "path": "/api/atlas/order", "result": 404 },
+      { "path": "/api/atlas/booking", "result": 404 },
+      { "path": "/api/atlas/payment", "result": 404 },
+      { "path": "/api/atlas/ticket", "result": 404 },
+      { "path": "/api/atlas/cancel", "result": 404 },
+      { "path": "/api/atlas/refund", "result": 404 },
+      { "path": "/api/atlas/unknown", "result": 404 }
+    ],
+    "methodGuard": [
+      { "path": "/api/atlas/search", "method": "GET", "result": 405 },
+      { "path": "/api/atlas/verify", "method": "GET", "result": 405 }
+    ]
+  },
+  "comparison": {
+    "priorRuns": [
+      {
+        "evidenceFile": "smoke-tests/atlas/live-app-runs/2026-08-24T06-30-00Z/evidence.json",
+        "timestamp": "2026-08-24T06:30:46.347Z",
+        "itinerary": "KUL-SIN 2026-09-15",
+        "searchId": "srch_382a9028e28574ab66a3cc27",
+        "offerCount": 20,
+        "responseCode": "FLIGHT_SEARCHED",
+        "verifyCode": "OFFER_VERIFIED",
+        "verifyStatus": "success",
+        "evidenceSource": "atlas-sandbox",
+        "executed": true,
+        "fallbackUsed": false,
+        "allBlockedRoutesReturned404": true
+      },
+      {
+        "evidenceFile": "smoke-tests/atlas/live-app-runs/2026-08-24T15-30-00Z/live-app-evidence.json",
+        "timestamp": "2026-08-24T15:30:00Z",
+        "itinerary": "KUL-BKK 2026-09-15",
+        "searchId": "srch_4f9557ed17285693059b1311",
+        "offerCount": 20,
+        "responseCode": "FLIGHT_SEARCHED",
+        "verifyCode": "OFFER_VERIFIED",
+        "verifyStatus": "success",
+        "sourceLabel": "Source: Atlas Sandbox · live",
+        "noWriteEndpointsCalled": true
+      }
+    ],
+    "currentRun": {
+      "searchTimestamp": "2026-08-24T16:48:17.160Z",
+      "searchId": "srch_5e7b31ade8e7bec5be1c063b",
+      "offerCount": 20,
+      "verifyTimestamp": "2026-08-24T16:48:52.516Z"
+    },
+    "codePath": {
+      "ui": "app/src/App.tsx performLiveSearch / handleVerifyOffer",
+      "client": "app/src/atlas/client.ts -> POST /api/atlas/search, POST /api/atlas/verify",
+      "labelCondition": "Source label 'Source: Atlas Sandbox · live' renders only when evidenceSource === 'atlas-sandbox' && executed === true && fallbackUsed === false (app/src/App.tsx lines 819-823)"
+    },
+    "consistency": "All three runs (06:30, 15:30, 16:48 UTC on 2026-08-24) returned HTTP 200 with responseCode FLIGHT_SEARCHED, 20 offers, OFFER_VERIFIED/success verify, and zero write traffic. Offer IDs and search IDs differ per run as expected for live data."
+  },
+  "verdict": "Atlas read-only Search + Verify is CONFIRMED live in the active UI. The prior three-provider verdict ATLAS_READ_ONLY_STATUS = NOT_CONFIRMED is not attributable to an app regression or an offline environment: three independent runtime evidence files in this repository (including two earlier on the same day) record successful live Search + Verify through the same code path, and no file in docs/ or smoke-tests/ containing the phrases NOT_CONFIRMED or CONFIGURED_BUT_BROKEN exists in this repository. The most defensible explanation, based only on files present, is that the NOT_CONFIRMED verdict reflects stale or incomplete evidence from a task that did not perform runtime verification against the active UI (methodology not recorded in this repository), rather than a functional failure."
+}

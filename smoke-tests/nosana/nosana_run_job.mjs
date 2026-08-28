@@ -135,6 +135,20 @@ export function isTerminalJobStatus(status) {
   return label !== null && TERMINAL_JOB_STATUSES.has(label);
 }
 
+/**
+ * Pull creditsUsed from a poll/status payload when present.
+ * Never invents a number; returns null when the field is absent.
+ */
+export function extractCreditsUsedFromStatus(status) {
+  if (!status || typeof status !== "object") return null;
+  if (typeof status.creditsUsed === "number") return status.creditsUsed;
+  const credits = status.credits;
+  if (credits && typeof credits === "object" && typeof credits.creditsUsed === "number") {
+    return credits.creditsUsed;
+  }
+  return null;
+}
+
 // ── Job-post response normalization ────────────────────────────────────────
 //
 // Verified SDK contract (@nosana/kit 2.7.5, @nosana/api client-manager schema):
@@ -688,6 +702,26 @@ async function main() {
   let resolvedHash = ipfsHash;
 
   try {
+    // ── D5: official SDK validator before any IPFS pin ────────────────
+    // Local validateJobDefinition already ran above. The live path must
+    // also run @nosana/kit's export before pin. Fake/offline kits that
+    // omit the export skip this layer.
+    if (jobDef && typeof nosanaKit.validateJobDefinition === "function") {
+      const sdkValidation = nosanaKit.validateJobDefinition(jobDef);
+      const sdkOk = Boolean(
+        sdkValidation && (sdkValidation.success === true || sdkValidation.valid === true),
+      );
+      if (!sdkOk) {
+        const detail = Array.isArray(sdkValidation?.errors)
+          ? sdkValidation.errors.map((e) => `${e.path}: expected ${e.expected}`).join("; ")
+          : Array.isArray(sdkValidation?.issues)
+            ? sdkValidation.issues.join("; ")
+            : "official validateJobDefinition rejected the job definition";
+        emitError(`Official SDK job definition validation failed: ${detail}`, "SDK_VALIDATION_FAILED");
+        return;
+      }
+    }
+
     // ── Step 1: Pin job definition to IPFS (if not already pinned) ──────
     if (!resolvedHash && jobDef) {
       // Official: client.ipfs.pin() returns the IPFS hash string directly.
@@ -910,6 +944,8 @@ async function main() {
         if (status) {
           const label = normalizeJobStatus(status);
           if (label !== null) observedStates.push(label);
+          const polledCredits = extractCreditsUsedFromStatus(status);
+          if (polledCredits !== null) creditsUsed = polledCredits;
         }
         // Terminal detection checks BOTH the string job status (jobStatus,
         // falling back to a string `state`) and ipfsResult/result presence.

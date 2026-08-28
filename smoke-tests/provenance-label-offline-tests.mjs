@@ -39,17 +39,19 @@ function test(name, fn) {
 // ── Inline label logic (mirrors app/src/data/labels.ts) ──
 // This duplicates the label selection logic to verify it independently.
 
-const GEMINI_LABELS = {
-  liveValidated: "Direct Gemini 3.7 — live validated",
-  localFixture: "Fictional itinerary — local demo fixture",
-  offlineFixture: "Offline fixture — not direct Gemini evidence",
+const EXTRACTION_LABELS = {
+  localFixture: "Local fixture",
+  offlineFixture: "Local fixture",
+  liveExtraction: "Source: AI extraction (MiniMax M3 via OpenRouter) · live",
+  unavailable: "AI extraction unavailable",
 };
+
+const GEMINI_LABELS = EXTRACTION_LABELS;
 
 const ATLAS_UI_LABELS = {
   sandboxLive: "Atlas Sandbox — live Search/Verify",
-  productionSearch: "Atlas production Search — reference prices only",
-  localFixture: "Fictional alternatives — local demo fixture",
-  offlineFixture: "Offline fixture — not Atlas Sandbox evidence",
+  localFixture: "Local fixture",
+  offlineFixture: "Offline fallback",
 };
 
 const NOSANA_UI_LABELS = {
@@ -60,18 +62,27 @@ const NOSANA_UI_LABELS = {
     "Nosana evidence — remote job succeeded; result from decentralized GPU workload.",
 };
 
-function getGeminiLabel(provenance) {
+function getExtractionProviderLabel(provenance) {
   if (
-    provenance.evidenceSource === "gemini-live" &&
-    provenance.fallbackUsed === false &&
-    provenance.validationOutcome === "valid"
+    provenance.evidenceSource === "extraction-live" &&
+    provenance.provider === "openrouter" &&
+    provenance.executed === true &&
+    provenance.fallbackUsed === false
   ) {
-    return GEMINI_LABELS.liveValidated;
+    return EXTRACTION_LABELS.liveExtraction;
   }
-  if (provenance.evidenceSource === "local-fixture") {
-    return GEMINI_LABELS.localFixture;
+  if (
+    provenance.evidenceSource === "extraction-live" &&
+    provenance.executed === true &&
+    provenance.fallbackUsed === true
+  ) {
+    return EXTRACTION_LABELS.unavailable;
   }
-  return GEMINI_LABELS.offlineFixture;
+  return EXTRACTION_LABELS.localFixture;
+}
+
+function getGeminiLabel(provenance) {
+  return getExtractionProviderLabel(provenance);
 }
 
 function getAtlasLabel(provenance) {
@@ -80,12 +91,6 @@ function getAtlasLabel(provenance) {
     provenance.fallbackUsed === false
   ) {
     return ATLAS_UI_LABELS.sandboxLive;
-  }
-  if (
-    provenance.evidenceSource === "atlas-production" &&
-    provenance.fallbackUsed === false
-  ) {
-    return ATLAS_UI_LABELS.productionSearch;
   }
   if (provenance.evidenceSource === "local-fixture") {
     return ATLAS_UI_LABELS.localFixture;
@@ -108,7 +113,7 @@ function getNosanaLabel(provenance) {
 
 // ── Test 1: Local fixture does not receive a live Gemini label ──
 
-test("Default extraction fixture is not labelled live Gemini", () => {
+test("Default extraction fixture is not labelled live extraction", () => {
   const defaultProvenance = {
     evidenceSource: "local-fixture",
     provider: "local",
@@ -117,15 +122,14 @@ test("Default extraction fixture is not labelled live Gemini", () => {
     validationOutcome: "valid",
     provenanceMode: "fictional-local",
   };
-  const label = getGeminiLabel(defaultProvenance);
-  assert.strictEqual(label, GEMINI_LABELS.localFixture);
-  assert.notStrictEqual(label, GEMINI_LABELS.liveValidated);
+  const label = getExtractionProviderLabel(defaultProvenance);
+  assert.strictEqual(label, EXTRACTION_LABELS.localFixture);
   assert.ok(!label.includes("live"), `Local fixture label must not contain 'live': ${label}`);
 });
 
-// ── Test 2: Default extraction fixture uses local/fictional provenance ──
+// ── Test 2: Default extraction fixture uses local/demo provenance ──
 
-test("Default extraction fixture uses local/fictional provenance", () => {
+test("Default extraction fixture uses local/demo provenance", () => {
   const defaultProvenance = {
     evidenceSource: "local-fixture",
     provider: "local",
@@ -134,10 +138,10 @@ test("Default extraction fixture uses local/fictional provenance", () => {
     validationOutcome: "valid",
     provenanceMode: "fictional-local",
   };
-  const label = getGeminiLabel(defaultProvenance);
-  assert.strictEqual(label, GEMINI_LABELS.localFixture);
-  assert.ok(label.includes("Fictional"), `Expected 'Fictional' in label: ${label}`);
-  assert.ok(label.includes("local"), `Expected 'local' in label: ${label}`);
+  const label = getExtractionProviderLabel(defaultProvenance);
+  assert.strictEqual(label, EXTRACTION_LABELS.localFixture);
+  assert.ok(label.includes("Local"), `Expected 'Local' in label: ${label}`);
+  assert.ok(label.includes("fixture"), `Expected 'fixture' in label: ${label}`);
 });
 
 // ── Test 5: Atlas local fixture does NOT receive the live Atlas label ──
@@ -168,55 +172,45 @@ test("Atlas Sandbox live evidence + executed + no fallback → live label", () =
   assert.ok(label.includes("live Search/Verify"), `Expected 'live Search/Verify' in label: ${label}`);
 });
 
-test("Atlas production Search + executed + no fallback → production label", () => {
+test("Atlas production Search now falls back to offline label (production branch removed)", () => {
   const label = getAtlasLabel({
     evidenceSource: "atlas-production",
     provider: "atlas",
     executed: true,
     fallbackUsed: false,
   });
-  assert.strictEqual(label, ATLAS_UI_LABELS.productionSearch);
-  assert.ok(label.includes("reference"), "Production label must indicate reference-only");
+  assert.strictEqual(label, ATLAS_UI_LABELS.offlineFixture);
 });
 
-test("Gemini live evidence + valid + no fallback → live label", () => {
-  const label = getGeminiLabel({
-    evidenceSource: "gemini-live",
-    provider: "gemini",
+test("Extraction live success receives live MiniMax label", () => {
+  const label = getExtractionProviderLabel({
+    evidenceSource: "extraction-live",
+    provider: "openrouter",
     executed: true,
     fallbackUsed: false,
     validationOutcome: "valid",
   });
-  assert.strictEqual(label, GEMINI_LABELS.liveValidated);
-  assert.ok(label.includes("Direct Gemini"), `Expected 'Direct Gemini' in label: ${label}`);
-  assert.ok(label.includes("live validated"), `Expected 'live validated' in label: ${label}`);
+  assert.strictEqual(label, EXTRACTION_LABELS.liveExtraction);
 });
 
-test("Gemini live evidence label matches verified evidence file", () => {
-  const evidencePath = path.join(ROOT, "smoke-tests", "gemini", "results", "results-gemini-3.7-flash-success.json");
+test("Historical Gemini evidence file still valid (category B, untouched content)", () => {
+  const evidencePath = path.join(ROOT, "smoke-tests", "extraction", "results", "results-gemini-3.7-flash-success.json");
   const evidence = JSON.parse(fs.readFileSync(evidencePath, "utf8"));
   assert.strictEqual(evidence.outcome, "success");
   assert.strictEqual(evidence.conclusion.fallbackUsed, false);
   assert.strictEqual(evidence.conclusion.schemaValidation, "valid");
-
-  const label = getGeminiLabel({
-    evidenceSource: "gemini-live",
-    fallbackUsed: evidence.conclusion.fallbackUsed,
-    validationOutcome:
-      evidence.conclusion.schemaValidation === "valid" ? "valid" : "invalid",
-  });
-  assert.strictEqual(label, GEMINI_LABELS.liveValidated);
 });
 
 // ── Test 4: Gemini live with fallbackUsed:true does NOT receive live label ──
 
-test("Gemini fallbackUsed=true → not live label even if evidenceSource is gemini-live", () => {
-  const label = getGeminiLabel({
-    evidenceSource: "gemini-live",
+test("Extraction fallbackUsed=true → unavailable label", () => {
+  const label = getExtractionProviderLabel({
+    evidenceSource: "extraction-live",
+    executed: true,
     fallbackUsed: true,
     validationOutcome: "valid",
   });
-  assert.notStrictEqual(label, GEMINI_LABELS.liveValidated);
+  assert.strictEqual(label, EXTRACTION_LABELS.unavailable);
 });
 
 // ── Test 7: Nosana fallback always includes 'not Nosana evidence' ──
@@ -259,7 +253,7 @@ test("Missing provenance falls back conservatively for Nosana", () => {
   assert.strictEqual(getNosanaLabel({}), NOSANA_UI_LABELS.localFallback);
 });
 
-test("Contradictory provenance (local-fixture + executed=true) → conservative Gemini label", () => {
+test("Contradictory provenance (local-fixture + executed=true) → local fixture label", () => {
   const label = getGeminiLabel({
     evidenceSource: "local-fixture",
     provider: "gemini",
@@ -267,7 +261,7 @@ test("Contradictory provenance (local-fixture + executed=true) → conservative 
     fallbackUsed: false,
     validationOutcome: "valid",
   });
-  assert.notStrictEqual(label, GEMINI_LABELS.liveValidated);
+  assert.strictEqual(label, GEMINI_LABELS.localFixture);
 });
 
 test("Contradictory provenance falls back conservatively for Atlas", () => {
@@ -306,12 +300,12 @@ test("Browser demo-data fixture has no live-provider claim in extraction metadat
   assert.strictEqual(extraction.syntheticDemo, true);
   // The fixture itself must not claim to be live evidence
   assert.ok(
-    !extraction.evidenceSource || extraction.evidenceSource !== "gemini-live",
-    "Fixture extraction must not have evidenceSource: 'gemini-live'"
+    !extraction.evidenceSource || extraction.evidenceSource !== "extraction-live",
+    "Fixture extraction must not have evidenceSource: 'extraction-live'"
   );
 });
 
-test("getDefaultExtraction() in source uses local-fixture, not gemini-live", () => {
+test("getDefaultExtraction() in source uses local-fixture, not extraction-live", () => {
   const fixturesPath = path.join(ROOT, "app", "src", "data", "fixtures.ts");
   const source = fs.readFileSync(fixturesPath, "utf8");
   // The getDefaultExtraction function must set evidenceSource to 'local-fixture'
@@ -321,8 +315,8 @@ test("getDefaultExtraction() in source uses local-fixture, not gemini-live", () 
   );
   // It must NOT set evidenceSource to 'gemini-live'
   assert.ok(
-    !source.includes("evidenceSource: 'gemini-live'"),
-    "getDefaultExtraction must NOT set evidenceSource: 'gemini-live'"
+    !source.includes("evidenceSource: 'extraction-live'"),
+    "getDefaultExtraction must NOT set evidenceSource: 'extraction-live'"
   );
 });
 
@@ -382,8 +376,16 @@ test("No raw Gemini response payload in browser bundle", () => {
   }
 });
 
-test("Nosana risk result JSON uses local-fallback, not nosana-evidence", () => {
-  const nosanaResultPath = path.join(ROOT, "app", "public", "nosana-risk-result.json");
+test("Nosana offline browser fixture uses local-fallback, not nosana-evidence", () => {
+  // Offline tests must not depend on app/public/nosana-risk-result.json, which is
+  // the live runtime file the browser loads after a successful Nosana job.
+  const nosanaResultPath = path.join(
+    ROOT,
+    "smoke-tests",
+    "nosana",
+    "fixtures",
+    "browser-local-fallback-result.json",
+  );
   const data = JSON.parse(fs.readFileSync(nosanaResultPath, "utf8"));
   assert.strictEqual(data.evidenceSource, "local-fallback");
   assert.strictEqual(data.usedFallback, true);
@@ -395,12 +397,15 @@ test("Nosana risk result JSON uses local-fallback, not nosana-evidence", () => {
 // ── Test 12: Human-confirmation and no-write behavior preserved ──
 
 test("LABELS object uses local-fixture defaults, not offline-fixture", () => {
-  const labelsPath = path.join(ROOT, "app", "src", "data", "labels.ts");
+  /* Canonical source is now core/provenance/labels.ts */
+  const labelsPath = path.join(ROOT, "core", "provenance", "labels.ts");
   const source = fs.readFileSync(labelsPath, "utf8");
   // The LABELS object should use localFixture for geminiExtraction
   assert.ok(
-    source.includes("geminiExtraction: GEMINI_LABELS.localFixture"),
-    "LABELS.geminiExtraction must use GEMINI_LABELS.localFixture"
+    source.includes("extractionProvider: EXTRACTION_PROVIDER_LABELS.localFixture") ||
+      source.includes("geminiExtraction: EXTRACTION_PROVIDER_LABELS.localFixture") ||
+      source.includes("geminiExtraction: GEMINI_LABELS.localFixture"),
+    "LABELS must use localFixture default for extraction",
   );
   // The LABELS object should use localFixture for atlasAlternatives
   assert.ok(
@@ -410,20 +415,22 @@ test("LABELS object uses local-fixture defaults, not offline-fixture", () => {
 });
 
 test("FINAL_STATEMENT denies all write actions", () => {
-  const labelsPath = path.join(ROOT, "app", "src", "data", "labels.ts");
+  /* Canonical source is now core/provenance/labels.ts */
+  const labelsPath = path.join(ROOT, "core", "provenance", "labels.ts");
   const source = fs.readFileSync(labelsPath, "utf8");
   assert.ok(
     source.includes("No booking, payment"),
     "FINAL_STATEMENT must deny booking and payment"
   );
   assert.ok(
-    source.includes("fictional data"),
-    "FINAL_STATEMENT must indicate fictional data"
+    source.includes("local fixture data"),
+    "FINAL_STATEMENT must indicate local fixture data"
   );
 });
 
 test("DISABLED_MESSAGE enforces confirmation gate", () => {
-  const labelsPath = path.join(ROOT, "app", "src", "data", "labels.ts");
+  /* Canonical source is now core/provenance/labels.ts */
+  const labelsPath = path.join(ROOT, "core", "provenance", "labels.ts");
   const source = fs.readFileSync(labelsPath, "utf8");
   assert.ok(
     source.includes("Confirm itinerary first"),
@@ -446,30 +453,36 @@ test("Decision panel preserves noOrderCreated invariant", () => {
 
 // ── Test: Source labels.ts contains correct label strings ──
 
-test("labels.ts contains 'Direct Gemini 3.7 — live validated'", () => {
-  const labelsPath = path.join(ROOT, "app", "src", "data", "labels.ts");
+test("labels.ts contains 'Local fixture' (replaces old Direct Gemini label)", () => {
+  /* Canonical source is now core/provenance/labels.ts */
+  const labelsPath = path.join(ROOT, "core", "provenance", "labels.ts");
   const source = fs.readFileSync(labelsPath, "utf8");
   assert.ok(
-    source.includes("Direct Gemini 3.7 — live validated"),
-    "labels.ts must contain 'Direct Gemini 3.7 — live validated'"
+    source.includes("Local fixture"),
+    "labels.ts must contain 'Local fixture'"
   );
 });
 
-test("labels.ts contains 'Fictional itinerary — local demo fixture'", () => {
-  const labelsPath = path.join(ROOT, "app", "src", "data", "labels.ts");
+test("labels.ts uses MiniMax M3 live extraction label", () => {
+  const labelsPath = path.join(ROOT, "core", "provenance", "labels.ts");
   const source = fs.readFileSync(labelsPath, "utf8");
   assert.ok(
-    source.includes("Fictional itinerary — local demo fixture"),
-    "labels.ts must contain 'Fictional itinerary — local demo fixture'"
+    source.includes("MiniMax M3 via OpenRouter"),
+    "labels.ts must contain MiniMax M3 via OpenRouter live label",
+  );
+  assert.ok(
+    !source.includes("Source: Gemini"),
+    "labels.ts must not contain legacy Gemini live label",
   );
 });
 
-test("labels.ts contains 'Fictional alternatives — local demo fixture'", () => {
-  const labelsPath = path.join(ROOT, "app", "src", "data", "labels.ts");
+test("labels.ts contains 'Offline fallback' for Atlas offline label", () => {
+  /* Canonical source is now core/provenance/labels.ts */
+  const labelsPath = path.join(ROOT, "core", "provenance", "labels.ts");
   const source = fs.readFileSync(labelsPath, "utf8");
   assert.ok(
-    source.includes("Fictional alternatives — local demo fixture"),
-    "labels.ts must contain 'Fictional alternatives — local demo fixture'"
+    source.includes("Offline fallback"),
+    "labels.ts must contain 'Offline fallback'"
   );
 });
 

@@ -37,9 +37,9 @@
 
 | Provider | Safe Submission Wording | Forbidden Wording |
 |---|---|---|
-| Gemini | `OpenRouter temporary path — not direct Gemini validation`. Direct Gemini remains unexecuted. GEM-01 was executed via an OpenRouter temporary path with a synthetic fixture and is labelled accordingly. | Direct Gemini was tested, passed, or validated. |
-| Nosana | Offline boundary and fixtures only. Credential-free read-only validation, sanitization, and offline tests are implemented. No live Nosana execution, deployment, authentication, or network request occurred. | Deployed, authenticated, integrated live, or provider result. |
-| Atlas | Authentication succeeded via official Atlas Flight Booking Skill CLI (v0.3.12). Two live production searches returned real offers (PVG→NRT/HND: 5; SIN→BKK: 8 via ATL-LIVE-01). All reference-price only. Ticketing activation pending. No booking, payment, ticket, or order was created. Atlas Sandbox was not used. | Authenticated and executed via production Atlas. Sandbox not used. |
+| Gemini | Direct Gemini 3.7 live extraction succeeded via the Interactions API; schema-valid, `fallbackUsed: false`. Evidence: `smoke-tests/gemini/results/results-gemini-3.7-flash-success.json`. A subsequent re-verification attempt returned a transient error and was not retried. GEM-01 was executed via a historical OpenRouter temporary path with a synthetic fixture and is labelled accordingly. | Direct Gemini was not tested, passed, or validated. |
+| Nosana | Nosana live job completed and reconciled offline. Credential-free read-only validation, sanitization, and offline tests are implemented. Browser demo uses local fallback fixture. | Deployed, authenticated, or provider result beyond the single reconciled job. |
+| Atlas | Authentication succeeded via official Atlas Flight Booking Skill CLI (v0.3.12). Two live production searches returned real offers (PVG→NRT/HND: 5; SIN→BKK: 8 via ATL-LIVE-01). All reference-price only. Ticketing activation pending. No booking, payment, ticket, or order was created. Atlas Sandbox Search + Verify (ATL-SBX-SV-01) also completed (20 offers KUL→SIN; verify returned PRICE_CONFIRMATION_REQUIRED). | Authenticated and executed via production Atlas. Sandbox was used for Search + Verify. |
 | OpenRouter | Temporary path only; not direct Gemini validation. GEM-01 results are labelled and not transferable to the Gemini API. | Direct Gemini evidence. |
 
 ## Demo Recording
@@ -85,10 +85,11 @@ following are true:
   39-item browser acceptance walkthrough.
 - All required documentation assets are present and accurately describe the
   local demo, offline contract verification, and provider execution status.
-- Every provider claim is status-qualified: direct Gemini is unexecuted,
-  Nosana is offline-only, Atlas production authentication succeeded with
-  two live read-only searches (reference-price only, ticketing pending),
-  Atlas Sandbox was not used, and OpenRouter is a temporary path only.
+- Every provider claim is status-qualified: Direct Gemini 3.7 live extraction
+  succeeded via the Interactions API; Nosana live job completed and reconciled
+  offline; Atlas authentication succeeded with two live production searches
+  and one Sandbox Search + Verify (all reference-price only, ticketing
+  pending); OpenRouter is a historical temporary path only.
 - No credential, PII, raw provider output, or external URL appears in any
   artifact.
 - No booking, payment, reservation, ticket, order, verification, or other
@@ -119,11 +120,14 @@ The local React/Vite demo is ready for demonstration, as supported by
 `docs/stitchcheck-demo-readiness-report.md` (verdict: Ready). Documentation
 assets — including the README, slide deck outline, demo narrative video plan,
 evidence index, contract-alignment record, and Nosana integration boundary —
-are prepared and present in the repository. Direct Gemini remains unexecuted;
-live Nosana execution has not occurred and the offline boundary is
-credential-free; Atlas production authentication succeeded via the official
-Skill CLI with two live read-only searches returning real offers (all
-reference-price only, ticketing activation pending); Atlas Sandbox was not
-used. Each of these provider validations is separately gated and incomplete
-for full integration. Final submission has not been made; the Go/No-Go
-decision and Final Human Review remain for the human reviewer to complete.
+are prepared and present in the repository. Direct Gemini 3.7 live extraction
+succeeded via the Interactions API; a subsequent re-verification attempt
+returned a transient error and was not retried. Nosana live job was completed
+and reconciled offline (`riskScore: 0.2895`, `costUsd: 0.044`); the browser
+demo uses a local fallback fixture. Atlas production authentication succeeded
+via the official Skill CLI with two live read-only searches returning real
+offers (all reference-price only, ticketing activation pending). Atlas Sandbox
+Search + Verify also completed (20 offers KUL→SIN; verify returned
+PRICE_CONFIRMATION_REQUIRED). Each of these provider validations is separately
+gated. Final submission has not been made; the Go/No-Go decision and Final
+Human Review remain for the human reviewer to complete.

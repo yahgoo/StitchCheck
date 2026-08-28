@@ -40,15 +40,24 @@ smoke-tests/nosana/results/nosana-risk-result.json
 *.tmp
 *.temp
 .cache/
+:memory:.ses
 
 # ── Output artifacts (captures, demo builds, personal paths) ──
 output/
+.recordings/
+
+# ── Deck export: keep the build script, ignore rendered frames ──
+.tmp-deck-export/rendered/
+.tmp-deck-export/node_modules
+
+# ── Pre-commit rollback backup snapshots ──
+.rollback-*/
 
 # ── IDE / tool local state ──
 .cursor/
 .workbuddy-ai/
-.qoder/
+.qoder/*
+!.qoder/specs/
 
-# ── Presentation / large binary assets (not required to reproduce demo) ──
-*.key
-*.pptx
+# ── Presentation assets: deck files (*.key, *.pptx, *.pdf) are submission
+# artifacts and are intentionally tracked. ──

@@ -72,15 +72,15 @@
 **Core message:** Gemini extracts, Nosana assesses risk, Atlas searches alternatives — each has a distinct planned role.
 
 **On-slide content:**
-- **Gemini:** structured itinerary extraction from screenshots into editable fields.
-- **Nosana:** planned connection-risk workload returning a heuristic band/score with visible status. Local harness exists (fixtures, schema validator, workload skeleton). The Nosana smoke test was blocked before any network request due to missing SDK, credit account, and reviewed workload definition.
+- **Gemini:** structured itinerary extraction from screenshots into editable fields. Direct Gemini 3.7 live extraction succeeded via the Interactions API; the browser walkthrough uses a local fixture.
+- **Nosana:** planned connection-risk workload returning a heuristic band/score with visible status. Live job completed and reconciled offline (`riskScore: 0.2895`, `costUsd: 0.044`). Browser demo uses local fallback fixture.
 - **Atlas Sandbox:** planned read-only alternative search for safer flight options. Atlas production authentication succeeded; two live read-only production searches returned reference-price offers. Sandbox Search + Verify (ATL-SBX-SV-01) partially succeeded.
 - Locally demonstrated: extraction UI, risk placeholder states, alternatives placeholder states.
-- Awaiting live execution: direct Gemini, Nosana workload deployment and submission. Atlas production authentication and two live searches have succeeded; the demo panel remains a local placeholder labelled accordingly.
+- Awaiting live execution: Nosana workload deployment and submission. Direct Gemini 3.7 live extraction succeeded via the Interactions API; the browser walkthrough uses a local fixture. Atlas production authentication and two live searches have succeeded; the demo panel remains a local placeholder labelled accordingly.
 
 **Suggested visual:** A three-column table or card layout. Each column shows the service name, its role in one line, and a status badge: "Temporary path evidence" for Gemini, "Local placeholder" for Nosana, "Local placeholder" for Atlas (the demo panel IS a local placeholder, but Atlas production authentication and two live searches have succeeded; the demo panel remains a local placeholder labelled accordingly). Draw as an original diagram in the presentation tool.
 
-**Speaker note:** Each service has a clearly defined role. Gemini provides the structured extraction that feeds the review screen. Nosana is planned to deliver a heuristic risk assessment; the local harness exists but the smoke test was blocked before any network request — no workload, endpoint, SDK, or submission mechanism is in place yet. Atlas Sandbox is planned to return safer alternatives for comparison. Atlas production authentication succeeded and two live read-only searches returned reference-price offers; however, the demo panels remain local placeholders. Nosana live execution has not occurred. All risk data carries the label: Synthetic local placeholder — not Nosana evidence. All Atlas alternatives carry the label: Synthetic local placeholder — not Atlas Sandbox evidence.
+**Speaker note:** Each service has a clearly defined role. Gemini provides the structured extraction — Direct Gemini 3.7 live extraction succeeded via the Interactions API; the browser walkthrough uses a local fixture. Nosana live job was completed and reconciled offline; the browser demo uses a local fallback fixture. Atlas Sandbox is planned to return safer alternatives for comparison. Atlas production authentication succeeded and live read-only searches returned reference-price offers; however, the demo panels remain local placeholders. All risk data carries the label: Local fallback — not Nosana evidence. All Atlas alternatives carry the label: Demo alternatives — local demo fixture.
 
 ---
 
@@ -113,7 +113,7 @@
 5. Compare options and choose Keep or Switch.
 6. View the final statement: no booking or external action created.
 
-- Visible labels: `OpenRouter temporary path — not direct Gemini validation`, `Synthetic local placeholder — not Nosana evidence`, `Synthetic local placeholder — not Atlas Sandbox evidence`.
+- Visible labels: `Demo itinerary — local demo fixture`, `Local fallback — not Nosana evidence`, `Demo alternatives — local demo fixture`.
 
 **Suggested visual:** A numbered step list with a small screenshot thumbnail beside each step, captured from the local demo at each corresponding stage. Alternatively, a single wide screenshot showing the full scrollable page in the confirmed state with annotations pointing to each label and the decision panel.
 
@@ -127,13 +127,13 @@
 
 **On-slide content:**
 - Local React/Vite demo: **ready** — type-check, production build, and browser walkthrough all pass.
-- GEM-01 evidence: `OpenRouter temporary path — not direct Gemini validation`.
-- Direct Gemini: not yet executed. Pass/fail intentionally blank.
-- Nosana: local harness exists — smoke test blocked before any network request; not executed, not deployed. Evidence: `smoke-tests/nosana/results/2026-08-20T15-53-43Z/`.
+- GEM-01 evidence: `Historical temporary OpenRouter test path — not the active provider`.
+- Direct Gemini 3.7: live extraction validated via `ai.interactions.create`; schema-valid, `fallbackUsed: false`. A subsequent re-verification attempt returned a transient error and was not retried.
+- Nosana: live job completed and reconciled offline. `riskScore: 0.2895`, `riskBand: medium`, `costUsd: 0.044`. Browser demo uses local fallback fixture.
 - Atlas Sandbox: local fixtures only for demo panels. Atlas production: authentication succeeded; two live read-only searches succeeded (PVG→NRT/HND: 5 offers; SIN→BKK: 8 offers). Sandbox Search + Verify (ATL-SBX-SV-01) partially succeeded. Ticketing activation pending.
 - Atlas duplicate-booking guard: offline-only state machine for synthetic 318 scenarios; 48 tests passed; not live Atlas evidence.
 - Next goals: obtain human authorization and credentials for each service smoke test; begin submission assets (README, demo narrative, slide recording).
 
 **Suggested visual:** A status dashboard with three rows — one per service — each showing a progress indicator: Gemini at "temporary path done, direct pending", Nosana at "preparation only", Atlas at "preparation only". A fourth row shows "Local demo" fully green. Draw as an original diagram in the presentation tool.
 
-**Speaker note:** We have a working local demo that proves the review-first flow, the confirmation gate, and the Keep-or-Switch decision — the demo UI itself uses synthetic data and makes no live service calls. Separately, OpenRouter and Atlas production have been called outside the demo UI. The Nosana smoke test was intentionally blocked before any network request because no reviewed workload, submission mechanism, or target environment exists yet — this is valid evidence of a safe stop. The next phase is to complete the six Nosana prerequisites and obtain the separately required human authorization for each service smoke test. Direct Gemini, Nosana, and Atlas validation are independent gates that must each be passed before any live-integration claim can be made.
+**Speaker note:** We have a working local demo that proves the review-first flow, the confirmation gate, and the Keep-or-Switch decision — the demo UI itself uses synthetic data and makes no live service calls. Direct Gemini 3.7 live extraction was validated via the Interactions API. Nosana live job was completed and reconciled offline. Separately, OpenRouter and Atlas production have been called outside the demo UI. The Atlas offline duplicate-booking guard passed 48 tests but is offline-only — not live Atlas evidence. No booking, payment, reservation, ticket, order, verification, or cancellation occurred.

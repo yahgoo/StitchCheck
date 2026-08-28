@@ -1,0 +1,124 @@
+# StitchCheck — Make MiniMax M3 Extraction Visibly Real on the Primary Demo Path
+# Codex Agent — ANALYSIS + DESIGN SPEC ONLY. Do not write or modify application code.
+# Output: one new markdown design-spec document (or an addendum to the prior Welcome-screen
+# spec) that Cursor will implement afterward.
+
+## Context — the actual problem to solve
+
+There are currently two "sample" entry points on the Welcome screen:
+
+1. **"Try a sample itinerary"** — a structured-data shortcut. It loads a pre-built itinerary
+   directly and INTENTIONALLY SKIPS extraction. Because of this, MiniMax M3 always shows
+   "offline" on this path. This is correct/honest behavior given how the shortcut works, but
+   a judge clicking the FIRST or most obvious sample button and seeing "MiniMax M3: offline"
+   will very plausibly read that as a broken integration, not as intentional design — the app
+   gives them no context to tell the difference.
+2. **"Try sample itinerary screenshot"** — a second, less prominent option that actually runs
+   the real upload → extraction (MiniMax) → review → confirm pipeline, and should show MiniMax
+   as genuinely live.
+
+The core risk: if judges only click the first, more prominent button (which is the natural
+thing to do), they will never see MiniMax do anything, and will see it reported as "offline"
+— directly undermining a hackathon requirement to show the AI model's role clearly and make it
+"visibly essential" (this framing appears in prior project judging-criteria notes). This is
+a serious risk, not a cosmetic one: it could read as a non-functional or fake integration.
+
+## Your task
+
+### Step 1 — Confirm the current default/primary path behavior
+
+1. Re-confirm (or reuse findings if you already did this in the prior Welcome-screen spec
+   session) exactly which button is visually first/most prominent today, and which of the two
+   sample paths actually invokes MiniMax.
+2. Confirm there is no way today for a judge who only clicks the obvious/first button to see
+   MiniMax run at all.
+
+### Step 2 — Decide and specify the fix: which path should be primary
+
+Evaluate and recommend ONE of these approaches (do not implement — just recommend with
+reasoning, as this is a product decision Cursor will build exactly as specified):
+
+**Option A — Promote the screenshot/extraction demo to be the primary, most prominent sample
+button**, since it is the one that actually demonstrates MiniMax. Demote (but keep) the
+structured-data shortcut as a secondary "or, skip straight to results" fast-path option for
+users who don't care about seeing extraction.
+
+**Option B — Merge the two into one flow**: the "Try a sample itinerary" button always runs
+through real extraction (using the sample screenshot under the hood) rather than loading
+structured data directly, so there is only ONE sample entry point and it always demonstrates
+MiniMax. Evaluate whether this adds unacceptable latency/friction to the fast-demo path
+compared to the current instant structured-data shortcut, and weigh that against the risk of
+a judge never seeing MiniMax run at all.
+
+**Option C — Keep both paths, but make the choice and its consequence explicit and impossible
+to miss**: relabel the buttons so a judge cannot mistake which one shows AI extraction (e.g.
+"Try a sample itinerary — instant, skips AI extraction" vs. "Try a sample itinerary — see
+MiniMax M3 extract it live"), and ensure the provider-status bar/copy explicitly explains WHY
+MiniMax shows offline on the fast path rather than leaving it unexplained.
+
+State your recommendation with clear reasoning about hackathon-judging risk versus demo speed,
+referencing the actual judging-criteria concern (AI model must be "visibly essential," judges
+should see it early, per prior project notes) as the deciding factor. Given the stated goal —
+judges must see MiniMax actually extract data, and must never be able to mistake correct
+behavior for a bug — weight your recommendation toward whichever option makes that
+unambiguous, even if it costs a small amount of demo speed.
+
+### Step 3 — Specify the exact UI changes for the recommended option
+
+Whichever option you recommend, specify precisely:
+1. Exact button copy, ordering, and visual hierarchy on the Welcome screen (compatible with
+   the Stripe-inspired hierarchy already specified in the prior Welcome-screen redesign spec —
+   do not contradict that work, extend it).
+2. Exact loading/progress state copy while MiniMax is actually running (e.g. "MiniMax M3 is
+   reading your itinerary…") so a judge watching sees an active, visible extraction step, not
+   an instant jump — this loading state must reflect REAL extraction latency, not a
+   fabricated delay.
+3. Exact copy for the moment extraction completes, showing the extracted fields with a clear
+   "Extracted by MiniMax M3" or equivalent provenance tag on the review/correction screen, so
+   the connection between "I clicked this" and "MiniMax did this" is unmistakable.
+4. If any path still intentionally skips extraction (per your recommended option), exact
+   copy explaining why "MiniMax M3: offline" is correct and expected on that path — e.g. a
+   tooltip or inline note such as "Skipped — this fast path loads a ready-made itinerary
+   directly" so it can never be mistaken for a failure.
+5. Whether/how the compact "Live checks: N of 3 passed" bar's copy or placement should change
+   as a result — e.g. should it not appear at all until AFTER a path that could exercise all
+   3 providers has run, to avoid ever showing a confusing "1 of 3" or "2 of 3" before a judge
+   understands why.
+
+### Step 4 — Non-negotiable honesty constraint
+
+Whatever you recommend, MiniMax's status must always reflect what ACTUALLY happened — if a
+real extraction call fails or is rate-limited, the UI must show that honestly, never fake a
+"live" badge to make the demo look better. Your spec must explicitly state this constraint
+for Cursor to preserve.
+
+### Step 5 — Write the deliverable
+
+Create `docs/minimax-visibility-fix-spec-2026-08-28.md` (or extend the existing
+`docs/welcome-screen-stripe-redesign-spec-2026-08-28.md` with a clearly marked new section if
+you determine that's cleaner — your call, state which you did) containing:
+
+1. The confirmed current-state problem (Step 1 findings).
+2. Your recommended option (A, B, or C) with reasoning tied to judging risk.
+3. Exact button copy, hierarchy, loading-state copy, and provenance-tag copy (Step 3).
+4. The explicit honesty constraint (Step 4).
+5. A short "what a judge will now see, step by step" walkthrough proving the fix actually
+   solves the stated problem — i.e. narrate a judge clicking the primary button and seeing
+   MiniMax visibly do something, with real observed or realistically expected timing.
+
+## Constraints
+
+- Analysis and design-spec writing only. Do not modify, refactor, or write any application
+  code. Create exactly one new (or extended) markdown file.
+- Do not recommend fabricating, hardcoding, or forcing a "live" MiniMax status under any
+  circumstance — the fix must make REAL extraction visible, not fake a visual impression of it.
+- Your recommendation must be compatible with the existing Stripe-inspired Welcome-screen
+  hierarchy spec already produced — read that file first if it exists, and do not propose a
+  layout that contradicts it.
+- Do not propose changing what happens in Options/Recovery/Atlas — this is Welcome-screen and
+  extraction-visibility scope only.
+
+## Final output
+
+Return: the file path written, your recommended option (A/B/C) with a one-paragraph
+justification, and the "what a judge will now see" walkthrough as your executive summary.

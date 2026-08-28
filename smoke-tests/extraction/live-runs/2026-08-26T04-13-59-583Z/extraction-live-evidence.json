@@ -1,0 +1,14 @@
+{
+  "provider": "openrouter",
+  "model": "minimax/minimax-m3:free",
+  "status": "live-failed",
+  "executed": true,
+  "transport": "openrouter",
+  "visionSupportConfirmed": true,
+  "correlationId": "extract-1787717639583",
+  "schemaValidated": false,
+  "fieldsExtracted": [],
+  "extractionStatus": "error",
+  "latencyMs": 21,
+  "timestamp": "2026-08-26T04:13:59.583Z"
+}

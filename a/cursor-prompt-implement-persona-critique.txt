@@ -1,0 +1,143 @@
+# StitchCheck — Implement Codex's Persona UX Critique (5 ranked improvements)
+# Cursor Agent — implement in the exact priority order below, lowest-effort first
+
+## Context
+
+Codex completed a live-observed + code-inferred persona critique of the Options screen,
+documented at `docs/persona-ux-critique-2026-08-26.md`. It roleplayed a price-conscious
+traveller (Priya) and a time-pressed traveller (Marcus) walking through the real running app,
+then produced 5 concrete, code-anchored improvements. Implement them in this exact order —
+each cites the real file/function to build on, so there is no ambiguity about where the work
+goes.
+
+## Absolute constraints
+
+- Do not touch Atlas write routes, Nosana execution, extraction logic, or route-continuity
+  snapshot logic.
+- Do not invent a new "best value" composite score anywhere — every ranking must be a direct,
+  explainable function of `total_price` and/or `offer_id`, exactly as Codex specified.
+- Do not permanently hide any of the 20 raw alternatives — collapse-by-default must always
+  have a working "See more" expand, mirroring the existing pattern.
+- Do not weaken the final "Submit switch request" confirmation or the "No booking, payment,
+  reservation, or order created" disclosure — these must remain exactly as-is per the "What
+  NOT to change" section of the critique doc.
+- Do not weaken any existing test to force a pass.
+- Do not touch video/narration/subtitle files.
+- Do not commit/push.
+
+## Implementation order (from the critique doc, effort-ordered)
+
+### 1. Price-sort the raw "Live Atlas alternatives" list (Effort: Small)
+
+Sort the 20-card list ascending by `AtlasRawOffer.total_price`, tie-break by `offer_id`
+lexicographic — this is exactly the existing `OFFER_SELECTION_RULE` already used by
+`selectOffersForPreview` in `app/src/atlas/unbooked-previews.ts`. Apply the same rule to the
+raw alternatives list in `app/src/App.tsx` (wherever `alternatives.map(...)` currently renders
+them unsorted). Confirm live: AK701 (USD 21.80) should now render first, not eighth.
+
+### 2. Collapse the raw 20-card list with "See more live alternatives (N)" (Effort: Medium)
+
+Reuse the exact `expanded` state, `remaining.length`, `aria-expanded`, and
+featured/remaining rendering pattern already implemented in
+`app/src/components/UnbookedTicketPreviewLegSection.tsx`. Show a small price-sorted leading
+set by default (match the existing preview pattern's count, e.g. top 1 featured + "See more
+live alternatives (N)" for the rest, or top 3 if that matches the leg-preview convention more
+closely — check which the existing component actually does and mirror it exactly for
+consistency). Ordering must come from the same `total_price`/`offer_id` rule as Step 1.
+
+### 3. Label the first sorted card as the lowest-listed price (Effort: Small)
+
+After sorting, label the first card clearly as the lowest-priced option shown (e.g. "Lowest
+price shown" badge/text) — derived purely from its position after the real sort, not a new
+score. Keep its existing `availabilityLabel` (mapped from `bookable`/`price_status` via
+`mapOfferToAlternative` in `app/src/atlas/adapter.ts`) untouched, so the label never implies
+verification or booking that hasn't happened.
+
+### 4. Merge Verify + Switch into one "Verify and select plan" action (Effort: Large)
+
+This is the highest-risk change — read it carefully before implementing:
+- Use the existing `handleVerifyOffer(offerId)` and `VerifySummary.status`/`currentPrice`/
+  `currency` in `app/src/App.tsx` / `app/src/atlas/adapter.ts`.
+- The new combined button calls `handleVerifyOffer(offerId)` first. Only call
+  `setDecision('switch')` if `mapVerifyResponse(...).status === 'success'`.
+- If verify fails or returns a price change, show that outcome honestly (do not silently
+  proceed to select the plan) — the traveller should see the real verify result before any
+  selection state changes.
+- Show the verified `currentPrice` when available.
+- The existing final "Submit switch request" confirmation step must remain completely
+  unchanged — this only removes the earlier redundant two-button choice per raw card, not the
+  final deliberate confirmation gate.
+- Add a test confirming: (a) selection never happens without a successful verify first, (b) a
+  failed/changed verify never silently becomes a switch, (c) "Request submitted — awaiting
+  verified supplier outcome" still appears exactly as today with no "Booked"/"Switched" claim.
+
+### 5. De-emphasize the blank "Arrival impact" line on the recommended card (Effort: Small)
+
+Conditionally omit the `Arrival impact: —` line entirely when
+`recommendedPlan.tradeoffs.arrivalImpactMinutes === null`, rather than showing a blank value.
+`PlanCard` in `app/src/components/RecoveryPlanAnimation.tsx` already renders the same nullable
+field elsewhere — keep that expanded/detailed view showing the explicit "not available"
+state; only the compact featured card should omit the line rather than show a dash.
+
+## Tests
+
+For each of the 5 changes, add or update an offline test:
+1. Sort correctness test for the raw alternatives list (fixture with known mixed prices,
+   confirm ascending order + tie-break).
+2. Collapse/expand test (default count shown, "See more" reveals the rest, re-sorts hold).
+3. Lowest-price label test (confirms it always lands on the actual first sorted item, not a
+   hardcoded position).
+4. Verify-then-select test per the 3 conditions listed in Step 4.
+5. Recommended-card omission test (confirms the line is absent when null, present with a real
+   value otherwise; confirms the detailed recovery view still shows "not available" honestly).
+
+Also re-run and confirm no regression in:
+- `unbooked-ticket-preview-offline-tests.mjs`
+- `cross-provider-invariant-tests.mjs`
+- `live-mode-banned-words-tests.mjs`
+- `traveller-flow-ui-tests.mjs`
+- `screen-consolidation-offline-tests.mjs`
+- `provider-status-model-offline-tests.mjs`
+
+## Full regression check
+
+```bash
+npm run typecheck
+npm run build
+```
+
+Run the full `smoke-tests/` suite and report pass/fail counts.
+
+## Live check (both personas)
+
+Restart the dev server, run "Try a sample itinerary" through to Options, and confirm:
+
+1. **Priya's fix:** AK701 (USD 21.80) or whichever offer is truly cheapest now appears first,
+   labelled as the lowest price, without scrolling through 20 unsorted cards.
+2. **Marcus's fix:** the raw alternatives list starts collapsed with a clear "See more"
+   expand; the recommended card no longer shows a blank arrival-impact dash; selecting a raw
+   offer requires only one combined action before the final "Submit switch request" gate.
+3. Confirm the final "No booking, payment, reservation, or order created" disclosure and the
+   "Request submitted — awaiting verified supplier outcome" copy are unchanged.
+
+## Final report
+
+Return, per improvement (1–5): what changed, file(s) touched, and live confirmation. Then:
+
+1. Full test results (new + regression).
+2. Typecheck/build results.
+3. Confirmation none of the "What NOT to change" items from the critique doc were altered.
+4. Confirmation no fabricated ranking/score was introduced anywhere.
+5. Confirmation no data was permanently hidden.
+
+End with:
+
+```text
+PRICE_SORT_STATUS = <IMPLEMENTED | BLOCKED: reason>
+COLLAPSE_EXPAND_STATUS = <IMPLEMENTED | BLOCKED: reason>
+LOWEST_PRICE_LABEL_STATUS = <IMPLEMENTED | BLOCKED: reason>
+VERIFY_SELECT_MERGE_STATUS = <IMPLEMENTED | DEFERRED: reason | BLOCKED: reason>
+ARRIVAL_IMPACT_OMISSION_STATUS = <IMPLEMENTED | BLOCKED: reason>
+ALL_REGRESSION_STATUS = <ALL_PASS | FAILURES: list>
+WHAT_NOT_TO_CHANGE_PRESERVED = <YES | NO: list what changed>
+```

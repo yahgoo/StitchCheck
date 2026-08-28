@@ -36,10 +36,10 @@ The checker verifies the presence of exact evidence labels:
 
 ### Provider Boundaries
 The checker verifies that provider boundary statements remain present:
-- Direct Gemini remains unexecuted
-- Nosana remains unexecuted and undeployed
-- Atlas remains unauthenticated and unexecuted
-- OpenRouter is temporary-path evidence only, not direct Gemini validation
+- Historical Gemini evidence is preserved under `smoke-tests/extraction/`; the active ready-made demo does no extraction and shows MiniMax offline.
+- Historical Nosana evidence is reconciled; the runtime browser fixture is a permitted dry-run preview with `jobId: null`, not a submitted workload.
+- Historical Atlas Sandbox Search→Verify evidence returned 20 offers and then `PRICE_CONFIRMATION_REQUIRED` with no write; the Aug 28 run failed during environment switching and is not fresh evidence.
+- The browser demo remains offline and uses clearly labelled local fixtures.
 
 ### Confirmation Gate
 The checker verifies the confirmation-gate wording:

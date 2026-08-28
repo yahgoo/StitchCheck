@@ -1,4 +1,4 @@
-import { getGeminiLabel } from '../data/labels';
+import { DataSourceTag } from './DataSourceTag';
 import type { ExtractionResult, FlightLeg } from '../data/types';
 
 interface Props {
@@ -85,15 +85,13 @@ export function ItineraryReview({
   const canConfirm = allPopulated && !confirmed;
 
   if (confirmed) {
-    const geminiLabel = getGeminiLabel(extraction);
     return (
       <section className="sc-itinerary-review sc-itinerary-review--confirmed" aria-label="Confirmed itinerary">
         <h2>✓ Itinerary Confirmed</h2>
-        <p className="sc-source-label">{geminiLabel}</p>
+        <DataSourceTag source="local-fixture" />
         <p>
           The itinerary has been confirmed. Risk and alternatives panels are now
-          available. <strong>No external service call was made.</strong> All
-          downstream data is local fixture content.
+          available.
         </p>
         <div className="sc-summary-grid">
           <div className="sc-summary-item">
@@ -126,9 +124,9 @@ export function ItineraryReview({
   return (
     <section className="sc-itinerary-review" aria-label="Review extracted itinerary">
       <h2>Review Extracted Itinerary</h2>
-      <p className="sc-source-label">{getGeminiLabel(extraction)}</p>
+      <DataSourceTag source="local-fixture" />
       <p>
-        The following itinerary fields were extracted from your fictional test
+        The following itinerary fields were extracted from your demo test
         itinerary. All fields are editable. Please review and correct any
         errors before confirming.
       </p>

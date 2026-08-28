@@ -1,0 +1,13 @@
+{
+  "eventType": "polling",
+  "recordedAt": "2026-08-28T13:39:50.453Z",
+  "phase": "poll",
+  "jobId": "8CfUkxFgZnPpC5kxiphD1kozwiJeLYBC4KB33bKPAEp1",
+  "market": "7AtiXMSH6R1jjBxrcYjehCkkSF7zvYWte63gwEDBcGHq",
+  "ipfsHash": "QmPF9E4NZyfu44m2eNHuHZufJ4cccoAPBkidcrJs6QEQVm",
+  "creditsUsed": 44,
+  "costUsd": 0.044,
+  "reservationId": "737d1513-c2c9-423d-9ae9-88ca9d205ed0",
+  "project": "7LB623XexGGLN4b9nbiGvQXrQAnBaYeaJzaPtVfrL5fG",
+  "submittedAt": "2026-08-28T13:39:46.019Z"
+}

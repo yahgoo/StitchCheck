@@ -1,0 +1,25 @@
+{
+  "provider": "gemini",
+  "status": "live-failed",
+  "executed": true,
+  "fallbackUsed": true,
+  "model": "gemini-3.6-flash",
+  "apiStyle": "generateContent",
+  "correlationId": "gemini-1787668195500",
+  "schemaValidated": false,
+  "extractionStatus": "error",
+  "uiLabelObserved": "Gemini · unavailable",
+  "failureClassification": "fast non-retryable provider-side rejection (~341ms, no retry per adapter policy): authentication (HTTP 401/403, invalid/expired key) OR model_not_found (HTTP 404); transient/network excluded. Exact sanitized message exists only in the extract response body (validationMessages/missingFields/_diagnostic.errorCategory) held by the Browser agent — the dev-server terminal logs nothing for the extract path.",
+  "diagnostics": {
+    "responseHttp": 200,
+    "responseTimeMsApprox": 341,
+    "retryAttempted": false,
+    "serverTerminalGeminiLogs": "none (handler/adapter emit no console output on the extract path; only adapter-load failures are logged, and the adapter loaded successfully)",
+    "networkReachability": "generativelanguage.googleapis.com reachable without credentials (DNS 3ms, TCP connect 38ms, HTTP HEAD responded) — network issue excluded",
+    "adapterLogicBasis": "SAFETY_LIMITS.maxRetries=1 with >=2s backoff means a transient error would have taken >2000ms; ~341ms implies the adapter returned immediately via its _isAuthError or _isModelNotFoundError branches",
+    "callBudget": "maxCalls=1 per server lifetime; budget consumed by this single attempt"
+  },
+  "userCorrectionApplied": false,
+  "timestamp": "2026-08-25T14:29:55.500Z",
+  "notes": "Single live attempt per server lifetime limit; honest fallback displayed; no fixture substitution labeled as live. Selected fixture image (not a 1x1 placeholder) was sent to the extraction endpoint. No credentials, raw image bytes, authorization headers, or raw model responses are included in this file."
+}

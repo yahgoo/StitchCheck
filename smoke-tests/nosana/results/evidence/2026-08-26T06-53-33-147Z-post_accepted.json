@@ -1,0 +1,27 @@
+{
+  "eventType": "post_accepted",
+  "recordedAt": "2026-08-26T06:53:33.147Z",
+  "phase": "post",
+  "jobId": "fakeJobAddress123456",
+  "jobIdField": "job",
+  "market": "fakeMarketAddress",
+  "ipfsHash": "QmFakeIpfsHashForRegressionTest",
+  "creditsUsed": 5,
+  "costUsd": 0.001,
+  "reservationId": null,
+  "project": null,
+  "responseKeys": [
+    "job",
+    "credits",
+    "ipfsResult"
+  ],
+  "rawShape": {
+    "job": "string",
+    "credits": {
+      "creditsUsed": "number",
+      "costUSD": "number"
+    },
+    "ipfsResult": "string"
+  },
+  "submittedAt": "2026-08-26T06:53:33.145Z"
+}
