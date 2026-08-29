@@ -70,6 +70,23 @@ The default browser launch (`DATA_MODE=offline`) runs fully offline from local f
 
 Evidence: `output/atlas-sandbox-evidence-2026-08-29.jsonl` (orderNo redacted by the secret scanner), `docs/demo-video-script-3min.md`.
 
+## Demo Assets
+
+- **Presentation deck (HTML):** [`deck/index.html`](deck/index.html) — 10 slides, printable to PDF via browser print-to-PDF
+- **Deck PDF:** [StitchCheck-Deck-Daytona-Nosana-10-Slides.pdf](deck/StitchCheck-Deck-Daytona-Nosana-10-Slides.pdf) — export from `deck/index.html`
+- **Demo video:** Local artifact — see [Video Artifacts](#video-artifacts) section below. Not yet uploaded to an external platform.
+
+## Mock Ticketing
+
+The repo includes a fully functional mock ticketing flow that runs against the Atlas Sandbox API — **no real bookings, payments, or tickets**.
+
+- **Pipeline:** Search → Verify → Order → Pay → Ticketed
+- **Safety:** All write endpoints are fail-closed by default (`ATLAS_SANDBOX_WRITES_ENABLED=false`, `ATLAS_WRITES_ENABLED=false`). The sandbox rehearsal succeeded (order `TESTA20260829181717829`, PNR `S30798`, terminal `TICKETED`) — exclusively inside the Atlas Sandbox environment.
+- **Evidence:** `output/atlas-sandbox-evidence-2026-08-29.jsonl` (bookingId `book_ae786a2307f7d670b2f114fd`)
+- **Implementation:** `scripts/atlas-sandbox-writes.mjs`, `app/src/components/SandboxOrderPanel.tsx`, `scripts/sandbox-write-gate-tests.mjs`
+
+See the "Mock Ticketing Flow" slide (slide 8) in the deck for the full safety gate chain.
+
 ## Quantified metric (honest and traceable)
 
 > The single price-verified fare (`off_11db11bad81302c295da16f1`) moved **$64.38 → $203.99, +217%**, between Search and Verify.
