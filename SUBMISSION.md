@@ -10,7 +10,7 @@ StitchCheck helps budget travellers understand the hidden risk of stitching two 
 
 ## Key Features
 
-- **Screenshot-to-structured-data extraction** — fictional test itinerary images are parsed into editable flight fields (origin, destination, dates, airlines, flight numbers, times, connection duration). Direct Gemini 3.7 live extraction validated.
+- **Screenshot-to-structured-data extraction** — fictional test itinerary images are parsed into editable flight fields (origin, destination, dates, airlines, flight numbers, times, connection duration). MiniMax M3 (via OpenRouter) live extraction validated.
 - **Human confirmation gate** — downstream panels remain locked until the traveller explicitly reviews and confirms the itinerary. Correction notes track every field change.
 - **Connection risk assessment** — heuristic risk band and score derived from historical delay data, with Monte Carlo simulation and clear disclaimers.
 - **Safer alternatives display** — side-by-side comparison of the current self-transfer plan against single-ticket alternatives.
@@ -23,7 +23,7 @@ StitchCheck helps budget travellers understand the hidden risk of stitching two 
 | Component | Technology | Provider |
 |---|---|---|
 | Frontend | React 19, Vite 8, TypeScript 7 | — |
-| Extraction | Structured JSON from fictional test itinerary images | Direct Google Gemini 3.7 (live extraction validated via `ai.interactions.create`, schema-validated, `fallbackUsed: false`) |
+| Extraction | Structured JSON from fictional test itinerary images | MiniMax M3 via OpenRouter (`minimax/minimax-m3:free`; live extraction validated, schema-validated, `fallbackUsed: false`) |
 | Risk estimation | Heuristic Monte Carlo simulation | Nosana (live job accepted and completed; result recovered from `opStates.logs.log`; `costUsd: 0.044`; risk output schema-valid; browser demo uses local fallback fixture) |
 | Alternatives | Read-only flight search | Atlas Sandbox (search + verify completed; ticketing activation-gated) |
 | Narration | Web Speech API | Browser-local only |
@@ -65,7 +65,7 @@ npm run verify:offline
 
 ## Known Limitations
 
-1. **Direct Gemini 3.7 live extraction validated.** Evidence: `smoke-tests/gemini/results/results-gemini-3.7-flash-success.json`. `ai.interactions.create` succeeded, schema-validated, `fallbackUsed: false`. A subsequent re-verification attempt returned a transient error and was not retried. Gemini 3.6 was live-verified previously. GEM-01 was executed via a historical OpenRouter temporary path.
+1. **MiniMax M3 (via OpenRouter) live extraction validated.** Evidence: `demo-evidence/2026-08-29-submission-final/00-report.txt`. Extraction succeeded, schema-validated, `fallbackUsed: false`, and the `Extracted by MiniMax M3` provenance tag is derived from real extraction state.
 2. **Nosana live job completed.** Job `BNZTHNoARu98EdaqPU5WiCaFWZAyU1e9NYCZJj2h1afY` accepted and completed; result recovered from `opStates.logs.log`; `costUsd: 0.044`; risk output schema-valid. Browser demo still uses local fallback fixture.
 3. **Atlas ticketing activation-gated.** Search and verify completed successfully. Ticketing/booking is blocked pending human activation.
 4. **Browser demo risk and alternatives panels use offline fixtures.** Risk and alternatives panels display local fixtures, not live provider results.
@@ -76,9 +76,7 @@ npm run verify:offline
 
 | Capability | Status | Displayed Label |
 |---|---|---|
-| Gemini extraction (direct 3.7) | Live extraction validated via `ai.interactions.create` | `Direct Gemini 3.7 — live validated` |
-| Gemini extraction (direct 3.6) | Live extraction verified previously | `Direct Gemini 3.7 — live validated` |
-| Gemini extraction (OpenRouter path) | Historical temporary smoke-test only | `Historical temporary OpenRouter test path — not the active provider` |
+| Extraction (MiniMax M3 via OpenRouter) | Live extraction validated, schema-validated, no fallback | `Extracted by MiniMax M3` |
 | Nosana risk workload | Live job completed; result validated | `Nosana evidence — remote job succeeded` (when showing reconciled live evidence); `Local fallback — not Nosana evidence` (when showing browser local fixture) |
 | Atlas Sandbox search + verify | Completed (20 offers, KUL→SIN) | `Atlas Sandbox — live Search/Verify` (when showing sandbox evidence); `Offline fixture — not Atlas Sandbox evidence` (when showing local fixture) |
 | Atlas production search | Completed (8 offers, SIN→BKK) | Reference-price only, `bookable: false` |
@@ -88,7 +86,7 @@ npm run verify:offline
 ## Security Confirmations
 
 - [x] **No API key is included in this repository.** `.env.example` contains placeholders only. `.env.local` is gitignored.
-- [x] **`GEMINI_API_KEY` is server-side only.** The browser bundle does not read, reference, or transmit this key.
+- [x] **`OPENROUTER_API_KEY` is server-side only.** The browser bundle does not read, reference, or transmit this key.
 - [x] **No bearer tokens, private keys, wallet secrets, or credentials are committed.**
 - [x] **No personal absolute file paths in committed source files.**
 - [x] **External writes require explicit user confirmation.** No UI handler, route, or button creates a booking, payment, order, or any write action. Atlas is read-only. Nosana has zero mutation operations.
