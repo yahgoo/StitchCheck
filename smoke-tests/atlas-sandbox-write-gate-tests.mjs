@@ -694,8 +694,8 @@ async function runTests() {
   {
     assertEqual(
       PASSENGER_CONTRACT_STATUS,
-      'BLOCKED_PENDING_SUPERVISED_REHEARSAL',
-      'passenger contract still BLOCKED_PENDING_SUPERVISED_REHEARSAL',
+      'VERIFIED_VIA_SUPERVISED_REHEARSAL_2026-08-29',
+      'passenger contract VERIFIED_VIA_SUPERVISED_REHEARSAL_2026-08-29',
     );
     // Capabilities endpoint reports execution NOT approved.
     const handler = createSandboxWriteHandler(PASS_ENV, createFailingCliSpy());
@@ -704,7 +704,7 @@ async function runTests() {
     const caps = res.getJson();
     assertEqual(caps?.executionApproved, false, 'capabilities executionApproved === false');
     assertEqual(caps?.writeExecution, 'disabled_pending_contract_approval', 'capabilities writeExecution disabled');
-    assertEqual(caps?.passengerContract, 'BLOCKED_PENDING_SUPERVISED_REHEARSAL', 'capabilities passenger contract blocked');
+    assertEqual(caps?.passengerContract, 'VERIFIED_VIA_SUPERVISED_REHEARSAL_2026-08-29', 'capabilities passenger contract verified');
   }
 
   /* ── Summary ─ */

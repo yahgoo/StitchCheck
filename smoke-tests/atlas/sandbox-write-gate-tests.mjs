@@ -714,7 +714,7 @@ async function runTests() {
           offers: [{
             offer_id: 'off_sandbox_1',
             segments: [
-              { departure_airport: 'KUL', arrival_airport: 'HAN' },
+              { departure_airport: 'CGK', arrival_airport: 'DPS' },
             ],
           }],
         },
@@ -728,7 +728,7 @@ async function runTests() {
       });
       const readMw = createAtlasProxyMiddleware(APPROVED_ENV, { execCliRead: readSpy });
       const searchRes = await callMiddleware(readMw, 'POST', '/api/atlas/search', {
-        origin: 'KUL', destination: 'HAN', depart: '2026-09-15', adults: 1, currency: 'USD',
+        origin: 'CGK', destination: 'DPS', depart: '2026-09-15', adults: 1, currency: 'USD',
       });
       assertEqual(searchRes._status, 200, 'mocked Search → 200');
       assertEqual(searchRes.getJson()?.searchId, 'srch_sandbox_1', 'mocked Search surfaces searchId');
@@ -758,7 +758,9 @@ async function runTests() {
       assert(spy.calls[0].args.join(' ').includes('order create --booking-id bk_happy --passengers-stdin --json'), 'exact order create CLI args');
       assertEqual(spy.calls[0].opts.timeoutMs, 20_000, 'order create 20s timeout');
       const stdinParsed = JSON.parse(spy.calls[0].stdin);
-      assertEqual(stdinParsed?.passengers?.[0]?.given_name, 'TESTTRAVELER', 'synthetic passenger delivered via stdin');
+      assertEqual(stdinParsed?.passengers?.[0]?.name, 'TESTTRAVELER/TESTTRAVELER', 'synthetic passenger delivered via stdin (passenger-input.md shape)');
+      assert(stdinParsed?.passengers?.[0]?.document?.number === 'SYNTHETIC00000001', 'nested synthetic document delivered via stdin');
+      assert(typeof stdinParsed?.contact?.name === 'string', 'contact block included in stdin payload');
       assert(!JSON.stringify(orderRes.getJson()).includes('conf-happy-1'), 'confirmationId NEVER sent to the browser');
 
       step(clock);

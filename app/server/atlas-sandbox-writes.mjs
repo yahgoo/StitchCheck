@@ -27,19 +27,18 @@ import { readBody, sendJson, sanitizeError, sanitizeResponse } from './atlas-pro
 
 /* ── Blocked-contract placeholders (spec Section 22) ── */
 
-/** Synthetic passenger stdin contract is BLOCKED pending the first
- *  supervised rehearsal. Nothing may consume passenger data until then. */
+/** Passenger stdin contract VERIFIED via supervised rehearsal
+ *  (sandbox order TESTA20260829181717829, bookingId book_ae786a2307f7d670b2f114fd,
+ *  PNR/ticket S30798, terminal TICKETED, 2026-08-29). */
 export const PASSENGER_CONTRACT_STATUS =
-  'BLOCKED_PENDING_SUPERVISED_REHEARSAL';
+  'VERIFIED_VIA_SUPERVISED_REHEARSAL_2026-08-29';
 
-// Placeholder for the exact synthetic-passenger stdin field names
-// (given_name/surname/...). The Skill's passenger-input.md has no
-// machine-readable local copy, so field names are intentionally NOT
-// finalized here (spec §7 BLOCKED item). When the contract is approved
-// after the first supervised rehearsal, only this constant changes.
+// Payload SHAPE follows the Skill's passenger-input.md one-time stdin
+// contract (name "FAMILY/GIVEN", birthday, nationality, nested document,
+// contact block); contract VERIFIED via supervised rehearsal 2026-08-29.
 const PASSENGER_STDIN_FIELD_NAMES = Object.freeze({
   status: PASSENGER_CONTRACT_STATUS,
-  fields: null, // BLOCKED — no field names until supervised rehearsal
+  fields: 'per-skill-passenger-input-md-shape-verified-2026-08-29',
 });
 void PASSENGER_STDIN_FIELD_NAMES;
 
@@ -196,26 +195,45 @@ export const SYNTHETIC_PASSENGER = Object.freeze({
   document_type: 'PP',
   document_number: 'SYNTHETIC00000001',
   document_country: 'JP',
+  document_expiry: '2030-12-31',
   email: 'test@example.com',
-  phone: '0000000000',
+  // Synthetic contact mobile in the documented 00{country_code}-{local}
+  // shape (rehearsal 2026-08-29: provider rejects unformatted mobile).
+  phone: '0081-9000000000',
 });
 
 /**
- * Builds the `--passengers-stdin` payload: the frozen synthetic
- * passenger merged with the validated traveler_id/passenger_type of
- * each requested traveler. Purely server-owned identity data.
+ * Builds the `--passengers-stdin` payload in the shape mandated by the
+ * Skill's passenger-input.md (`name` "FAMILY/GIVEN", `birthday`,
+ * `nationality`, nested `document`, top-level `contact`). Purely
+ * server-owned synthetic identity data; the validated traveler_id /
+ * passenger_type pairs from the request are carried through unchanged.
  */
 function buildPassengersStdinPayload(travelers) {
   const list =
     Array.isArray(travelers) && travelers.length > 0
       ? travelers
-      : [{ traveler_id: 'synthetic-traveler-1', passenger_type: 'ADT' }];
+      : [{ traveler_id: 'synthetic-traveler-1', passenger_type: 'adult' }];
   return {
     passengers: list.map((t) => ({
-      ...SYNTHETIC_PASSENGER,
       traveler_id: String(t.traveler_id).trim(),
+      name: `${SYNTHETIC_PASSENGER.surname}/${SYNTHETIC_PASSENGER.given_name}`,
       passenger_type: String(t.passenger_type).trim(),
+      gender: SYNTHETIC_PASSENGER.gender,
+      birthday: SYNTHETIC_PASSENGER.date_of_birth,
+      nationality: SYNTHETIC_PASSENGER.nationality,
+      document: {
+        type: SYNTHETIC_PASSENGER.document_type,
+        number: SYNTHETIC_PASSENGER.document_number,
+        issuing_country: SYNTHETIC_PASSENGER.document_country,
+        expires: SYNTHETIC_PASSENGER.document_expiry,
+      },
     })),
+    contact: {
+      name: `${SYNTHETIC_PASSENGER.surname}/${SYNTHETIC_PASSENGER.given_name}`,
+      email: SYNTHETIC_PASSENGER.email,
+      mobile: SYNTHETIC_PASSENGER.phone,
+    },
   };
 }
 
