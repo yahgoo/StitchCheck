@@ -75,8 +75,8 @@ test('3. Generated image exists and flight data matches Atlas-sourced fixture JS
   const assetPath = resolve(ROOT, 'app/src/assets/sample-itinerary-screenshot.png');
   assert(existsSync(publicPath), 'public PNG exists');
   assert(existsSync(assetPath), 'bundled asset PNG exists');
-  assert(screenshotData.firstLeg.flightNumber === 'AK701', 'leg1 flight from Atlas sandbox capture');
-  assert(screenshotData.secondLeg.flightNumber === 'TR624', 'leg2 flight from live walkthrough capture');
+  assert(screenshotData.firstLeg.flightNumber === 'QZ806', 'leg1 flight from Atlas sandbox capture (JKT→DPS)');
+  assert(screenshotData.secondLeg.flightNumber === 'QZ819', 'leg2 flight from Atlas sandbox capture (DPS→JKT)');
   assert(screenshotData.meta.sources.length === 2, 'Atlas source citations recorded');
 });
 

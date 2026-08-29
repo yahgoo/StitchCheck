@@ -2,7 +2,7 @@ import screenshotData from '../../../app-fixture-contracts/sample-itinerary-scre
 import type { ExtractionResult } from '../../../core/domain';
 
 /** Expected fields embedded in the sample itinerary screenshot (Atlas-sourced demo data). */
-export const SAMPLE_SCREENSHOT_ROUTE_LABEL = 'Kuala Lumpur → Singapore → Bangkok';
+export const SAMPLE_SCREENSHOT_ROUTE_LABEL = 'Jakarta → Denpasar → Jakarta';
 
 export const SAMPLE_SCREENSHOT_ATLAS_SOURCES = screenshotData.meta.sources;
 

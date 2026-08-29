@@ -53,9 +53,9 @@ test('3. Sample banner label on review screen', () => {
   );
 });
 
-test('4. Preflight-confirmed route uses KUL→SIN→BKK', () => {
-  assert(sampleSrc.includes("origin: 'KUL'") && sampleSrc.includes("destination: 'SIN'"), 'leg1 KUL→SIN');
-  assert(sampleSrc.includes("origin: 'SIN'") && sampleSrc.includes("destination: 'BKK'"), 'leg2 SIN→BKK');
+test('4. Supervised-rehearsal route uses CGK→DPS→CGK (Atlas Sandbox supported test route)', () => {
+  assert(sampleSrc.includes("origin: 'CGK'") && sampleSrc.includes("destination: 'DPS'"), 'leg1 CGK→DPS');
+  assert(sampleSrc.includes("origin: 'DPS'") && sampleSrc.includes("destination: 'CGK'"), 'leg2 DPS→CGK');
   assert(sampleSrc.includes('2026-10-01'), 'near-term preflight date');
 });
 

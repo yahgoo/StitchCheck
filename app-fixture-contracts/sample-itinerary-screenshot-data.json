@@ -1,22 +1,23 @@
 {
   "meta": {
-    "purpose": "Sample itinerary screenshot for upload/extraction demo — flight fields sourced from real Atlas Sandbox observations, not fabricated.",
+    "purpose": "Sample itinerary screenshot for upload/extraction demo — flight fields sourced from real Atlas Sandbox observations (2026-08-29 read-only searches, CGK↔DPS Jakarta–Denpasar supervised-rehearsal route), not fabricated.",
     "isRealBooking": false,
     "isLiveServiceEvidence": false,
     "demoArtifact": true,
     "sources": [
       {
         "leg": "first",
-        "file": "smoke-tests/atlas/results/sandbox-search-verify-2026-08-21T07-02-42-099Z.json",
-        "timestamp": "2026-08-21T07:02:39.232Z",
-        "label": "Atlas Sandbox · live Search (ATL-SBX-SV-01)",
-        "offerId": "off_c40664a66186272cd4ea9f39"
+        "file": "smoke-tests/atlas/live-app-runs/2026-08-29-route-swap/search-jkt-dps-2026-10-01.json",
+        "timestamp": "2026-08-29T08:13:33Z",
+        "label": "Atlas Sandbox · live Search observation (CGK→DPS, supervised rehearsal route)",
+        "offerId": "off_10bcfcfeb7c32bd0c137786c"
       },
       {
         "leg": "second",
-        "file": "docs/how-the-app-works-live-walkthrough-2026-08-26.md",
-        "timestamp": "2026-08-26",
-        "label": "Atlas Sandbox · live unbooked preview (SIN→BKK verified options)"
+        "file": "smoke-tests/atlas/live-app-runs/2026-08-29-route-swap/search-dps-jkt-2026-10-01.json",
+        "timestamp": "2026-08-29T08:58:28Z",
+        "label": "Atlas Sandbox · live Search observation (DPS→CGK return, unbooked preview)",
+        "offerId": "off_7b8afc2b1dda72e7a7303888"
       }
     ]
   },
@@ -25,23 +26,23 @@
     "FOR EXTRACTION TESTING ONLY — NOT A BOOKING OR RECEIPT"
   ],
   "departureDate": "2026-10-01",
-  "connectionDurationMinutes": 65,
+  "connectionDurationMinutes": 520,
   "firstLeg": {
-    "origin": "KUL",
-    "destination": "SIN",
-    "carrier": "AK",
-    "flightNumber": "AK701",
-    "departureTime": "06:10",
-    "arrivalTime": "07:15",
-    "priceDisplay": "USD 48.87"
+    "origin": "CGK",
+    "destination": "DPS",
+    "carrier": "QZ",
+    "flightNumber": "QZ806",
+    "departureTime": "06:00",
+    "arrivalTime": "09:00",
+    "priceDisplay": "USD 75.34"
   },
   "secondLeg": {
-    "origin": "SIN",
-    "destination": "BKK",
-    "carrier": "TR",
-    "flightNumber": "TR624",
-    "departureTime": "08:20",
-    "arrivalTime": "09:55",
-    "priceDisplay": "USD 107.10"
+    "origin": "DPS",
+    "destination": "CGK",
+    "carrier": "QZ",
+    "flightNumber": "QZ819",
+    "departureTime": "17:40",
+    "arrivalTime": "18:30",
+    "priceDisplay": "USD 60.79"
   }
 }

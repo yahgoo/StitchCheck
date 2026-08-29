@@ -164,12 +164,12 @@ test("No AAA in fixture extraction data", () => {
   assert.ok(extraction.secondLeg.destination !== "CCC", "Second leg destination must not be CCC");
 });
 
-test("Fixture uses coherent KUL-BKK-HAN route", () => {
+test("Fixture uses coherent CGK-DPS-CGK route", () => {
   const extraction = fixtureJson.uiStates.itineraryUnconfirmed.extractionResult;
-  assert.equal(extraction.firstLeg.origin, "KUL");
-  assert.equal(extraction.firstLeg.destination, "BKK");
-  assert.equal(extraction.secondLeg.origin, "BKK");
-  assert.equal(extraction.secondLeg.destination, "HAN");
+  assert.equal(extraction.firstLeg.origin, "CGK");
+  assert.equal(extraction.firstLeg.destination, "DPS");
+  assert.equal(extraction.secondLeg.origin, "DPS");
+  assert.equal(extraction.secondLeg.destination, "CGK");
 });
 
 /* ══════════════════════════════════════════════════════════
@@ -223,14 +223,14 @@ test("Onward option uses itineraryContext for second leg route", () => {
   );
 });
 
-test("Atlas success fixture uses KUL-BKK-HAN route", () => {
+test("Atlas success fixture uses CGK-DPS route", () => {
   const atlSuccess = JSON.parse(
     readFileSync(join(root, "smoke-tests/atlas/fixtures/result-atl-success.json"), "utf8"),
   );
   const routes = atlSuccess.searchResult.alternatives.map((a) => a.routeSummary);
   assert.ok(
-    routes.some((r) => r.includes("KUL") && r.includes("BKK") && r.includes("HAN")),
-    "Atlas success fixture alternatives must reference KUL-BKK-HAN route",
+    routes.some((r) => r.includes("CGK") && r.includes("DPS")),
+    "Atlas success fixture alternatives must reference the CGK-DPS route",
   );
 });
 

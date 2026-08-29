@@ -1,16 +1,16 @@
 import type { ExtractionResult } from '../../../core/domain';
 
-/** Preflight-confirmed sample route (2026-08-26): both legs verified live on Atlas Sandbox. */
+/** Supervised-rehearsal sample route (2026-08-29): CGK→DPS (Jakarta) is on the Atlas Sandbox supported test route list; legs verified live via read-only Search. */
 export const SAMPLE_ITINERARY_DEPARTURE_DATE = '2026-10-01';
 
-export const SAMPLE_ITINERARY_ROUTE_LABEL = 'Kuala Lumpur → Singapore → Bangkok';
+export const SAMPLE_ITINERARY_ROUTE_LABEL = 'Jakarta → Denpasar → Jakarta';
 
 export function getSampleItineraryExtraction(): ExtractionResult {
   return {
     extractionStatus: 'success',
     firstLeg: {
-      origin: 'KUL',
-      destination: 'SIN',
+      origin: 'CGK',
+      destination: 'DPS',
       departureDate: SAMPLE_ITINERARY_DEPARTURE_DATE,
       airline: 'Sample carrier',
       flightNumber: 'SC-101',
@@ -18,8 +18,8 @@ export function getSampleItineraryExtraction(): ExtractionResult {
       arrivalTime: '09:15',
     },
     secondLeg: {
-      origin: 'SIN',
-      destination: 'BKK',
+      origin: 'DPS',
+      destination: 'CGK',
       departureDate: SAMPLE_ITINERARY_DEPARTURE_DATE,
       airline: 'Sample carrier',
       flightNumber: 'SC-202',

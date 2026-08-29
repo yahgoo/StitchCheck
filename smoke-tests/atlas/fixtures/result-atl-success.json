@@ -10,7 +10,7 @@
     "alternatives": [
       {
         "offerReference": "display-only-reference-a1",
-        "routeSummary": "KUL → BKK → HAN",
+        "routeSummary": "CGK → DPS → CGK",
         "departureTime": "08:30",
         "arrivalTime": "16:10",
         "duration": "7h 40m",
@@ -22,7 +22,7 @@
       },
       {
         "offerReference": "display-only-reference-a2",
-        "routeSummary": "KUL → HAN direct",
+        "routeSummary": "CGK → DPS direct",
         "departureTime": "09:15",
         "arrivalTime": "13:05",
         "duration": "3h 50m",

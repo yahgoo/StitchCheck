@@ -132,10 +132,10 @@ export function computeRiskFromSeed(seed: RiskComputationSeed): RiskComputationR
    * Labels derive from the confirmed itinerary context when available,
    * ensuring cascade items reference the traveller's actual route. */
   const ctx = seed.itineraryContext;
-  const connectionAirport = ctx ? ctx.firstLegDestination : 'BKK';
+  const connectionAirport = ctx ? ctx.firstLegDestination : 'DPS';
   const onwardRoute = ctx
     ? `${ctx.secondLegOrigin} → ${ctx.secondLegDestination}`
-    : 'BKK → HAN';
+    : 'DPS → CGK';
 
   const statusForScore = (threshold: number): DependencyNodeStatus =>
     riskScore >= threshold ? 'at-risk' : 'ok';

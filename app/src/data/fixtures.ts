@@ -141,7 +141,7 @@ export async function loadAtlasEvidence(): Promise<AtlasEvidenceEnvelope | null>
 }
 
 /* ── Default extraction (unconfirmed itinerary) ──
- * The fixture data uses a coherent KUL → BKK → HAN route.
+ * The fixture data uses a coherent JKT → DPS → JKT route.
  * The browser walkthrough itself uses this local fixture and makes no provider call.
  * Provenance is labelled accordingly: local-fixture. */
 export function getDefaultExtraction(): ExtractionResult {

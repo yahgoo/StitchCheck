@@ -5,27 +5,10 @@
 import { execCli } from '../app/server/atlas-proxy.mjs';
 import {
   selectOffersForPreview,
-  verifyOffersSequentially,
   VERIFY_DELAY_MS,
 } from '../app/src/atlas/unbooked-previews-core.mjs';
 
 const DEPART = '2026-10-01';
-
-function mapOfferFromAtlas(offer) {
-  return {
-    offerReference: offer.offer_id,
-    routeSummary: `${offer.segments?.[0]?.departure_airport ?? '???'} → ${offer.segments?.[offer.segments.length - 1]?.arrival_airport ?? '???'}`,
-    departureTime: '—',
-    arrivalTime: '—',
-    priceDisplay: `${offer.currency} ${offer.total_price}`,
-    currency: offer.currency,
-    connectionType: (offer.segments?.length ?? 1) <= 1 ? 'nonstop' : `${(offer.segments?.length ?? 1) - 1}-stop`,
-  };
-}
-
-function mapVerifyFromAtlas(offerId, response) {
-  return { offerId, status: response.status };
-}
 
 async function atlasSearchViaCli({ origin, destination, depart }) {
   await execCli(['environment', 'use', 'sandbox', '--json']);
@@ -59,6 +42,7 @@ async function verifyFirstSuccess(offers) {
 }
 
 const pairs = [
+  { name: 'CGK→DPS then DPS→CGK', leg1: ['CGK', 'DPS'], leg2: ['DPS', 'CGK'] },
   { name: 'KUL→SIN then SIN→BKK', leg1: ['KUL', 'SIN'], leg2: ['SIN', 'BKK'] },
   { name: 'KUL→BKK then BKK→HAN', leg1: ['KUL', 'BKK'], leg2: ['BKK', 'HAN'] },
   { name: 'KUL→BKK then BKK→SIN', leg1: ['KUL', 'BKK'], leg2: ['BKK', 'SIN'] },

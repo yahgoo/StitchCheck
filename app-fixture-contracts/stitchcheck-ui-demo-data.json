@@ -1,11 +1,11 @@
 {
   "meta": {
-    "filePurpose": "Local offline demo data for the StitchCheck UI traveller flow. Uses a coherent KUL-BKK-HAN route.",
+    "filePurpose": "Local offline demo data for the StitchCheck UI traveller flow. Uses a coherent CGK-DPS-CGK route (2026-08-29: aligned with the Atlas Sandbox supported test route used for the supervised rehearsal).",
     "syntheticDemo": true,
     "externalCallsMade": false,
     "isLiveServiceEvidence": false,
     "atlasSearchOnly": true,
-    "piiReview": "All data is local demo content: invented flight numbers (SC-101/SC-202), sample carrier labels, and placeholder times for the KUL-BKK-HAN route. No real passenger, booking reference, payment data, airline record, PII, or credential appears anywhere in this file.",
+    "piiReview": "All data is local demo content: invented flight numbers (SC-101/SC-202), sample carrier labels, and placeholder times for the CGK-DPS-CGK route. No real passenger, booking reference, payment data, airline record, PII, or credential appears anywhere in this file.",
     "forbiddenActions": [
       "verify",
       "book",
@@ -43,8 +43,8 @@
       "extractionResult": {
         "extractionStatus": "success",
         "firstLeg": {
-          "origin": "KUL",
-          "destination": "BKK",
+          "origin": "CGK",
+          "destination": "DPS",
           "departureDate": "2026-09-15",
           "airline": "Sample carrier",
           "flightNumber": "SC-101",
@@ -52,8 +52,8 @@
           "arrivalTime": "10:30"
         },
         "secondLeg": {
-          "origin": "BKK",
-          "destination": "HAN",
+          "origin": "DPS",
+          "destination": "CGK",
           "departureDate": "2026-09-15",
           "airline": "Sample carrier",
           "flightNumber": "SC-202",
@@ -93,8 +93,8 @@
       "extractionResult": {
         "extractionStatus": "success",
         "firstLeg": {
-          "origin": "KUL",
-          "destination": "BKK",
+          "origin": "CGK",
+          "destination": "DPS",
           "departureDate": "2026-09-15",
           "airline": "Sample carrier",
           "flightNumber": "SC-101",
@@ -102,8 +102,8 @@
           "arrivalTime": "10:30"
         },
         "secondLeg": {
-          "origin": "BKK",
-          "destination": "HAN",
+          "origin": "DPS",
+          "destination": "CGK",
           "departureDate": "2026-09-15",
           "airline": "Sample carrier",
           "flightNumber": "SC-299",
@@ -143,8 +143,8 @@
       "extractionResult": {
         "extractionStatus": "success",
         "firstLeg": {
-          "origin": "KUL",
-          "destination": "BKK",
+          "origin": "CGK",
+          "destination": "DPS",
           "departureDate": "2026-09-15",
           "airline": "Sample carrier",
           "flightNumber": "SC-101",
@@ -152,8 +152,8 @@
           "arrivalTime": "10:30"
         },
         "secondLeg": {
-          "origin": "BKK",
-          "destination": "HAN",
+          "origin": "DPS",
+          "destination": "CGK",
           "departureDate": "2026-09-15",
           "airline": "Sample carrier",
           "flightNumber": "SC-299",
@@ -324,7 +324,7 @@
         "alternatives": [
           {
             "offerReference": "display-only-reference-a1",
-            "routeSummary": "KUL → BKK → HAN",
+            "routeSummary": "CGK → DPS → CGK",
             "departureTime": "08:30",
             "arrivalTime": "16:10",
             "duration": "7h 40m",
@@ -336,7 +336,7 @@
           },
           {
             "offerReference": "display-only-reference-a2",
-            "routeSummary": "KUL → HAN direct",
+            "routeSummary": "CGK → DPS direct",
             "departureTime": "09:15",
             "arrivalTime": "13:05",
             "duration": "3h 50m",
@@ -431,9 +431,9 @@
       "forbiddenActions": ["verify", "book", "pay", "ticket", "reserve", "order", "write"],
       "comparison": {
         "originalItinerary": {
-          "routeSummary": "KUL → BKK → HAN (self-transfer)",
-          "firstLeg": "KUL → BKK, SC-101, 08:00–10:30",
-          "secondLeg": "BKK → HAN, SC-299, 13:00–15:45",
+          "routeSummary": "CGK → DPS → CGK (self-transfer)",
+          "firstLeg": "CGK → DPS, SC-101, 08:00–10:30",
+          "secondLeg": "DPS → CGK, SC-299, 13:00–15:45",
           "connectionDurationMinutes": 150,
           "riskBand": "medium",
           "riskLabel": "Offline risk analysis — local computation"
@@ -441,7 +441,7 @@
         "alternatives": [
           {
             "offerReference": "display-only-reference-a1",
-            "routeSummary": "KUL → BKK → HAN",
+            "routeSummary": "CGK → DPS → CGK",
             "departureTime": "08:30",
             "arrivalTime": "16:10",
             "duration": "7h 40m",
@@ -452,7 +452,7 @@
           },
           {
             "offerReference": "display-only-reference-a2",
-            "routeSummary": "KUL → HAN direct",
+            "routeSummary": "CGK → DPS direct",
             "departureTime": "09:15",
             "arrivalTime": "13:05",
             "duration": "3h 50m",

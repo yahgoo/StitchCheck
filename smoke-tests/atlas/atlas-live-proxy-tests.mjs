@@ -111,7 +111,7 @@ async function runTests() {
   section('1. Search route allowed');
   {
     const res = await callMiddleware(middleware, 'POST', '/api/atlas/search', {
-      origin: 'KUL', destination: 'SIN', depart: '2026-09-15', adults: 1, currency: 'USD',
+      origin: 'CGK', destination: 'DPS', depart: '2026-09-15', adults: 1, currency: 'USD',
     });
     // Will fail at CLI level (no real CLI in test), but should NOT 404 from routing
     assert(res._status !== 404, 'Search route is not rejected by router');
@@ -170,7 +170,7 @@ async function runTests() {
   /* ── 7. Invalid date rejected ── */
   {
     const res = await callMiddleware(middleware, 'POST', '/api/atlas/search', {
-      origin: 'KUL', destination: 'SIN', depart: 'not-a-date', adults: 1, currency: 'USD',
+      origin: 'CGK', destination: 'DPS', depart: 'not-a-date', adults: 1, currency: 'USD',
     });
     assertEqual(res._status, 400, 'Invalid date returns 400');
     const body = res.getJson();
@@ -180,7 +180,7 @@ async function runTests() {
   /* ── 8. Invalid adults rejected ── */
   {
     const res = await callMiddleware(middleware, 'POST', '/api/atlas/search', {
-      origin: 'KUL', destination: 'SIN', depart: '2026-09-15', adults: 0, currency: 'USD',
+      origin: 'CGK', destination: 'DPS', depart: '2026-09-15', adults: 0, currency: 'USD',
     });
     assertEqual(res._status, 400, 'Invalid adults (0) returns 400');
   }
@@ -197,7 +197,7 @@ async function runTests() {
     const offlineEnv = { DATA_MODE: 'offline', ATLAS_LIVE_READ_ONLY: 'true' };
     const offlineMiddleware = createAtlasProxyMiddleware(offlineEnv);
     const res = await callMiddleware(offlineMiddleware, 'POST', '/api/atlas/search', {
-      origin: 'KUL', destination: 'SIN', depart: '2026-09-15', adults: 1, currency: 'USD',
+      origin: 'CGK', destination: 'DPS', depart: '2026-09-15', adults: 1, currency: 'USD',
     });
     assertEqual(res._status, 403, 'Offline mode blocks search with 403');
   }
@@ -207,7 +207,7 @@ async function runTests() {
     const noReadOnlyEnv = { DATA_MODE: 'live', ATLAS_LIVE_READ_ONLY: 'false' };
     const noReadOnlyMiddleware = createAtlasProxyMiddleware(noReadOnlyEnv);
     const res = await callMiddleware(noReadOnlyMiddleware, 'POST', '/api/atlas/search', {
-      origin: 'KUL', destination: 'SIN', depart: '2026-09-15', adults: 1, currency: 'USD',
+      origin: 'CGK', destination: 'DPS', depart: '2026-09-15', adults: 1, currency: 'USD',
     });
     assertEqual(res._status, 403, 'ATLAS_LIVE_READ_ONLY=false blocks with 403');
   }
@@ -229,7 +229,7 @@ async function runTests() {
     // The sanitizeResponse function should redact sensitive patterns
     // We verify the middleware exists and handles errors without leaking data
     const res = await callMiddleware(middleware, 'POST', '/api/atlas/search', {
-      origin: 'KUL', destination: 'SIN', depart: '2026-09-15', adults: 1, currency: 'USD',
+      origin: 'CGK', destination: 'DPS', depart: '2026-09-15', adults: 1, currency: 'USD',
     });
     const body = res.getJson();
     if (body?.message) {
