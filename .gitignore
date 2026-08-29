@@ -60,6 +60,9 @@ output/
 
 # ── Presentation assets: deck files (*.key, *.pptx, *.pdf) are submission
 # artifacts and are intentionally tracked. ──
+# NOTE: Large presentation files (>100MB) must be gitignored for GitHub compatibility
+Agentic AI Hackathon 2H.pptx
+Agentic AI Hackathon 2H.key
 
 # ── Post-hackathon cleanup — working scratch and build artifacts ──
 a/
