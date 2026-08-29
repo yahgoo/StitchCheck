@@ -25,6 +25,12 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { readBody, sendJson, sanitizeError, sanitizeResponse } from './atlas-proxy.mjs';
 
+// #region agent log
+function agentDebug(hypothesisId, location, message, data) {
+  fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'713e09'},body:JSON.stringify({sessionId:'713e09',runId:'pre-fix',hypothesisId,location,message,data,timestamp:Date.now()})}).catch(()=>{});
+}
+// #endregion
+
 /* ── Blocked-contract placeholders (spec Section 22) ── */
 
 /** Passenger stdin contract VERIFIED via supervised rehearsal
@@ -57,6 +63,7 @@ export const ATRIP_TICKETING_ACTIVATION_STATUS =
 /** Candidate keys carrying the created order number. */
 const ORDER_NO_FIELD_KEYS = Object.freeze([
   'orderNo', 'order_no', 'orderNumber', 'order_number', 'orderID', 'order_id',
+  'existingOrderNo', 'existing_order_no', 'existingOrderId', 'existing_order_id',
 ]);
 
 /** Candidate keys carrying the payment confirmation id. The value is
@@ -159,9 +166,13 @@ const IDEMPOTENCY_STORE_CAP = 200;
 const MAX_ID_LENGTH = 128;
 const MAX_TRAVELERS = 9;
 
-/** Single-shot CLI timeouts for approved write execution. */
-const WRITE_CLI_TIMEOUT_MS = 20_000;
-const STATUS_CLI_TIMEOUT_MS = 20_000;
+/** Single-shot CLI timeouts for approved write execution.
+ *  `atlas-flight order pay` polls ticketing for up to 120s (Skill
+ *  booking-workflow). A 20s kill produced HTTP 200 unknown with
+ *  providerCode null (~20017ms) and left confirmation ids consumed. */
+const ORDER_CREATE_CLI_TIMEOUT_MS = 20_000;
+const ORDER_PAY_CLI_TIMEOUT_MS = 125_000;
+const STATUS_CLI_TIMEOUT_MS = 60_000;
 
 /**
  * Execution activation flag. Read from the environment INSIDE
@@ -214,24 +225,36 @@ function buildPassengersStdinPayload(travelers) {
     Array.isArray(travelers) && travelers.length > 0
       ? travelers
       : [{ traveler_id: 'synthetic-traveler-1', passenger_type: 'adult' }];
+  // Unique synthetic identity per create: repeating the frozen passport
+  // after a ticketed rehearsal returns DUPLICATE_BOOKING_SUSPECTED, and a
+  // second create then hits ORDER_STATE_INVALID (live 2026-08-29).
+  // Name uniqueness must stay A–Z only — a hex suffix made
+  // passengers[0].name / contact.name fail PASSENGER_INFO_INVALID on
+  // Lion Air CGK→DPS (2026-08-30). Document numbers may still use hex.
+  const uniq = randomBytes(4).toString('hex').toUpperCase();
+  const uniqAlpha = Array.from(randomBytes(4), (b) => String.fromCharCode(65 + (b % 26))).join('');
+  const surname = `${SYNTHETIC_PASSENGER.surname}${uniqAlpha}`;
+  const given = SYNTHETIC_PASSENGER.given_name;
+  const displayName = `${surname}/${given}`;
+  const documentNumber = `SYNTHETIC${uniq}`;
   return {
     passengers: list.map((t) => ({
       traveler_id: String(t.traveler_id).trim(),
-      name: `${SYNTHETIC_PASSENGER.surname}/${SYNTHETIC_PASSENGER.given_name}`,
+      name: displayName,
       passenger_type: String(t.passenger_type).trim(),
       gender: SYNTHETIC_PASSENGER.gender,
       birthday: SYNTHETIC_PASSENGER.date_of_birth,
       nationality: SYNTHETIC_PASSENGER.nationality,
       document: {
         type: SYNTHETIC_PASSENGER.document_type,
-        number: SYNTHETIC_PASSENGER.document_number,
+        number: documentNumber,
         issuing_country: SYNTHETIC_PASSENGER.document_country,
         expires: SYNTHETIC_PASSENGER.document_expiry,
       },
     })),
     contact: {
-      name: `${SYNTHETIC_PASSENGER.surname}/${SYNTHETIC_PASSENGER.given_name}`,
-      email: SYNTHETIC_PASSENGER.email,
+      name: displayName,
+      email: `test.${uniq.toLowerCase()}@example.com`,
       mobile: SYNTHETIC_PASSENGER.phone,
     },
   };
@@ -665,7 +688,11 @@ const KNOWN_ORDER_ACCEPTED_CODES = new Set([
   // Adopt the returned existing order number; never recreate.
   'DUPLICATE_BOOKING_SUSPECTED',
 ]);
-const KNOWN_PAY_ACCEPTED_CODES = new Set(['PAYMENT_ACCEPTED']);
+const KNOWN_PAY_ACCEPTED_CODES = new Set([
+  'PAYMENT_ACCEPTED',
+  'TICKETED',
+  'TICKETING_PENDING',
+]);
 
 function mapSandboxProviderOutcome(operation, code) {
   if (typeof code !== 'string' || code.trim().length === 0) return 'unknown';
@@ -832,10 +859,39 @@ export function createSandboxWriteHandler(env, execCliImpl = null, options = {})
     const startedAt = now();
     let result = { parsed: null, exitCode: 1, timedOut: false, errorCode: 'no_executor', stderr: '' };
     if (typeof execCliImpl === 'function') {
-      const stdinPayload = JSON.stringify(buildPassengersStdinPayload(travelers));
+      const stdinObj = buildPassengersStdinPayload(travelers);
+      // #region agent log
+      {
+        const p0 = stdinObj.passengers?.[0];
+        const mobile = String(stdinObj.contact?.mobile || '');
+        agentDebug('A', 'atlas-sandbox-writes.mjs:executeOrderCreate', 'passenger stdin shape (no PII)', {
+          passengerCount: stdinObj.passengers?.length ?? 0,
+          travelerIdPrefix: String(p0?.traveler_id || '').slice(0, 12),
+          travelerIdLen: String(p0?.traveler_id || '').length,
+          passengerType: p0?.passenger_type ?? null,
+          nameHasSlash: typeof p0?.name === 'string' && p0.name.includes('/'),
+          gender: p0?.gender ?? null,
+          birthdayLen: String(p0?.birthday || '').length,
+          nationality: p0?.nationality ?? null,
+          docType: p0?.document?.type ?? null,
+          docIssuingCountry: p0?.document?.issuing_country ?? null,
+          docExpiresLen: String(p0?.document?.expires || '').length,
+          mobileStarts00: mobile.startsWith('00'),
+          mobileHasHyphen: mobile.includes('-'),
+          mobileLen: mobile.length,
+          usedRequestTravelers: Array.isArray(travelers) && travelers.length > 0,
+          requestPassengerTypes: Array.isArray(travelers)
+            ? travelers.map((t) => t?.passenger_type).slice(0, 8)
+            : [],
+          bookingIdPrefix: String(cleanBookingId || '').slice(0, 8),
+          bookingIdLen: String(cleanBookingId || '').length,
+        });
+      }
+      // #endregion
+      const stdinPayload = JSON.stringify(stdinObj);
       result = await execCliImpl(
         ['order', 'create', '--booking-id', cleanBookingId, '--passengers-stdin', '--json'],
-        { stdin: stdinPayload, timeoutMs: WRITE_CLI_TIMEOUT_MS },
+        { stdin: stdinPayload, timeoutMs: ORDER_CREATE_CLI_TIMEOUT_MS },
       );
     }
     return { result, latencyMs: Math.max(0, now() - startedAt) };
@@ -847,7 +903,7 @@ export function createSandboxWriteHandler(env, execCliImpl = null, options = {})
     if (typeof execCliImpl === 'function') {
       result = await execCliImpl(
         ['order', 'pay', '--confirmation-id', confirmationId, '--json'],
-        { timeoutMs: WRITE_CLI_TIMEOUT_MS },
+        { timeoutMs: ORDER_PAY_CLI_TIMEOUT_MS },
       );
     }
     return { result, latencyMs: Math.max(0, now() - startedAt) };
@@ -1078,6 +1134,29 @@ export function createSandboxWriteHandler(env, execCliImpl = null, options = {})
             providerCode,
             message: sanitizeError(result.parsed.message || 'order creation was rejected by the provider'),
           };
+          // #region agent log
+          agentDebug('D', 'atlas-sandbox-writes.mjs:handleOrder', 'order explicit rejection 502', {
+            providerCode,
+            parsedStatus: result.parsed?.status ?? null,
+            parsedCode: typeof result.parsed?.code === 'string' ? result.parsed.code : null,
+            hasError: Boolean(result.parsed?.error),
+            message: body.message,
+            exitCode: result.exitCode ?? null,
+            latencyMs,
+          });
+          // #region agent log
+          {
+            const details = result.parsed?.data?.details ?? result.parsed?.details;
+            const fields = details?.fields;
+            const detailFieldKeys = Array.isArray(fields)
+              ? fields.map((f) => String(f)).slice(0, 20)
+              : (fields && typeof fields === 'object' ? Object.keys(fields).slice(0, 20) : null);
+            agentDebug('D', 'atlas-sandbox-writes.mjs:handleOrder', 'order rejection detail field names', {
+              detailFieldKeys,
+            });
+          }
+          // #endregion
+          // #endregion
           idempotencyStore.finish(idempotencyKey, 'failed', { status: 502, body });
           recordEvidence({
             ...evidenceBase,
@@ -1127,7 +1206,15 @@ export function createSandboxWriteHandler(env, execCliImpl = null, options = {})
       // Accepted. Defensive multi-key extraction of the order number.
       const orderNo = extractFieldValue(result.parsed, ORDER_NO_FIELD_KEYS);
       if (!orderNo) {
-        // Accepted code but no extractable orderNo → fail closed unknown.
+        // #region agent log
+        agentDebug('D', 'atlas-sandbox-writes.mjs:handleOrder', 'accepted code but orderNo missing', {
+          providerCode,
+          topKeys: result.parsed && typeof result.parsed === 'object' ? Object.keys(result.parsed).slice(0, 20) : [],
+          dataKeys: result.parsed?.data && typeof result.parsed.data === 'object'
+            ? Object.keys(result.parsed.data).slice(0, 20)
+            : [],
+        });
+        // #endregion
         idempotencyStore.finish(idempotencyKey, 'unknown', {
           status: 200,
           body: { outcome: 'unknown', reason: 'order_no_not_extractable' },
@@ -1175,6 +1262,14 @@ export function createSandboxWriteHandler(env, execCliImpl = null, options = {})
         latencyMs,
         terminal: false,
       });
+      // #region agent log
+      agentDebug('D', 'atlas-sandbox-writes.mjs:handleOrder', 'order accepted', {
+        hasOrderNo: true,
+        orderNoLen: orderNo.length,
+        providerCode,
+        outcome: 'accepted',
+      });
+      // #endregion
       sendJson(res, 200, okBody);
       return;
     }
@@ -1186,6 +1281,11 @@ export function createSandboxWriteHandler(env, execCliImpl = null, options = {})
       throw new Error('sandbox_write_execution_not_approved');
     }
 
+    // #region agent log
+    agentDebug('D', 'atlas-sandbox-writes.mjs:handleOrder', 'order fail-closed 503', {
+      executionApproved,
+    });
+    // #endregion
     idempotencyStore.finish(idempotencyKey, 'unknown', { status: 503, body: WRITE_NOT_IMPLEMENTED });
     recordEvidence({
       operation: 'order',
@@ -1366,6 +1466,14 @@ export function createSandboxWriteHandler(env, execCliImpl = null, options = {})
       // Timeout / unparsable output → UNKNOWN. NEVER auto-retry; the
       // same-key follow-up replays and /status reconciles.
       if (!result || result.parsed === null || result.timedOut) {
+        // #region agent log
+        agentDebug('K', 'atlas-sandbox-writes.mjs:handlePay', 'pay timeout or unparsable', {
+          timedOut: Boolean(result?.timedOut),
+          hasParsed: Boolean(result?.parsed),
+          latencyMs,
+          errorCode: result?.errorCode ?? null,
+        });
+        // #endregion
         idempotencyStore.finish(idempotencyKey, 'unknown', {
           status: 200,
           body: { outcome: 'unknown', reason: result?.timedOut ? 'timeout' : 'unparsable_response' },
@@ -1471,6 +1579,13 @@ export function createSandboxWriteHandler(env, execCliImpl = null, options = {})
         latencyMs,
         terminal: false,
       });
+      // #region agent log
+      agentDebug('D', 'atlas-sandbox-writes.mjs:handlePay', 'pay accepted', {
+        orderNoLen: cleanOrderNo.length,
+        providerCode,
+        outcome: 'accepted',
+      });
+      // #endregion
       sendJson(res, 200, okBody);
       return;
     }
@@ -1482,6 +1597,11 @@ export function createSandboxWriteHandler(env, execCliImpl = null, options = {})
       throw new Error('sandbox_write_execution_not_approved');
     }
 
+    // #region agent log
+    agentDebug('D', 'atlas-sandbox-writes.mjs:handlePay', 'pay fail-closed 503', {
+      executionApproved,
+    });
+    // #endregion
     idempotencyStore.finish(idempotencyKey, 'unknown', { status: 503, body: WRITE_NOT_IMPLEMENTED });
     recordEvidence({
       operation: 'pay',
@@ -1535,6 +1655,13 @@ export function createSandboxWriteHandler(env, execCliImpl = null, options = {})
       const { result, latencyMs } = exec;
 
       if (!result || result.parsed === null || result.timedOut) {
+        // #region agent log
+        agentDebug('K', 'atlas-sandbox-writes.mjs:handleStatus', 'status timeout or unparsable', {
+          timedOut: Boolean(result?.timedOut),
+          hasParsed: Boolean(result?.parsed),
+          latencyMs,
+        });
+        // #endregion
         recordEvidence({
           operation: 'status',
           route: '/api/atlas/sandbox/status',
@@ -1584,6 +1711,14 @@ export function createSandboxWriteHandler(env, execCliImpl = null, options = {})
         gateEvaluation: gatesSummary(gateResult),
         terminal,
       });
+      // #region agent log
+      agentDebug('E', 'atlas-sandbox-writes.mjs:handleStatus', 'status observed', {
+        status,
+        terminal,
+        cliCode: normalized,
+        hasPnrHint: /PNR|TICKET/i.test(String(normalized || '')),
+      });
+      // #endregion
       sendJson(res, 200, {
         orderNo: cleanOrderNo,
         status,
@@ -1622,6 +1757,17 @@ export function createSandboxWriteHandler(env, execCliImpl = null, options = {})
 
     // Gates 1–6 (fail closed). Gate 7 (route/input validation) follows.
     const gateResult = evaluateGates(env);
+    // #region agent log
+    agentDebug('A', 'atlas-sandbox-writes.mjs:handleSandboxRoute', 'sandbox route gates', {
+      pathname,
+      gateOk: gateResult.ok,
+      firstFailure: gateResult.firstFailure?.error ?? null,
+      executionApproved: env[EXECUTION_APPROVED_ENV_KEY] === 'true',
+      writesEnabled: env.ATLAS_SANDBOX_WRITES_ENABLED === 'true',
+      dataMode: env.DATA_MODE || env.VITE_DATA_MODE || null,
+      atlasEnv: env.ATLAS_ENVIRONMENT || null,
+    });
+    // #endregion
     if (!gateResult.ok) {
       // Evidence: one line per gate rejection (fire & forget).
       recordEvidence({
