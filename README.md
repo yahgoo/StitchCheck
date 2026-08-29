@@ -1,45 +1,56 @@
 # StitchCheck
 
-StitchCheck turns a flight screenshot into a confirmed itinerary, explains self-transfer risk, and compares safer alternatives before a traveller commits.
+StitchCheck helps budget travelers evaluate the hidden risk in self-transfer flight itineraries using **MiniMax M3** for extraction, **Nosana** for Monte Carlo risk simulation, and **Atlas Sandbox** for verified safer alternatives — with the risk score computed in a reproducible **Daytona** sandbox worker.
 
 ## Hackathon Submission
 
-- **Event:** Build with Gemini Hackathon 2026
-- **Track:** Most Creative Gemini Hack
-- **Status:** Submitted
-- **Demo video:** <YOUR_YOUTUBE_URL_HERE>
+- **Event:** Daytona HackSprint × Nosana — Singapore
+- **Project status:** Functional prototype — live, verified integrations across four sponsor stacks (Daytona, Nosana, Atlas Sandbox, MiniMax M3 via OpenRouter)
+- **Demo video:** Local artifact — see [Video Artifacts](#video-artifacts) section below. Not yet uploaded to an external platform.
 
-## What It Does
+## Problem
 
-1. **Screenshot upload** — the traveller uploads a booking-page screenshot of two separately purchased flights.
-2. **Gemini multimodal extraction** — Gemini 3.7 (`ai.interactions.create`) parses the image into structured itinerary fields (origins, destinations, dates, airlines, flight numbers, times, connection duration).
-3. **Editable fields** — the traveller reviews and corrects every extracted field beside the source image.
-4. **User correction** — correction notes track each change the traveller makes.
-5. **Confirmation gate** — downstream panels stay locked until the traveller explicitly confirms the itinerary.
-6. **Risk analysis** — a Nosana decentralized-compute workload runs a Monte Carlo simulation over historical delay data to estimate connection risk.
-7. **Alternatives** — Atlas Sandbox Search/Verify returns single-ticket alternatives for the same route.
-8. **Keep / Switch decision** — a side-by-side comparison lets the traveller choose to keep the self-transfer or switch to a safer option. No booking, payment, or order is created.
+Budget travellers stitch two separately purchased one-way flights to save money. A self-transfer connection carries **no contractual protection**: if the first leg is delayed or cancelled, the second leg is orphaned, no airline is responsible for rebooking, and downstream commitments cascade into unrecoverable losses. The traveller bears **100% of the misconnection risk**, and **no one discloses the probability** — it is an unpriced bet.
 
-## Technology and Providers
+StitchCheck quantifies that hidden risk — a Monte Carlo connection-risk score computed in an isolated sandbox — and proves a safer alternative exists by verifying real single-ticket fares for the same route. The traveller decides with a number instead of a guess.
 
-| Component | Technology | Role |
+## How it works
+
+1. **Screenshot extraction** — the traveller uploads a booking-page screenshot of two separately purchased flights. **MiniMax M3 (via OpenRouter, `minimax/minimax-m3:free`)** parses the image into a structured, editable itinerary (origins, destinations, dates, airlines, flight numbers, times, connection duration). The "Extracted by MiniMax M3" provenance tag is derived from real extraction state — never hardcoded.
+2. **Human correction and confirmation** — the traveller reviews and corrects every extracted field beside the source image. Downstream panels remain locked until explicit confirmation.
+3. **Connection-risk simulation** — **Nosana** decentralized GPU compute runs the Monte Carlo connection-risk simulation as a real job; the completed-job evidence (job ID, IPFS-anchored result, `evidenceSource`, `fallbackUsed`, risk band) is reconciled and surfaced in the UI. The risk score itself is produced by **Daytona**: a sandboxed, reproducible risk-computation worker (`daytona-risk-worker-v1`) scores the connection risk (score 54, risk band *medium*) inside an ephemeral, network-blocked sandbox.
+4. **Verified safer alternatives** — **Atlas Sandbox** Search/Verify (strictly read-only) finds and verifies real single-ticket alternatives for the same route. The traveller compares side-by-side and decides to keep the self-transfer or switch. **No booking, payment, or order is created at any point.**
+
+## Sponsored integrations
+
+Primary sponsors:
+
+- **Daytona** — sandboxed, reproducible risk-computation worker (`daytona-risk-worker-v1`) runs connection-risk scoring in an isolated, network-blocked sandbox (risk score 54, risk band *medium*, 6 ms worker latency). Live evidence is surfaced directly in the UI under "How this was calculated" with the tag `Source: Daytona sandbox · live`.
+- **Nosana** — the Monte Carlo connection-risk simulation runs as a Nosana GPU job. Completed-job evidence — job ID, `evidenceSource: "nosana-evidence"`, `fallbackUsed: false`, risk band *medium* (0.2895 over 800 simulations, $0.044 cost), IPFS-anchored job definition and result hashes — is reconciled and surfaced to the user as `Nosana · live` in the provider bar.
+
+Supporting providers:
+
+- **Atlas Sandbox** — live Search/Verify calls find and verify real single-ticket alternatives (18 alternatives surfaced in the final live walkthrough), strictly **read-only**: no booking, payment, order, or ticketing writes.
+- **MiniMax M3** (via OpenRouter) — itinerary screenshot-to-structured-data extraction, replacing manual data entry and feeding directly into the risk simulation.
+
+## Provider and evidence status
+
+The default browser launch (`DATA_MODE=offline`) runs fully offline from local fixtures. The live evidence below was captured with dedicated smoke-test runners under `DATA_MODE=live` and reconciled into the app.
+
+| Component | Status | Key evidence |
 |---|---|---|
-| Itinerary extraction | Gemini 3.7 (`ai.interactions.create`, `@google/genai`) | Multimodal screenshot-to-structured-data extraction |
-| Risk analysis | Nosana decentralized compute | Validated Monte Carlo connection-risk workload |
-| Alternative routing | Atlas Sandbox Search/Verify | Read-only alternative itinerary evidence |
-| Frontend | React + Vite + TypeScript | Local browser walkthrough |
+| **MiniMax M3 extraction** (via OpenRouter) | **Live, verified.** Real extraction in the final submission walkthrough produced the `Extracted by MiniMax M3` provenance tag from actual state (`evidenceSource`, `fallbackUsed` fields drive the label; extraction not skipped, not fallback). | `demo-evidence/2026-08-29-submission-final/00-report.txt`, `smoke-tests/extraction/` |
+| **Nosana risk simulation** | **Live, verified.** One completed job: ID `8CfUkxFgZnPpC5kxiphD1kozwiJeLYBC4KB33bKPAEp1`, `riskScore: 0.2895`, `riskBand: medium`, 800 simulations, `costUsd: 0.044`, submitted 2026-08-28T13:39:46Z. IPFS job def `QmPF9E4NZyfu44m2eNHuHZufJ4cccoAPBkidcrJs6QEQVm`, result `QmXG2ZpA6AJYd2zTHxVCarGpPuY6RvtETKoNMYjV3vz6uG`. `evidenceSource: "nosana-evidence"`, `fallbackUsed: false`. | `smoke-tests/nosana/results/evidence/2026-08-28T13-40-14-358Z-completed_success.json`, `app/public/nosana-risk-result.json` |
+| **Atlas Sandbox alternatives** | **Live Search/Verify, read-only.** Sandbox search returned 20 real KUL→SIN offers; individual verify calls confirm fares and expose drift (see metric below); the live walkthrough surfaced 18 verified single-ticket alternatives tagged `Source: Atlas Sandbox · live`. Hard stop after Verify — no write call. Offer IDs and fare-drift values recorded in evidence. | `smoke-tests/atlas/results/sandbox-search-verify-2026-08-21T07-02-42-099Z.json`, `demo-evidence/2026-08-29-four-live-providers/00-report.txt` |
+| **Daytona risk worker** | **Live sandbox worker.** One ephemeral sandbox (`node:20-slim`, cpu 1, memory 2 GiB, `networkBlockAll: true`), risk worker exit 0: `riskScore: 54`, `riskBand: medium`, dataset `daytona-risk-worker-v1`, 6 ms latency, `externalWriteOccurred: false`, sandbox destroyed in `finally`. Envelope consumed by the UI. | `smoke-tests/daytona/results/daytona-live-risk-2026-08-28T13-01-59-259Z.json`, `app/public/daytona-risk-live-result.json` |
 
-## Provenance and Evidence Status
+## Quantified metric (honest and traceable)
 
-The interactive browser walkthrough uses fictional local fixture data and makes no external provider calls.
+> The single price-verified fare (`off_11db11bad81302c295da16f1`) moved **$64.38 → $203.99, +217%**, between Search and Verify.
 
-Gemini, Nosana, and Atlas evidence shown in the demo video and documentation was verified separately using dedicated smoke-test scripts.
-
-**Gemini 3.7** (`gemini-3.7-flash`, Interactions API): implemented and offline-validated; a later live verification attempt during final polish returned a transient error and was not retried, per project safety rules. The previously captured successful live evidence artifact remains available in `smoke-tests/gemini/results/`.
-
-**Nosana**: a completed live job was reconciled offline. Verified values: riskScore 0.2895, riskBand medium, simulationCount 800, costUsd 0.044, evidenceSource `"nosana-evidence"`, fallbackUsed false. This is a heuristic indication, not a guaranteed probability.
-
-**Atlas**: Sandbox Search and Verify evidence is read-only. No booking, payment, or ticketing was performed.
+- **Source file:** `smoke-tests/atlas/results/sandbox-search-verify-2026-08-21T07-02-42-099Z.json`
+- **Offer:** `off_11db11bad81302c295da16f1` (KUL → SIN, `OD807`, 2026-09-15) — search `total_price: 64.38` (`price_status: "current"`), verify returned `PRICE_CONFIRMATION_REQUIRED` with `previous_price: 64.38`, `current_price: 203.99`.
+- One search, one verify, one confirmed fare-drift event. A fare that looked current at search time no longer held at verify time — exactly the unpriced risk StitchCheck surfaces. Full context: `docs/quantified-metric-2026-08-29.md`.
 
 ## Setup
 
@@ -59,11 +70,7 @@ cd <repo-dir>
 cd app
 npm install
 
-# (Optional) Configure provider keys for live smoke tests
-#    cp ../.env.example ../.env.local
-#    # Edit .env.local — never commit it
-
-# Start development server (runs entirely offline with fictional fixtures)
+# Start development server (runs entirely offline with demo fixtures by default)
 npm run dev
 
 # Production build
@@ -75,104 +82,139 @@ npm run typecheck
 
 ### Environment Variables
 
-Copy `.env.example` to `.env.local` and fill in values for live smoke tests. The browser demo runs fully offline without any keys.
+Copy `.env.example` to `.env.local` and fill in values only if you want to exercise live paths. The browser demo runs fully offline without any keys.
+
+```bash
+cp .env.example .env.local
+# Edit .env.local — never commit it
+```
 
 | Variable | Purpose | Required |
 |---|---|---|
-| `GEMINI_API_KEY` | Google Gemini API key — server-side only, never exposed in browser bundle | No — demo runs offline with fictional fixtures when absent |
-| `GEMINI_MODEL` | Model identifier (e.g. `gemini-3.7-flash`) | No — defaults to `gemini-3.7-flash` |
-| `EXTRACTION_PROVIDER` | `gemini` (direct) or `openrouter` (legacy rollback) | No — defaults to `gemini` |
-| `NOSANA_API_KEY` | Nosana API key — server-side only | No — risk panel uses local fallback when absent |
-| `NOSANA_MARKET` | Nosana market address (Solana public key) | No — used only for live workload submission |
+| `OPENROUTER_API_KEY` | OpenRouter API key for MiniMax M3 extraction — server-side only, never exposed in the browser bundle | No — demo runs offline with fixtures when absent |
+| `EXTRACTION_MODEL` | Extraction model identifier (default `minimax/minimax-m3:free`) | No |
+| `ATLAS_CLIENT_ID` / `ATLAS_CLIENT_SECRET` | Atlas API credentials — server-side only | No — demo runs offline when absent |
+| `DATA_MODE` | `offline` (fixture-only, default) or `live` (surfaces reconciled live evidence) | No — defaults to `offline` |
+| `NOSANA_API_KEY` | Nosana API key for workload submission — server-side only | No |
+| `NOSANA_MARKET` | Nosana market address (Solana public key) | No |
 | `NOSANA_COST_CEILING_USD` | Maximum USD spend ceiling (safety limit) | No — defaults to `10` |
+| `DAYTONA_API_KEY` | Daytona API key for sandbox lifecycle — server-side only | No |
+| `DAYTONA_ENABLED` / `DAYTONA_RISK_COMPUTE_ENABLED` | Daytona sandbox-creation and risk-compute safety flags | No — both default to `false` |
+| `NOSANA_ENABLED` / `NOSANA_LIVE_ENABLED` | Nosana submission and live-execution safety flags | No — both default to `false` |
+| `ATLAS_LIVE_READ_ONLY` | Allow Atlas read-only Search/Verify | No — defaults to `false` |
+| `ATLAS_WRITES_ENABLED` | Atlas write kill switch | No — **must remain `false`**; verified by the sandbox write-gate suite |
 
 Never commit `.env.local` or any file containing real credentials.
 
-## Safety and Limitations
+## Judge verification path
 
-- No booking, payment, ticketing, reservation, or order is created by this application.
-- The browser walkthrough uses fictional, non-PII data only.
-- Nosana's risk output is a heuristic indication, not a guaranteed probability.
-- Atlas evidence is read-only; ticketing remains gated and was never activated.
-- No real passenger personal data is processed.
-- `GEMINI_API_KEY` is server-side only — the browser bundle does not read, reference, or transmit this key.
+One credential-free command reproduces the entire offline evidence chain:
+
+```bash
+npm --prefix app run verify:offline
+```
+
+- **Wall-clock:** ~14 seconds.
+- **Result:** `Results: 354 passed, 0 failed`, exit code `0` (followed by `tsc --noEmit` typecheck and a production `vite build`).
+- **Zero keys, sockets disabled:** the suite runs with **no provider API keys and no network**. The output asserts this directly — e.g. `isEnabled() false without credential`, `contract remains network-free`, `offline mode never calls transport`, `transport was never called in offline mode`, `Dry-run makes no network call`.
+- **Two extra suites** (outside the chained command) cover the MiniMax M3 UI copy and the sample-screenshot entry point:
+
+```bash
+node smoke-tests/minimax-visibility-fix-offline-tests.mjs   # 8 passed, 0 failed
+node smoke-tests/sample-itinerary-screenshot-tests.mjs      # 7 passed, 0 failed
+```
+
+Full detail: `docs/judge-verification-path.md`.
+
+## Safety posture
+
+> **Request submitted — awaiting verified supplier outcome.**
+
+- **No booking, payment, ticketing, reservation, or order writes** — this invariant holds across every provider path and is enforced, not just documented: `smoke-tests/atlas/sandbox-write-gate-tests.mjs` (354 assertions) proves all write-capable Atlas sandbox endpoints remain default-denied behind the execution-approval flag.
+- Daytona sandbox ran with `networkBlockAll: true`, risk-worker only, no external write occurred (`externalWriteOccurred: false`), and was destroyed in `finally`.
+- Nosana live execution is gated by a safety preflight (`NOSANA_ENABLED`, `NOSANA_LIVE_ENABLED`, `DEMO_MODE`, cost ceiling); exactly one job was submitted per explicit approval, no retries.
+- `OPENROUTER_API_KEY`, `ATLAS_CLIENT_SECRET`, `NOSANA_API_KEY`, `DAYTONA_API_KEY`, and all provider keys are server-side only — the browser bundle does not read, reference, or transmit these keys.
 - Human confirmation gate — downstream panels remain locked until the user explicitly confirms the itinerary.
+- Nosana's risk output is a heuristic indication, not a guaranteed probability.
+- All browser fixtures are synthetic, fictional, non-PII; no real passenger personal data is processed.
 
 ## Testing
 
-The offline test suite covers 300+ tests across all providers and cross-cutting invariants:
+The offline suite covers extraction, risk, sandbox, and cross-cutting provenance/safety invariants:
 
 | Suite | Location | Coverage |
 |---|---|---|
-| Gemini adapter offline tests | `smoke-tests/gemini/adapter-offline-tests.mjs` | Extraction, schema validation, fallback labels |
-| Gemini 3.7 routing regression | `smoke-tests/gemini/gemini-3.7-routing-regression-tests.mjs` | Interactions API routing, model resolution, credential safety |
-| Atlas adapter offline tests | `smoke-tests/atlas/adapter-offline-tests.mjs` | Search/Verify contract, schema validation |
-| Atlas duplicate-booking guard | `smoke-tests/atlas/duplicate-booking-guard-offline-tests.mjs` | Duplicate booking prevention |
-| Nosana client offline tests | `smoke-tests/nosana/nosana-client-offline-tests.mjs` | Client boundary, credential isolation |
-| Nosana child-process regression | `smoke-tests/nosana/nosana-child-process-regression-tests.mjs` | Job runner, timeout, idempotency |
-| Nosana UI label assertions | `smoke-tests/nosana/nosana-ui-label-assertion-tests.mjs` | Provenance label truthfulness |
-| Nosana live-evidence reconciliation | `smoke-tests/nosana/nosana-live-evidence-reconciliation-tests.mjs` | Reconciled artifact validation |
-| Nosana timeout safety | `smoke-tests/nosana/nosana-timeout-safety-tests.mjs` | Platform timeout, watchdog, dry-run defaults |
-| Nosana cost unit tests | `smoke-tests/nosana/nosana-cost-unit-tests.mjs` | Cost ceiling, credits/cost distinction |
-| Provenance label tests | `smoke-tests/provenance-label-offline-tests.mjs` | Cross-provider label invariants |
-| Cross-provider invariant tests | `smoke-tests/cross-provider-invariant-tests.mjs` | Placeholder/evidence boundary enforcement |
-
-```bash
-# From app/ — runs all offline test suites + typecheck + build
-npm run verify:offline
-
-# Individual suites (from repo root)
-node smoke-tests/gemini/adapter-offline-tests.mjs
-node smoke-tests/gemini/gemini-3.7-routing-regression-tests.mjs
-node smoke-tests/atlas/adapter-offline-tests.mjs
-node smoke-tests/nosana/nosana-client-offline-tests.mjs
-node smoke-tests/nosana/nosana-timeout-safety-tests.mjs
-node smoke-tests/cross-provider-invariant-tests.mjs
-node smoke-tests/provenance-label-offline-tests.mjs
-```
+| OpenRouter extraction adapter offline tests | `smoke-tests/extraction/openrouter-extraction-adapter-offline-tests.mjs` | MiniMax M3 extraction contract, schema validation, fallback labels |
+| MiniMax visibility tests | `smoke-tests/minimax-visibility-fix-offline-tests.mjs` | Provenance-tag truthfulness in the UI |
+| Nosana suites (10+) | `smoke-tests/nosana/` | Client boundary, cost ceiling, safety gate, timeout watchdog, live-evidence reconciliation, UI-label truthfulness |
+| Atlas adapter / guard / write-gate | `smoke-tests/atlas/` | Search/Verify contract, duplicate-booking prevention, sandbox write-gate (default-deny) |
+| Daytona suites | `smoke-tests/daytona/`, `smoke-tests/risk-computation-offline-tests.mjs` | Orchestrator, worker sanitization, risk-worker determinism |
+| Cross-cutting invariants | `smoke-tests/cross-provider-invariant-tests.mjs`, `smoke-tests/provenance-label-offline-tests.mjs` | Placeholder/evidence boundary, label semantics across all providers |
 
 All tests make zero network requests and use no credentials.
 
 ### Secret scanning
 
-A lightweight pre-commit secret scanner is available at `scripts/secret-scan.mjs`. It checks staged files for credential-shaped patterns (Google API keys, sk- tokens, Bearer tokens, etc.) and refuses the commit if any match.
+A lightweight pre-commit secret scanner is available at `scripts/secret-scan.mjs`. It checks staged files for credential-shaped patterns (API keys, sk- tokens, Bearer tokens, etc.) and refuses the commit if any match.
 
 ```bash
-# Scan staged changes (default)
-node scripts/secret-scan.mjs
-
-# Scan all tracked files (slower)
-node scripts/secret-scan.mjs --all
-
-# Install as a pre-commit hook
-cp scripts/secret-scan.mjs .git/hooks/pre-commit
+node scripts/secret-scan.mjs          # scan staged changes (default)
+node scripts/secret-scan.mjs --all    # scan all tracked files
+cp scripts/secret-scan.mjs .git/hooks/pre-commit   # install as a hook
 ```
 
 No external dependencies required.
 
-## Known Limitations
+## Honest limits — design decisions
 
-- **Gemini 3.7 live path** is implemented and offline-tested; the most recent live attempt was inconclusive due to a transient error. The previously captured successful evidence artifact is preserved in `smoke-tests/gemini/results/`.
-- **Nosana live evidence** comes from a previously completed and reconciled job, not a fresh submission. No additional Nosana job was submitted during final polish.
-- **Atlas evidence** is Sandbox/read-only only. No production booking, payment, or ticketing was performed.
-- **Browser demo uses offline fixtures.** The risk and alternatives panels display local fixtures, not live provider results.
-- **No persistence.** All state resets on browser refresh.
+These are deliberate boundaries, not oversights:
+
+- **Offline-reconciled by default.** The default launch (`DATA_MODE=offline`) is deterministic and fixture-based so any reviewer gets the same walkthrough. Live evidence is surfaced only when the reconciled artifacts are loaded under `DATA_MODE=live`.
+- **`DATA_MODE=live` is an explicit gate.** No silent live calls; every live path additionally requires its own provider flag (`NOSANA_LIVE_ENABLED`, `DAYTONA_ENABLED`, `ATLAS_LIVE_READ_ONLY`, …), each defaulting to `false`.
+- **Mock-ticketing lives on a separate branch.** The Atlas mock-ticketing execution path (`feature/atlas-sandbox-mock-ticketing`) is unmerged and activation-gated: `ATLAS_WRITES_ENABLED` must remain `false` until all ticketing prerequisites are confirmed by a human. No real ticket was ever issued.
+- **One-shot live evidence.** Daytona sandbox and Nosana job quotas were honored — one successful execution each, no re-runs for polish; evidence is preserved rather than regenerated.
+- **Heuristic risk model.** The risk score is a Monte Carlo heuristic over modeled delay distributions, not an airline-guaranteed probability.
+- **No persistence.** All application state resets on browser refresh.
+
+## Video Artifacts
+
+The following demo video artifacts exist locally. They have not been uploaded to any external platform.
+
+| Artifact | Path | Details |
+|---|---|---|
+| Latest render | `output/demo-artifacts/stitchcheck-video/stitchcheck-demo-fixed-v1.mp4` | 120s, H.264 1920×1080, AAC audio |
+| Full voiceover proof | `output/demo-artifacts/stitchcheck-video/stitchcheck-full-voiceover-proof.mp4` | 131s, H.264 1920×1080, AAC 24kHz mono, ~4.0 MB. Voiceover produced locally via Kokoro ONNX v0.4.7 — no external TTS call. |
+| Hackathon demo (live v2) | `output/demo-artifacts/stitchcheck-video/hackathon-submission-live-v2/stitchcheck-hackathon-demo-live-v2.mp4` | ~5.0 MB |
+| Hackathon demo v2 | `output/demo-artifacts/stitchcheck-video/hackathon-submission/stitchcheck-hackathon-demo-v2.mp4` | ~5.5 MB |
+
+To view: open any `.mp4` file in a media player. All videos were rendered offline — no provider was called during rendering.
+
+## Development attribution
+
+- **Development:** Built with Qoder (AI-assisted development).
+- **Travel-tech context:** WiT Singapore is the travel-tech context, not an endorsement.
 
 ## Repository Structure
 
 ```
 app/                          React/Vite/TypeScript demo application
   src/components/             UI components (9 components + narration hook)
-  src/data/                   Fixtures, types, and label constants
+  src/data/                   Fixtures, types, live-evidence loaders, label constants
+core/                         Canonical provenance, safety, and flag modules
 app-fixture-contracts/        JSON contracts defining UI data shapes
 smoke-tests/
-  gemini/                     Gemini adapter, offline tests, fixtures
-  atlas/                      Atlas adapter, offline tests, fixtures
-  nosana/                     Nosana client boundary, offline tests, fixtures
+  extraction/                 MiniMax M3 (OpenRouter) adapter, offline tests, fixtures
+  atlas/                      Atlas adapter, offline tests, write-gate, live evidence
+  nosana/                     Nosana client boundary, offline tests, live job evidence
+  daytona/                    Daytona runner results and offline tests
   cross-provider-invariant-tests.mjs
   provenance-label-offline-tests.mjs
-scripts/                      Capture and preflight scripts
-docs/                         Documentation and audit reports
+scripts/                      Capture, orchestrator, live-runner, and preflight scripts
+workers/
+  daytona-risk-worker/        Daytona sandbox risk-computation worker (daytona-risk-worker-v1)
+  daytona-atlas-worker/       Daytona Atlas worker (not live)
+demo-evidence/                Timestamped live-walkthrough reports and screenshots
+docs/                         Documentation, audit reports, judge verification path
 ```
 
 ## License
