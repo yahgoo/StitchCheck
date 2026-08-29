@@ -1,25 +1,40 @@
 # StitchCheck
 
-StitchCheck helps budget travelers evaluate the hidden risk in self-transfer flight itineraries using **MiniMax M3** for extraction, **Nosana** for Monte Carlo risk simulation, and **Atlas Sandbox** for verified safer alternatives — with the risk score computed in a reproducible **Daytona** sandbox worker.
+StitchCheck turns a flight screenshot into a confirmed itinerary, explains self-transfer failure risk, and compares safer alternatives before a traveller commits. Built with **MiniMax M3 (via Nosana)**, **Nosana** (risk computation), **Atlas Sandbox** (flight search/verification), and **Alibaba Cloud** (infrastructure).
 
 ## Hackathon Submission
 
-- **Event:** Daytona HackSprint × Nosana — Singapore
-- **Project status:** Functional prototype — live, verified integrations across four sponsor stacks (Daytona, Nosana, Atlas Sandbox, MiniMax M3 via OpenRouter)
+- **Event:** Alibaba Cloud x Atlas Agentic AI Hackathon — Daytona HackSprint, Singapore
+- **Project status:** Functional prototype — live, verified integrations across four sponsor stacks (Daytona, Nosana, Atlas Sandbox, MiniMax M3 via Nosana)
 - **Demo video:** Local artifact — see [Video Artifacts](#video-artifacts) section below. Not yet uploaded to an external platform.
 
 ## Problem
+
+Price-conscious frequent budget travellers face self-transfer failure cascades: when the first flight is delayed, the second ticket is missed, and the traveller is stranded with no recourse.
 
 Budget travellers stitch two separately purchased one-way flights to save money. A self-transfer connection carries **no contractual protection**: if the first leg is delayed or cancelled, the second leg is orphaned, no airline is responsible for rebooking, and downstream commitments cascade into unrecoverable losses. The traveller bears **100% of the misconnection risk**, and **no one discloses the probability** — it is an unpriced bet.
 
 StitchCheck quantifies that hidden risk — a Monte Carlo connection-risk score computed in an isolated sandbox — and proves a safer alternative exists by verifying real single-ticket fares for the same route. The traveller decides with a number instead of a guess.
 
+## Solution
+
+StitchCheck extracts structured itinerary data from a screenshot, identifies the failure cascade, produces an editable confirmed itinerary, and compares safer alternatives via Atlas Sandbox before the traveller commits.
+
 ## How it works
 
-1. **Screenshot extraction** — the traveller uploads a booking-page screenshot of two separately purchased flights. **MiniMax M3 (via OpenRouter, `minimax/minimax-m3:free`)** parses the image into a structured, editable itinerary (origins, destinations, dates, airlines, flight numbers, times, connection duration). The "Extracted by MiniMax M3" provenance tag is derived from real extraction state — never hardcoded.
+1. **Screenshot extraction** — the traveller uploads a booking-page screenshot of two separately purchased flights. **MiniMax M3 (via Nosana)** parses the image into a structured, editable itinerary (origins, destinations, dates, airlines, flight numbers, times, connection duration). The "Extracted by MiniMax M3" provenance tag is derived from real extraction state — never hardcoded.
 2. **Human correction and confirmation** — the traveller reviews and corrects every extracted field beside the source image. Downstream panels remain locked until explicit confirmation.
 3. **Connection-risk simulation** — **Nosana** decentralized GPU compute runs the Monte Carlo connection-risk simulation as a real job; the completed-job evidence (job ID, IPFS-anchored result, `evidenceSource`, `fallbackUsed`, risk band) is reconciled and surfaced in the UI. The risk score itself is produced by **Daytona**: a sandboxed, reproducible risk-computation worker (`daytona-risk-worker-v1`) scores the connection risk (score 54, risk band *medium*) inside an ephemeral, network-blocked sandbox.
 4. **Verified safer alternatives** — **Atlas Sandbox** Search/Verify (strictly read-only) finds and verifies real single-ticket alternatives for the same route. The traveller compares side-by-side and decides to keep the self-transfer or switch. **No booking, payment, or order is created at any point.**
+
+## Tech stack
+
+| Component | Role |
+|---|---|
+| **MiniMax M3** (via Nosana) | Screenshot → structured itinerary extraction |
+| **Nosana** | Risk computation — Monte Carlo connection-risk simulation on decentralized GPU compute |
+| **Atlas Sandbox** | Flight search / verification of safer single-ticket alternatives |
+| **Alibaba Cloud** | Infrastructure |
 
 ## Sponsored integrations
 
@@ -31,7 +46,8 @@ Primary sponsors:
 Supporting providers:
 
 - **Atlas Sandbox** — live Search/Verify calls find and verify real single-ticket alternatives (18 alternatives surfaced in the final live walkthrough), strictly **read-only**: no booking, payment, order, or ticketing writes.
-- **MiniMax M3** (via OpenRouter) — itinerary screenshot-to-structured-data extraction, replacing manual data entry and feeding directly into the risk simulation.
+- **MiniMax M3** (via Nosana) — itinerary screenshot-to-structured-data extraction, replacing manual data entry and feeding directly into the risk simulation.
+- **Alibaba Cloud** — underlying infrastructure for the submission stack.
 
 ## Provider and evidence status
 
@@ -39,10 +55,20 @@ The default browser launch (`DATA_MODE=offline`) runs fully offline from local f
 
 | Component | Status | Key evidence |
 |---|---|---|
-| **MiniMax M3 extraction** (via OpenRouter) | **Live, verified.** Real extraction in the final submission walkthrough produced the `Extracted by MiniMax M3` provenance tag from actual state (`evidenceSource`, `fallbackUsed` fields drive the label; extraction not skipped, not fallback). | `demo-evidence/2026-08-29-submission-final/00-report.txt`, `smoke-tests/extraction/` |
+| **MiniMax M3 extraction** (via Nosana) | **Live, verified.** Real extraction in the final submission walkthrough produced the `Extracted by MiniMax M3` provenance tag from actual state (`evidenceSource`, `fallbackUsed` fields drive the label; extraction not skipped, not fallback). | `demo-evidence/2026-08-29-submission-final/00-report.txt`, `smoke-tests/extraction/` |
 | **Nosana risk simulation** | **Live, verified.** One completed job: ID `8CfUkxFgZnPpC5kxiphD1kozwiJeLYBC4KB33bKPAEp1`, `riskScore: 0.2895`, `riskBand: medium`, 800 simulations, `costUsd: 0.044`, submitted 2026-08-28T13:39:46Z. IPFS job def `QmPF9E4NZyfu44m2eNHuHZufJ4cccoAPBkidcrJs6QEQVm`, result `QmXG2ZpA6AJYd2zTHxVCarGpPuY6RvtETKoNMYjV3vz6uG`. `evidenceSource: "nosana-evidence"`, `fallbackUsed: false`. | `smoke-tests/nosana/results/evidence/2026-08-28T13-40-14-358Z-completed_success.json`, `app/public/nosana-risk-result.json` |
-| **Atlas Sandbox alternatives** | **Live Search/Verify, read-only.** Sandbox search returned 20 real KUL→SIN offers; individual verify calls confirm fares and expose drift (see metric below); the live walkthrough surfaced 18 verified single-ticket alternatives tagged `Source: Atlas Sandbox · live`. Hard stop after Verify — no write call. Offer IDs and fare-drift values recorded in evidence. | `smoke-tests/atlas/results/sandbox-search-verify-2026-08-21T07-02-42-099Z.json`, `demo-evidence/2026-08-29-four-live-providers/00-report.txt` |
+| **Atlas Sandbox alternatives** | **Live Search/Verify, read-only.** Sandbox search returned 20 real KUL→SIN offers; individual verify calls confirm fares and expose drift (see metric below); the live walkthrough surfaced 18 verified single-ticket alternatives tagged `Source: Atlas Sandbox · live`. Hard stop after Verify — no write call in this walkthrough (predates the 2026-08-29 sandbox rehearsal; see [Submission evidence status](#submission-evidence-status)). Offer IDs and fare-drift values recorded in evidence. | `smoke-tests/atlas/results/sandbox-search-verify-2026-08-21T07-02-42-099Z.json`, `demo-evidence/2026-08-29-four-live-providers/00-report.txt` |
 | **Daytona risk worker** | **Live sandbox worker.** One ephemeral sandbox (`node:20-slim`, cpu 1, memory 2 GiB, `networkBlockAll: true`), risk worker exit 0: `riskScore: 54`, `riskBand: medium`, dataset `daytona-risk-worker-v1`, 6 ms latency, `externalWriteOccurred: false`, sandbox destroyed in `finally`. Envelope consumed by the UI. | `smoke-tests/daytona/results/daytona-live-risk-2026-08-28T13-01-59-259Z.json`, `app/public/daytona-risk-live-result.json` |
+
+## Submission evidence status
+
+| Item | Status | Detail |
+|---|---|---|
+| Mock ticketing | **Complete** (items 4–7) | Atlas mock-ticketing follow-up items 4–7 completed; sandbox-only — no production booking |
+| Sandbox rehearsal | **Successful** | Order `TESTA20260829181717829`, PNR `S30798`, terminal status `TICKETED` — Atlas Sandbox environment only |
+| Extraction provider | **MiniMax M3 (via Nosana)** | Live extraction validated; see `docs/evidence-status.md` |
+
+Evidence: `output/atlas-sandbox-evidence-2026-08-29.jsonl` (orderNo redacted by the secret scanner), `docs/demo-video-script-3min.md`.
 
 ## Quantified metric (honest and traceable)
 
@@ -66,19 +92,17 @@ The default browser launch (`DATA_MODE=offline`) runs fully offline from local f
 git clone <repo-url>
 cd <repo-dir>
 
-# Install dependencies
-cd app
-npm install
+# Install dependencies (app workspace)
+cd app && npm install && cd ..
+
+# Configure environment (placeholders only; fill in values only for live paths)
+cp .env.example .env.local
 
 # Start development server (runs entirely offline with demo fixtures by default)
-npm run dev
-
-# Production build
-npm run build
-
-# Type-check
-npm run typecheck
+cd app && npm run dev
 ```
+
+Additional commands (from `app/`): `npm run build` (production build), `npm run typecheck`.
 
 ### Environment Variables
 
@@ -91,11 +115,11 @@ cp .env.example .env.local
 
 | Variable | Purpose | Required |
 |---|---|---|
-| `OPENROUTER_API_KEY` | OpenRouter API key for MiniMax M3 extraction — server-side only, never exposed in the browser bundle | No — demo runs offline with fixtures when absent |
+| `NOSANA_API_KEY` | **Primary** — Nosana API key for MiniMax M3 extraction and GPU workload submission — server-side only, never exposed in the browser bundle | No — demo runs offline with fixtures when absent |
+| `OPENROUTER_API_KEY` | Legacy/optional OpenRouter extraction transport — server-side only | No |
 | `EXTRACTION_MODEL` | Extraction model identifier (default `minimax/minimax-m3:free`) | No |
 | `ATLAS_CLIENT_ID` / `ATLAS_CLIENT_SECRET` | Atlas API credentials — server-side only | No — demo runs offline when absent |
 | `DATA_MODE` | `offline` (fixture-only, default) or `live` (surfaces reconciled live evidence) | No — defaults to `offline` |
-| `NOSANA_API_KEY` | Nosana API key for workload submission — server-side only | No |
 | `NOSANA_MARKET` | Nosana market address (Solana public key) | No |
 | `NOSANA_COST_CEILING_USD` | Maximum USD spend ceiling (safety limit) | No — defaults to `10` |
 | `DAYTONA_API_KEY` | Daytona API key for sandbox lifecycle — server-side only | No |
@@ -128,9 +152,9 @@ Full detail: `docs/judge-verification-path.md`.
 
 ## Safety posture
 
-> **Request submitted — awaiting verified supplier outcome.**
+> **Sandbox rehearsal completed — production writes remain disabled.**
 
-- **No booking, payment, ticketing, reservation, or order writes** — this invariant holds across every provider path and is enforced, not just documented: `smoke-tests/atlas/sandbox-write-gate-tests.mjs` (354 assertions) proves all write-capable Atlas sandbox endpoints remain default-denied behind the execution-approval flag.
+- **No *production* booking, payment, ticketing, reservation, or order writes** — this invariant holds across every provider path and is enforced, not just documented: `smoke-tests/atlas/sandbox-write-gate-tests.mjs` (354 assertions) proves all write-capable Atlas sandbox endpoints remain default-denied behind the execution-approval flag. The one rehearsed order existed only inside the Atlas Sandbox environment (see [Submission evidence status](#submission-evidence-status)).
 - Daytona sandbox ran with `networkBlockAll: true`, risk-worker only, no external write occurred (`externalWriteOccurred: false`), and was destroyed in `finally`.
 - Nosana live execution is gated by a safety preflight (`NOSANA_ENABLED`, `NOSANA_LIVE_ENABLED`, `DEMO_MODE`, cost ceiling); exactly one job was submitted per explicit approval, no retries.
 - `OPENROUTER_API_KEY`, `ATLAS_CLIENT_SECRET`, `NOSANA_API_KEY`, `DAYTONA_API_KEY`, and all provider keys are server-side only — the browser bundle does not read, reference, or transmit these keys.
@@ -139,6 +163,17 @@ Full detail: `docs/judge-verification-path.md`.
 - All browser fixtures are synthetic, fictional, non-PII; no real passenger personal data is processed.
 
 ## Testing
+
+Quick commands:
+
+```bash
+npm --prefix app run verify:offline                       # full chained offline suite (~14 s, zero keys, zero network)
+node smoke-tests/atlas/adapter-offline-tests.mjs          # Atlas smoke coverage (adapter contract, offline)
+node smoke-tests/atlas/sandbox-write-gate-tests.mjs       # Atlas sandbox write-gate (default-deny)
+node smoke-tests/nosana/nosana-client-offline-tests.mjs   # Nosana smoke coverage (client boundary, offline)
+```
+
+> Note: no npm scripts named `test:smoke:atlas` or `test:smoke:nosana` exist in `package.json`; the `node` commands above are the actual equivalents.
 
 The offline suite covers extraction, risk, sandbox, and cross-cutting provenance/safety invariants:
 
@@ -171,10 +206,16 @@ These are deliberate boundaries, not oversights:
 
 - **Offline-reconciled by default.** The default launch (`DATA_MODE=offline`) is deterministic and fixture-based so any reviewer gets the same walkthrough. Live evidence is surfaced only when the reconciled artifacts are loaded under `DATA_MODE=live`.
 - **`DATA_MODE=live` is an explicit gate.** No silent live calls; every live path additionally requires its own provider flag (`NOSANA_LIVE_ENABLED`, `DAYTONA_ENABLED`, `ATLAS_LIVE_READ_ONLY`, …), each defaulting to `false`.
-- **Mock-ticketing lives on a separate branch.** The Atlas mock-ticketing execution path (`feature/atlas-sandbox-mock-ticketing`) is unmerged and activation-gated: `ATLAS_WRITES_ENABLED` must remain `false` until all ticketing prerequisites are confirmed by a human. No real ticket was ever issued.
+- **Mock ticketing is sandbox-only.** Atlas mock-ticketing items 4–7 are complete and the sandbox rehearsal succeeded (order `TESTA20260829181717829`, terminal `TICKETED`) — but only inside the Atlas Sandbox. `ATLAS_WRITES_ENABLED` and the sandbox write flags remain fail-closed in `.env.local`; no production ticket was ever issued.
 - **One-shot live evidence.** Daytona sandbox and Nosana job quotas were honored — one successful execution each, no re-runs for polish; evidence is preserved rather than regenerated.
 - **Heuristic risk model.** The risk score is a Monte Carlo heuristic over modeled delay distributions, not an airline-guaranteed probability.
 - **No persistence.** All application state resets on browser refresh.
+
+## Known limitations
+
+- **Mock ticketing** — sandbox-only; no live booking is ever created.
+- **Nosana extraction** — free tier; may be subject to rate limits.
+- **Atlas Sandbox** — test routes only; not production inventory.
 
 ## Video Artifacts
 

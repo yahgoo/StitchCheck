@@ -103,3 +103,25 @@ StitchCheck-Deck-*.pdf
 out/
 .next/
 .nuxt/
+
+# ── Large binary artifacts — never commit these (per repo hygiene spec) ──
+# Large PDFs (decks, submissions, email exports)
+*.pdf
+
+# Large image assets (screenshots, exports)
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+
+# Whitelist exceptions — tracked assets the submission needs.
+# Blanket *.pdf / *.png / *.svg rules above would otherwise hide future
+# additions of these files; already-tracked copies stay tracked either way.
+!demo-evidence/**/*.png
+!app/public/*.png
+!app/public/*.jpg
+!app/src/assets/*.png
+!app/src/assets/*.jpg
+!smoke-tests/extraction/fixtures/*.png
+!smoke-tests/extraction/fixtures/*.svg
