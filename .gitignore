@@ -61,8 +61,9 @@ output/
 # ── Presentation assets: deck files (*.key, *.pptx, *.pdf) are submission
 # artifacts and are intentionally tracked. ──
 # NOTE: Large presentation files (>100MB) must be gitignored for GitHub compatibility
-Agentic AI Hackathon 2H.pptx
-Agentic AI Hackathon 2H.key
+Agentic AI Hackathon*.pptx
+Agentic AI Hackathon*.key
+Agentic AI Hackathon.pdf
 
 # ── Post-hackathon cleanup — working scratch and build artifacts ──
 a/
@@ -72,3 +73,33 @@ submission/
 smoke-tests/atlas/live-app-runs/
 smoke-tests/nosana/results/evidence/
 StitchCheck-Deck-*.pdf
+
+# ── Large binary video artifacts — never commit these ──
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.wmv
+*.flv
+*.webm
+*.m4v
+*.mpg
+*.mpeg
+
+# ── Video/audio project files ──
+*.prproj
+*.aep
+*.fcpxml
+*.davinci
+
+# ── Large binary image formats (design source files) ──
+*.bmp
+*.tiff
+*.psd
+*.ai
+*.eps
+
+# ── Additional build output directories ──
+out/
+.next/
+.nuxt/
