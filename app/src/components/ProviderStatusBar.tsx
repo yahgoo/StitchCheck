@@ -4,16 +4,18 @@ import {
   providerChecksSummary,
 } from '../data/minimax-visibility-copy';
 import { MiniMaxOfflineNotice } from './MiniMaxOfflineNotice';
+import { Icon, type IconName } from './Icon';
 
 const PROVIDER_ROWS: ReadonlyArray<{
   key: 'extraction' | 'nosana' | 'atlas' | 'daytona';
   name: string;
   role: string;
+  icon: IconName;
 }> = [
-  { key: 'extraction', name: 'Kimi K3', role: 'extraction' },
-  { key: 'nosana', name: 'Nosana', role: 'risk analysis' },
-  { key: 'atlas', name: 'Atlas Sandbox', role: 'search' },
-  { key: 'daytona', name: 'Daytona', role: 'risk computation' },
+  { key: 'extraction', name: 'MiniMax M3', role: 'extraction', icon: 'sparkle' },
+  { key: 'nosana', name: 'Nosana', role: 'risk analysis', icon: 'gear' },
+  { key: 'atlas', name: 'Atlas Sandbox', role: 'search', icon: 'globe' },
+  { key: 'daytona', name: 'Daytona', role: 'risk computation', icon: 'shield' },
 ];
 
 function labelFor(s: ProviderStatusResult | null, name: string): string {
@@ -91,18 +93,20 @@ export function ProviderStatusBar({
       {showMiniMaxOfflineExplanation && <MiniMaxOfflineNotice />}
       <div className="sc-provider-checks-row" role="status" aria-label="Provider checks status">
         <span className="sc-provider-live-checks-summary">
+          <Icon name="checkCircle" size={14} />
           {providerChecksSummary(completedCount)}
         </span>
         <details className="sc-provider-details">
           <summary>How this works</summary>
           <div className="sc-provider-details__body">
-            {PROVIDER_ROWS.map(({ key, name, role }) => {
+            {PROVIDER_ROWS.map(({ key, name, role, icon }) => {
               if (key === 'daytona') {
                 return (
                   <span
                     key={key}
                     className="sc-provider-tag"
                   >
+                    <Icon name={icon} size={14} />
                     {`${name} (${role})`}
                   </span>
                 );
@@ -116,6 +120,7 @@ export function ProviderStatusBar({
                   key={key}
                   className={`sc-provider-tag ${variantFor(status)}`}
                 >
+                  <Icon name={icon} size={14} />
                   {label} ({role})
                 </span>
               );

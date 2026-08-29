@@ -126,13 +126,7 @@ function handleStatus(res, env) {
 
 async function handleExtract(req, res, env, getAdapter) {
   const dataMode = env.DATA_MODE || 'offline';
-  // #region agent log
-  fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'6d26ff'},body:JSON.stringify({sessionId:'6d26ff',runId:'demo-ready',hypothesisId:'A',location:'openrouter-extract.mjs:handleExtract:entry',message:'extract request received',data:{dataMode,hasKey:hasOpenRouterCredential(env),extractionModel:env.EXTRACTION_MODEL||null,extractionProvider:env.EXTRACTION_PROVIDER||null},timestamp:Date.now()})}).catch(()=>{});
-  // #endregion
   if (dataMode !== 'live') {
-    // #region agent log
-    fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'975ced'},body:JSON.stringify({sessionId:'975ced',runId:'live-flip',hypothesisId:'A',location:'openrouter-extract.mjs:handleExtract:offline-gate',message:'blocked because DATA_MODE is not live',data:{dataMode,hasKey:hasOpenRouterCredential(env)},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
     sendJson(res, 403, {
       error: 'live_mode_not_enabled',
       message: 'Set DATA_MODE=live to enable live itinerary extraction',
@@ -175,10 +169,6 @@ async function handleExtract(req, res, env, getAdapter) {
   const previousCallCount = typeof adapterMod._resetCallCount === 'function'
     ? adapterMod._resetCallCount()
     : null;
-  // #region agent log
-  fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'d481ad'},body:JSON.stringify({sessionId:'d481ad',runId:'post-fix',hypothesisId:'C',location:'openrouter-extract.mjs:handleExtract',message:'reset adapter call count per HTTP request',data:{previousCallCount,resetApplied:previousCallCount !== null},timestamp:Date.now()})}).catch(()=>{});
-  fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'975ced'},body:JSON.stringify({sessionId:'975ced',runId:'live-flip',hypothesisId:'D',location:'openrouter-extract.mjs:handleExtract',message:'reset adapter call count per HTTP request',data:{dataMode,hasKey:hasOpenRouterCredential(env),adapterEnabled:typeof adapter.isEnabled==='function'?adapter.isEnabled():null,previousCallCount,resetApplied:previousCallCount!==null},timestamp:Date.now()})}).catch(()=>{});
-  // #endregion
   if (!adapter.isEnabled()) {
     sendJson(res, 503, {
       error: 'adapter_not_enabled',
@@ -201,10 +191,6 @@ async function handleExtract(req, res, env, getAdapter) {
       sourceStatus.executed === true &&
       sourceStatus.fallbackUsed === false &&
       result.extractionStatus !== 'error';
-    // #region agent log
-    fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'975ced'},body:JSON.stringify({sessionId:'975ced',runId:'live-flip',hypothesisId:'C',location:'openrouter-extract.mjs:handleExtract:result',message:'adapter extract returned',data:{extractionStatus:result.extractionStatus,executed:sourceStatus.executed??null,fallbackUsed:sourceStatus.fallbackUsed??null,isLiveSuccess,origin:result.firstLeg?.origin??null,destination:result.firstLeg?.destination??null,departureDate:result.firstLeg?.departureDate??null,date:result.firstLeg?.date??null,secondOrigin:result.secondLeg?.origin??null,secondDest:result.secondLeg?.destination??null,validationMessages:result.validationMessages??[],missingFields:result.missingFields??[],failurePoint:result._failurePoint??null},timestamp:Date.now()})}).catch(()=>{});
-    fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'6d26ff'},body:JSON.stringify({sessionId:'6d26ff',runId:'demo-ready',hypothesisId:'C',location:'openrouter-extract.mjs:handleExtract:result',message:'adapter extract returned',data:{extractionStatus:result.extractionStatus,executed:sourceStatus.executed??null,fallbackUsed:sourceStatus.fallbackUsed??null,isLiveSuccess,origin:result.firstLeg?.origin??null,destination:result.firstLeg?.destination??null,departureDate:result.firstLeg?.departureDate??null,date:result.firstLeg?.date??null,flightNumber:result.firstLeg?.flightNumber??null,failurePoint:result._failurePoint??null,validationMessages:result.validationMessages??[]},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
 
     const providerStatus = isLiveSuccess ? 'live-success'
       : sourceStatus.executed === true ? 'live-failed'

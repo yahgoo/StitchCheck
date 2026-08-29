@@ -985,6 +985,13 @@
   line-height: 1.5;
 }
 
+.sc-options-alternatives-lead {
+  font-size: 1.05rem;
+  color: #1a1a2e;
+  margin: -0.75rem 0 1.25rem;
+  font-weight: 600;
+}
+
 .sc-screen__intro {
   font-size: 1rem;
   color: #555;
@@ -1069,6 +1076,10 @@
 }
 
 .sc-boarding-pass-card__route {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   font-size: 1.4rem;
   font-weight: 800;
   color: #1e293b;
@@ -1214,6 +1225,12 @@
   font-size: 0.85rem;
   color: #555;
   line-height: 1.5;
+}
+
+.sc-how-calculated__risk-band {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .sc-meta-small {
@@ -1457,6 +1474,9 @@
 }
 
 .sc-more-options__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 0.95rem;
   font-weight: 600;
   color: #475569;
@@ -1617,7 +1637,9 @@
 }
 
 .sc-provider-live-checks-summary {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 0.2rem 0.65rem;
   border-radius: 999px;
   font-size: 0.75rem;
@@ -1663,7 +1685,9 @@
 }
 
 .sc-provider-tag {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 0.2rem 0.6rem;
   border-radius: 999px;
   font-size: 0.75rem;
@@ -1703,6 +1727,13 @@
   width: 100%;
   max-width: 420px;
   margin: 0 auto;
+}
+
+.sc-welcome-actions .sc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
 .sc-welcome-helper {
@@ -1762,6 +1793,7 @@
 }
 
 .sc-minimax-provenance-tag__icon {
+  display: inline-flex;
   color: #533afd;
   font-size: 0.7rem;
 }
@@ -2008,4 +2040,26 @@
 
 .sc-unbooked-preview__status--failed {
   color: #856404;
+}
+
+/* ── Inline decorative icons (currentColor) ── */
+.sc-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: -0.125em;
+}
+
+.sc-icon--airplane-right {
+  transform: rotate(45deg);
+}
+
+.sc-icon--risk-medium {
+  color: #d97706;
+}
+
+.sc-boarding-pass-card__route .sc-icon {
+  width: 18px;
+  height: 18px;
 }

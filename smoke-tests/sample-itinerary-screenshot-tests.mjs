@@ -40,7 +40,7 @@ console.log('\n── Sample itinerary screenshot tests ──\n');
 const copyModule = readFileSync(resolve(ROOT, 'app/src/data/minimax-visibility-copy.ts'), 'utf-8');
 
 test('1. Welcome screen shows sample screenshot entry point distinct from structured sample', () => {
-  assert(copyModule.includes('Extract with Kimi K3'), 'screenshot CTA text');
+  assert(copyModule.includes('Extract with MiniMax M3'), 'screenshot CTA text');
   assert(copyModule.includes('Use sample — no extraction'), 'structured sample CTA preserved');
   assert(appSrc.includes('handleTrySampleScreenshot'), 'screenshot handler');
   assert(appSrc.includes('handleTrySampleItinerary'), 'structured sample handler preserved');

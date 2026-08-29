@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "provider": "none",
+  "tierUsed": "none",
+  "usedFallback": true,
+  "evidenceSource": "safety-gate-blocked",
+  "evidenceLabel": "Nosana live execution blocked by safety gate — not Nosana evidence.",
+  "externalWriteOccurred": false,
+  "latencyMs": 0,
+  "jobMetadata": null,
+  "riskResult": {
+    "correlationId": "nosana-risk-run-1787988189678",
+    "workloadStatus": "blocked",
+    "jobOrServiceReference": null,
+    "riskBand": "unavailable",
+    "riskScore": null,
+    "heuristicDisclaimer": "Heuristic risk estimate only — derived from a static/historical synthetic dataset; not a live delay, weather, legal, or guaranteed-outcome prediction. Synthetic local placeholder — not Nosana evidence",
+    "failureCascadeExplanation": "Nosana live execution blocked by safety gate: DEMO_MODE=local, NOSANA_ENABLED=false, NOSANA_LIVE_ENABLED=false",
+    "datasetVersion": "hist-delay-v1",
+    "fallbackUsed": true,
+    "errorCode": "NOSANA_SAFETY_GATE_BLOCKED",
+    "errorMessage": "Nosana live execution blocked by safety gate: DEMO_MODE=local, NOSANA_ENABLED=false, NOSANA_LIVE_ENABLED=false",
+    "evidenceSource": "safety-gate-blocked",
+    "evidenceLabel": "Nosana live execution blocked by safety gate — not Nosana evidence.",
+    "simulationCount": 0,
+    "assumptions": [],
+    "latencyMs": 0
+  },
+  "output": null,
+  "safetyGate": {
+    "demoMode": "local",
+    "nosanaEnabled": false,
+    "nosanaLiveEnabled": false,
+    "permitted": false
+  }
+}

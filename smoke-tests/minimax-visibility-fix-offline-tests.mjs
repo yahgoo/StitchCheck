@@ -33,13 +33,13 @@ const provenanceSrc = readFileSync(resolve(ROOT, 'app/src/components/MiniMaxProv
 const offlineSrc = readFileSync(resolve(ROOT, 'app/src/components/MiniMaxOfflineNotice.tsx'), 'utf-8');
 
 const SPEC = {
-  screenshotCta: 'Extract with Kimi K3',
+  screenshotCta: 'Extract with MiniMax M3',
   screenshotHelper:
-    'Use a sample itinerary screenshot. Kimi K3 will extract your flights and dates.',
+    'Use a sample itinerary screenshot. MiniMax M3 will extract your flights and dates.',
   readyMadeCta: 'Use sample — no extraction',
   readyMadeHelper: 'Fast preview with itinerary data already loaded.',
   loading: 'MiniMax M3 is reading your itinerary…',
-  provenance: 'Extracted by Kimi K3',
+  provenance: 'Extracted by MiniMax M3',
   offlineStatus: 'MiniMax M3: offline',
   offlineExplanation:
     'Expected for this fast path — a ready-made itinerary was loaded directly, so no MiniMax M3 extraction request was made.',

@@ -1,0 +1,28 @@
+{
+  "_label": "SUBMITTED DEFINITION — posted to Nosana network",
+  "_evidenceSource": "nosana-evidence",
+  "_containerImage": "docker.io/tensorflow/tensorflow:2.17.0-gpu-jupyter",
+  "definition": {
+    "version": "0.1",
+    "type": "container",
+    "ops": [
+      {
+        "id": "stitchcheck-risk-calc",
+        "type": "container/run",
+        "args": {
+          "image": "docker.io/tensorflow/tensorflow:2.17.0-gpu-jupyter",
+          "cmd": "python3 << 'PYEOF'\nimport json, os, sys, math, random\n\nrandom.seed(42)\n\ndata = json.loads(os.environ['RISK_INPUT_DATA'])\nhist = json.loads(os.environ['HISTORICAL_DELAY_DATA'])\n\nconn_min = data['connectionDurationMinutes']\nconn_apt = data['connectionAirport']\norigin = data['origin']\ndest = data['destination']\n\napt = hist.get('airports', {}).get(conn_apt, {})\navg_delay = apt.get('avgDelayMinutes', 20)\non_time = apt.get('onTimeRate', 0.75)\ntight_rate = apt.get('tightConnectionRate', 0.25)\nsample = apt.get('sampleSize', 500)\n\nroute = None\nfor r in hist.get('routes', []):\n    if r['origin'] == origin and r['connection'] == conn_apt:\n        route = r\n        break\nmiss_rate = route['avgMissRate'] if route else 0.20\n\nn_sims = min(1000, max(100, sample))\ntight_count = 0\nfor _ in range(n_sims):\n    d = max(0, random.gauss(avg_delay, avg_delay * 0.4))\n    remaining = conn_min - d\n    if remaining < 45:\n        tight_count += 1\n\ntight_ratio = tight_count / n_sims\nrisk_score = round(min(1.0, max(0.0, miss_rate * 0.6 + tight_ratio * 0.4)), 4)\n\nif risk_score < 0.25:\n    band = 'low'\nelif risk_score < 0.55:\n    band = 'medium'\nelse:\n    band = 'high'\n\nresult = {\n    'riskScore': risk_score,\n    'riskBand': band,\n    'assumptions': [\n        'Historical average delay at %s: %d min' % (conn_apt, avg_delay),\n        'On-time rate: %.2f' % on_time,\n        'Route miss rate: %.2f' % miss_rate,\n        'Monte Carlo simulations: %d' % n_sims,\n    ],\n    'simulationCount': n_sims,\n    'explanation': (\n        'A %d-minute connection at %s was evaluated against %d historical records. '\n        'Monte Carlo simulation (%d runs) estimated a %.1f%% probability of tight connection. '\n        'Combined with route miss rate, the heuristic risk score is %.4f (%s band). '\n        'This is a heuristic indication only — not a prediction or guarantee.'\n    ) % (conn_min, conn_apt, sample, n_sims, tight_ratio * 100, risk_score, band),\n}\n\nprint(json.dumps(result))\nPYEOF"
+        }
+      }
+    ],
+    "meta": {
+      "trigger": "api"
+    },
+    "global": {
+      "env": {
+        "RISK_INPUT_DATA": "{\"correlationId\":\"nosana-risk-cli-1787976829387\",\"origin\":\"AAA\",\"connectionAirport\":\"BBB\",\"destination\":\"CCC\",\"connectionDurationMinutes\":75,\"staticHistoricalDatasetVersion\":\"hist-delay-v1\",\"syntheticDemo\":true,\"nonPiiDeclaration\":true}",
+        "HISTORICAL_DELAY_DATA": "{\"datasetVersion\":\"hist-delay-v1\",\"description\":\"Static historical connection-delay dataset for heuristic risk estimation. All airport codes and statistics are fictional. No PII, no booking references, no payment data.\",\"disclaimer\":\"Heuristic reference data only — not a live delay, weather, legal, or guaranteed-outcome prediction.\",\"nonPiiDeclaration\":true,\"syntheticDemo\":true,\"airports\":{\"AAA\":{\"name\":\"Fictional Alpha Airport\",\"avgDelayMinutes\":12,\"onTimeRate\":0.88,\"tightConnectionRate\":0.15,\"sampleSize\":1200},\"BBB\":{\"name\":\"Fictional Bravo Airport\",\"avgDelayMinutes\":25,\"onTimeRate\":0.72,\"tightConnectionRate\":0.35,\"sampleSize\":800},\"CCC\":{\"name\":\"Fictional Charlie Airport\",\"avgDelayMinutes\":8,\"onTimeRate\":0.92,\"tightConnectionRate\":0.08,\"sampleSize\":1500},\"DDD\":{\"name\":\"Fictional Delta Airport\",\"avgDelayMinutes\":30,\"onTimeRate\":0.65,\"tightConnectionRate\":0.42,\"sampleSize\":600},\"EEE\":{\"name\":\"Fictional Echo Airport\",\"avgDelayMinutes\":18,\"onTimeRate\":0.8,\"tightConnectionRate\":0.22,\"sampleSize\":950}},\"routes\":[{\"origin\":\"AAA\",\"connection\":\"BBB\",\"avgMissRate\":0.28,\"flights\":400},{\"origin\":\"AAA\",\"connection\":\"CCC\",\"avgMissRate\":0.05,\"flights\":600},{\"origin\":\"BBB\",\"connection\":\"DDD\",\"avgMissRate\":0.45,\"flights\":200},{\"origin\":\"BBB\",\"connection\":\"CCC\",\"avgMissRate\":0.18,\"flights\":350},{\"origin\":\"CCC\",\"connection\":\"EEE\",\"avgMissRate\":0.1,\"flights\":500},{\"origin\":\"DDD\",\"connection\":\"EEE\",\"avgMissRate\":0.38,\"flights\":150}]}"
+      }
+    }
+  }
+}

@@ -3,6 +3,7 @@ import type { Alternative } from '../../../core/domain';
 import type { VerifySummary } from '../atlas/adapter';
 import type { Decision } from '../data/types';
 import { splitAlternativesForDisplay } from '../atlas/unbooked-previews';
+import { Icon } from './Icon';
 
 interface LiveAlternativesListProps {
   alternatives: Alternative[];
@@ -98,6 +99,7 @@ export function LiveAlternativesList({
   return (
     <div className="sc-more-options">
       <h3 className="sc-more-options__title">
+        <Icon name="airplane" />
         Live Atlas alternatives ({alternatives.length})
       </h3>
 

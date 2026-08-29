@@ -52,6 +52,7 @@ import {
   WELCOME_SCREENSHOT_SAMPLE_HELPER,
 } from './data/minimax-visibility-copy';
 import { MiniMaxProvenanceTag } from './components/MiniMaxProvenanceTag';
+import { Icon } from './components/Icon';
 /* Demo fixture screenshots bundled inline (base64 data URLs) so the live
  * Live extraction receives the same itinerary image the traveller
  * selected in the ticket selectors, not a stand-in placeholder image. */
@@ -294,9 +295,6 @@ export default function App() {
       warnIfAtlasSearchRouteMismatch(response.offers, confirmed, 'first');
       const result = mapSearchResponseToResult(response);
       setAlternativesResult(result);
-      // #region agent log
-      fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'6d26ff'},body:JSON.stringify({sessionId:'6d26ff',runId:'demo-ready',hypothesisId:'E',location:'App.tsx:performLiveSearchForConfirmed',message:'atlas live search settled',data:{searchStatus:result.searchStatus??null,executed:result.executed??null,fallbackUsed:result.fallbackUsed??null,evidenceSource:result.evidenceSource??null,offerCount:Array.isArray(result.alternatives)?result.alternatives.length:null,depart:params.depart},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion
       /* Track Atlas provider status from live Search result */
       setAtlasProviderStatus({
         provider: 'atlas',
@@ -467,23 +465,12 @@ export default function App() {
           && incoming.extractionStatus !== 'error'
           && incoming.extractionStatus !== 'disabled',
         );
-        // #region agent log
-        fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'d481ad'},body:JSON.stringify({sessionId:'d481ad',runId:'post-fix',hypothesisId:'A',location:'App.tsx:handleCheckMyTrip:extract',message:'live extraction settled',data:{itineraryInputMode,liveOk,extractionStatus:incoming?.extractionStatus ?? null,incomingOrigin:incoming?.firstLeg?.origin ?? null,incomingDepartureDate:incoming?.firstLeg?.departureDate ?? null,incomingDate:(incoming?.firstLeg as { date?: string } | undefined)?.date ?? null,providerStatus:extractionResponse.providerStatus?.status ?? null},timestamp:Date.now()})}).catch(()=>{});
-        fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'975ced'},body:JSON.stringify({sessionId:'975ced',runId:'live-flip',hypothesisId:'A',location:'App.tsx:handleCheckMyTrip:extract',message:'live extraction settled',data:{isLive,itineraryInputMode,liveOk,extractionStatus:incoming?.extractionStatus ?? null,incomingOrigin:incoming?.firstLeg?.origin ?? null,incomingDest:incoming?.firstLeg?.destination ?? null,incomingDepartureDate:incoming?.firstLeg?.departureDate ?? null,incomingDate:(incoming?.firstLeg as { date?: string } | undefined)?.date ?? null,secondOrigin:incoming?.secondLeg?.origin ?? null,secondDest:incoming?.secondLeg?.destination ?? null,providerStatus:extractionResponse.providerStatus?.status ?? null,executed:extractionResponse.providerStatus?.executed ?? null,fallbackUsed:extractionResponse.providerStatus?.fallbackUsed ?? null,validationMessages:incoming?.validationMessages ?? []},timestamp:Date.now()})}).catch(()=>{});
-        // #endregion
         if (liveOk && incoming) {
           const merged = mergeExtractionResult(extraction, incoming);
           setExtraction(merged);
           setLiveExtractionReviewed(true);
           const extractedSnapshot = createConfirmedItinerarySnapshot(merged, snapshotInputMode);
           setConfirmedItinerary(extractedSnapshot);
-          // #region agent log
-          fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'6d26ff'},body:JSON.stringify({sessionId:'6d26ff',runId:'demo-ready',hypothesisId:'C',location:'App.tsx:handleCheckMyTrip:merged',message:'snapshot after extraction; staying on review',data:{mergedOrigin:merged.firstLeg.origin,mergedDest:merged.firstLeg.destination,mergedDepartureDate:merged.firstLeg.departureDate,snapshotDepartureDate:extractedSnapshot.firstLeg.departureDate,flightNumber:merged.firstLeg.flightNumber,stepRemains:'trip',providerStatus:extractionResponse.providerStatus?.status??null},timestamp:Date.now()})}).catch(()=>{});
-          // #endregion
-          // #region agent log
-          fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'d481ad'},body:JSON.stringify({sessionId:'d481ad',runId:'impl',hypothesisId:'I2',location:'App.tsx:handleCheckMyTrip:stay-review',message:'snapshot from merged MiniMax legs; stay on review',data:{mergedOrigin:merged.firstLeg.origin,mergedDest:merged.firstLeg.destination,mergedDepartureDate:merged.firstLeg.departureDate,snapshotDepartureDate:extractedSnapshot.firstLeg.departureDate,secondOrigin:merged.secondLeg.origin,secondDest:merged.secondLeg.destination,stepRemains:'trip'},timestamp:Date.now()})}).catch(()=>{});
-          fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'975ced'},body:JSON.stringify({sessionId:'975ced',runId:'live-flip',hypothesisId:'E',location:'App.tsx:handleCheckMyTrip:stay-review',message:'snapshot from merged MiniMax legs; stay on review',data:{mergedOrigin:merged.firstLeg.origin,mergedDest:merged.firstLeg.destination,mergedDepartureDate:merged.firstLeg.departureDate,snapshotOrigin:extractedSnapshot.firstLeg.origin,snapshotDepartureDate:extractedSnapshot.firstLeg.departureDate,secondOrigin:merged.secondLeg.origin,secondDest:merged.secondLeg.destination,stepRemains:'trip'},timestamp:Date.now()})}).catch(()=>{});
-          // #endregion
           return;
         }
         const failMessage = incoming?.validationMessages?.filter(Boolean).join('; ')
@@ -491,9 +478,6 @@ export default function App() {
         setExtractionError(
           `Extraction failed: ${failMessage}. Please try again or use the ready-made sample.`,
         );
-        // #region agent log
-        fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'d481ad'},body:JSON.stringify({sessionId:'d481ad',runId:'post-fix',hypothesisId:'D',location:'App.tsx:handleCheckMyTrip:extract-unusable',message:'extraction payload not merged',data:{extractionStatus:incoming?.extractionStatus ?? null,failMessage},timestamp:Date.now()})}).catch(()=>{});
-        // #endregion
         return;
       } catch (err) {
         const message = err instanceof Error ? err.message : 'AI extraction failed';
@@ -510,9 +494,6 @@ export default function App() {
           correlationId: `extract-err-${Date.now()}`,
           errorCode: err instanceof Error && 'code' in err ? (err as { code: string }).code : 'UNKNOWN',
         });
-        // #region agent log
-        fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'d481ad'},body:JSON.stringify({sessionId:'d481ad',runId:'post-fix',hypothesisId:'D',location:'App.tsx:handleCheckMyTrip:extract-error',message:'extraction threw; staying on review',data:{errorCode:err instanceof Error && 'code' in err ? (err as { code: string }).code : 'UNKNOWN'},timestamp:Date.now()})}).catch(()=>{});
-        // #endregion
         return;
       } finally {
         setExtractionLoading(false);
@@ -523,10 +504,6 @@ export default function App() {
     const snapshot = createConfirmedItinerarySnapshot(extraction, snapshotInputMode);
     setConfirmedItinerary(snapshot);
     setUserConfirmed(true);
-    // #region agent log
-    fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'d481ad'},body:JSON.stringify({sessionId:'d481ad',runId:'post-fix',hypothesisId:'A',location:'App.tsx:handleCheckMyTrip:snapshot',message:'confirmed snapshot from current extraction',data:{isLive,skipLiveExtraction,liveExtractionReviewed,inputMode:snapshotInputMode,origin:snapshot.firstLeg.origin,destination:snapshot.firstLeg.destination,departureDate:snapshot.firstLeg.departureDate,secondOrigin:snapshot.secondLeg.origin,secondDest:snapshot.secondLeg.destination},timestamp:Date.now()})}).catch(()=>{});
-    fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'975ced'},body:JSON.stringify({sessionId:'975ced',runId:'live-flip',hypothesisId:'D',location:'App.tsx:handleCheckMyTrip:snapshot',message:'confirmed snapshot from current extraction; advancing',data:{isLive,skipLiveExtraction,liveExtractionReviewed,inputMode:snapshotInputMode,origin:snapshot.firstLeg.origin,destination:snapshot.firstLeg.destination,departureDate:snapshot.firstLeg.departureDate,secondOrigin:snapshot.secondLeg.origin,secondDest:snapshot.secondLeg.destination},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
 
     if (!liveExtractionReviewed) {
       if (isLive && skipLiveExtraction) {
@@ -554,9 +531,6 @@ export default function App() {
 
     /* ── Nosana risk result ── */
     const nosanaResult = await loadNosanaRiskResult();
-    // #region agent log
-    fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'6d26ff'},body:JSON.stringify({sessionId:'6d26ff',runId:'demo-ready',hypothesisId:'E',location:'App.tsx:handleCheckMyTrip:nosana',message:'nosana risk result loaded',data:{loaded:Boolean(nosanaResult),evidenceSource:(nosanaResult as unknown as {evidenceSource?:string}|null)?.evidenceSource??null,fallbackUsed:(nosanaResult as unknown as {fallbackUsed?:boolean}|null)?.fallbackUsed??null,jobRef:(nosanaResult as unknown as {jobOrServiceReference?:string}|null)?.jobOrServiceReference??null,riskBand:nosanaResult?.riskBand??null},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
     if (nosanaResult) {
       setRiskResult(nosanaResult);
       setNosanaProviderStatus({
@@ -690,6 +664,19 @@ export default function App() {
   const showMiniMaxOfflineExplanation =
     itineraryInputMode === 'sample' || confirmedItinerary?.inputMode === 'sample';
 
+  /* Risk headline score (0–100) — never invented; null when band is unavailable. */
+  const riskScoreOutOf100 =
+    riskResult && riskResult.riskScore !== null && riskResult.riskBand !== 'unavailable'
+      ? Math.round(riskResult.riskScore * 100)
+      : null;
+  /* Provenance qualifier — driven by real evidenceSource/fallbackUsed, not hardcoded. */
+  const riskProvenanceVerifiedLive =
+    riskResult?.evidenceSource === 'nosana-evidence' && riskResult?.fallbackUsed === false;
+  const riskProvenanceQualifier = riskProvenanceVerifiedLive
+    ? ' — verified live'
+    : ' — replayed evidence';
+  const alternativesCount = alternatives.length;
+
   return (
     <div className="sc-app">
       <header className="sc-header">
@@ -733,6 +720,7 @@ export default function App() {
                   onClick={handleTrySampleScreenshot}
                   type="button"
                 >
+                  <Icon name="camera" />
                   {WELCOME_SCREENSHOT_SAMPLE_CTA}
                 </button>
                 <p className="sc-welcome-helper">
@@ -743,6 +731,7 @@ export default function App() {
                   onClick={handleTrySampleItinerary}
                   type="button"
                 >
+                  <Icon name="document" />
                   {WELCOME_READY_MADE_CTA}
                 </button>
                 <p className="sc-welcome-helper sc-welcome-helper--tertiary">
@@ -866,6 +855,7 @@ export default function App() {
                   <div className="sc-boarding-pass-card">
                     <span className="sc-boarding-pass-card__label">First flight</span>
                     <span className="sc-boarding-pass-card__route">
+                      <Icon name="airplane" />
                       {firstLeg.origin} → {firstLeg.destination}
                     </span>
                     <span className="sc-boarding-pass-card__detail">
@@ -878,6 +868,7 @@ export default function App() {
                   <div className="sc-boarding-pass-card">
                     <span className="sc-boarding-pass-card__label">Second flight</span>
                     <span className="sc-boarding-pass-card__route">
+                      <Icon name="airplane" />
                       {secondLeg.origin} → {secondLeg.destination}
                     </span>
                     <span className="sc-boarding-pass-card__detail">
@@ -987,7 +978,18 @@ export default function App() {
         {/* ═══ Screen 3 — Answer / options (risk summary + recommendation + decision) ═══ */}
         {step === 'options' && (
           <section className="sc-screen sc-screen--options" aria-label="Your options">
-            <h2 className="sc-screen__title">Your connection is at risk</h2>
+            <h2 className="sc-screen__title">
+              {riskScoreOutOf100 !== null
+                ? `Your connection has a ${riskScoreOutOf100}/100 risk of failing you${riskProvenanceQualifier}.`
+                : 'Your connection is at risk'}
+            </h2>
+
+            {riskScoreOutOf100 !== null && alternativesCount > 0 && (
+              <p className="sc-options-alternatives-lead">
+                {alternativesCount} single-ticket alternative
+                {alternativesCount === 1 ? '' : 's'} that remove this risk.
+              </p>
+            )}
 
             {extractionError && !extractionLoading && (
               <div className="sc-banner sc-banner--error" role="alert">
@@ -1107,7 +1109,17 @@ export default function App() {
                         {recoveryAnimationData && (
                           <p data-testid="rpa-how-provenance">{recoveryAnimationData.provenanceLabel}</p>
                         )}
-                        <p>Risk band: <strong>{howCalculated.riskBand}</strong></p>
+                        <p className="sc-how-calculated__risk-band">
+                          <Icon
+                            name="warning"
+                            className={
+                              howCalculated.riskBand === 'medium'
+                                ? 'sc-icon--risk-medium'
+                                : undefined
+                            }
+                          />
+                          Risk band: <strong>{howCalculated.riskBand}</strong>
+                        </p>
                         <p className="sc-disclaimer">{howCalculated.heuristicDisclaimer}</p>
                         <p className="sc-explanation">{howCalculated.failureCascadeExplanation}</p>
                         <p className="sc-meta-small">

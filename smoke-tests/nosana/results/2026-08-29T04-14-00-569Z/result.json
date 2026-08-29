@@ -1,0 +1,61 @@
+{
+  "success": true,
+  "provider": "nosana/job",
+  "tierUsed": "cheap",
+  "usedFallback": false,
+  "evidenceSource": "nosana-evidence",
+  "evidenceLabel": "Nosana evidence — remote job succeeded; result from decentralized GPU workload.",
+  "latencyMs": 11181,
+  "jobMetadata": {
+    "jobId": "EDdUttgajPWJGMDmhFjQJ3wQ12Qh9yKsFupSJvduGTNg",
+    "market": "7AtiXMSH6R1jjBxrcYjehCkkSF7zvYWte63gwEDBcGHq",
+    "ipfsHash": "QmTde7ck9jxNTuJNhyWenLLRnMq8XQu54GTcKJQmGFxWFf",
+    "resultIpfsHash": "QmZKP4rxV9D98tMMst437e8R4H3cZkrhvpzs6s8afr2E3A",
+    "platformTimeoutSec": 3600,
+    "submittedAt": "2026-08-29T04:13:49.418Z",
+    "completedAt": "2026-08-29T04:14:00.553Z",
+    "observedStates": [
+      "success"
+    ],
+    "creditsUsed": 44,
+    "costUsd": 0.044,
+    "reservationId": "aebc0462-ba5d-4d4f-a9fa-cef09c5ed320",
+    "project": "7LB623XexGGLN4b9nbiGvQXrQAnBaYeaJzaPtVfrL5fG",
+    "containerImage": "docker.io/tensorflow/tensorflow:2.17.0-gpu-jupyter"
+  },
+  "riskResult": {
+    "correlationId": "nosana-risk-cli-1787976829387",
+    "workloadStatus": "completed",
+    "jobOrServiceReference": "EDdUttgajPWJGMDmhFjQJ3wQ12Qh9yKsFupSJvduGTNg",
+    "riskBand": "medium",
+    "riskScore": 0.2895,
+    "heuristicDisclaimer": "Heuristic risk estimate only — derived from a static/historical synthetic dataset; not a live delay, weather, legal, or guaranteed-outcome prediction. Nosana evidence — remote job succeeded; result from decentralized GPU workload.",
+    "failureCascadeExplanation": "A 75-minute connection at BBB was evaluated against 800 historical records. Monte Carlo simulation (800 runs) estimated a 30.4% probability of tight connection. Combined with route miss rate, the heuristic risk score is 0.2895 (medium band). This is a heuristic indication only — not a prediction or guarantee.",
+    "datasetVersion": "hist-delay-v1",
+    "fallbackUsed": false,
+    "errorCode": null,
+    "errorMessage": null,
+    "evidenceSource": "nosana-evidence",
+    "evidenceLabel": "Nosana evidence — remote job succeeded; result from decentralized GPU workload.",
+    "simulationCount": 800,
+    "assumptions": [
+      "Historical average delay at BBB: 25 min",
+      "On-time rate: 0.72",
+      "Route miss rate: 0.28",
+      "Monte Carlo simulations: 800"
+    ],
+    "latencyMs": 11181
+  },
+  "output": {
+    "riskScore": 0.2895,
+    "riskBand": "medium",
+    "assumptions": [
+      "Historical average delay at BBB: 25 min",
+      "On-time rate: 0.72",
+      "Route miss rate: 0.28",
+      "Monte Carlo simulations: 800"
+    ],
+    "simulationCount": 800,
+    "explanation": "A 75-minute connection at BBB was evaluated against 800 historical records. Monte Carlo simulation (800 runs) estimated a 30.4% probability of tight connection. Combined with route miss rate, the heuristic risk score is 0.2895 (medium band). This is a heuristic indication only — not a prediction or guarantee."
+  }
+}

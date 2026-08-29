@@ -470,11 +470,6 @@ function _errorResult(error, missingFieldsNote, note) {
 export function createProviderCallFunction(client) {
   return async function callProvider(request, model) {
     if (_callCount >= SAFETY_LIMITS.maxCalls) {
-      // #region agent log
-      fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'6d26ff'},body:JSON.stringify({sessionId:'6d26ff',runId:'demo-ready',hypothesisId:'D',location:'openrouter-extraction-adapter.mjs:maxCalls',message:'call budget exhausted',data:{callCount:_callCount,maxCalls:SAFETY_LIMITS.maxCalls},timestamp:Date.now()})}).catch(()=>{});
-      fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'d481ad'},body:JSON.stringify({sessionId:'d481ad',runId:'post-fix',hypothesisId:'C',location:'openrouter-extraction-adapter.mjs:maxCalls',message:'call budget exhausted',data:{callCount:_callCount,maxCalls:SAFETY_LIMITS.maxCalls},timestamp:Date.now()})}).catch(()=>{});
-      fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'975ced'},body:JSON.stringify({sessionId:'975ced',runId:'live-flip',hypothesisId:'D',location:'openrouter-extraction-adapter.mjs:maxCalls',message:'call budget exhausted',data:{callCount:_callCount,maxCalls:SAFETY_LIMITS.maxCalls},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion
       return createDisabledExtractionResult("call_limit_exceeded");
     }
     _callCount += 1;
@@ -505,10 +500,6 @@ export function createProviderCallFunction(client) {
     }
     const { parsed, warnings, failurePoint } = _parseProviderText(text);
     const normalized = parsed ? _normalizeParsedExtraction(parsed) : null;
-    // #region agent log
-    fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'d481ad'},body:JSON.stringify({sessionId:'d481ad',runId:'post-fix',hypothesisId:'B',location:'openrouter-extraction-adapter.mjs:normalize',message:'provider JSON after date mapping',data:{parsed:Boolean(parsed),incomingDate:parsed?.firstLeg?.date || null,incomingDepartureDate:parsed?.firstLeg?.departureDate || null,normalizedDate:normalized?.firstLeg?.date || null,normalizedDepartureDate:normalized?.firstLeg?.departureDate || null,origin:normalized?.firstLeg?.origin || null,callCount:_callCount},timestamp:Date.now()})}).catch(()=>{});
-    fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'975ced'},body:JSON.stringify({sessionId:'975ced',runId:'live-flip',hypothesisId:'C',location:'openrouter-extraction-adapter.mjs:normalize',message:'provider JSON after date mapping',data:{parsed:Boolean(parsed),incomingDate:parsed?.firstLeg?.date||null,incomingDepartureDate:parsed?.firstLeg?.departureDate||null,normalizedDate:normalized?.firstLeg?.date||null,normalizedDepartureDate:normalized?.firstLeg?.departureDate||null,origin:normalized?.firstLeg?.origin||null,destination:normalized?.firstLeg?.destination||null,flightNumber:normalized?.firstLeg?.flightNumber||null,callCount:_callCount},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
     if (!normalized) {
       return Object.freeze({
         extractionStatus: "error",
@@ -536,9 +527,6 @@ export function createProviderCallFunction(client) {
     }
     const itinerary = _assessItinerarySchema(normalized);
     if (!itinerary.schemaValidated) {
-      // #region agent log
-      fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'6d26ff'},body:JSON.stringify({sessionId:'6d26ff',runId:'demo-ready',hypothesisId:'C',location:'openrouter-extraction-adapter.mjs:schema',message:'itinerary schema rejected',data:{issues:itinerary.issues,origin:normalized?.firstLeg?.origin||null,departureDate:normalized?.firstLeg?.departureDate||null,flightNumber:normalized?.firstLeg?.flightNumber||null},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion
       return _schemaFailureResult(normalized, itinerary.issues, warnings, model);
     }
     return _normalizeProviderResult(normalized, warnings);

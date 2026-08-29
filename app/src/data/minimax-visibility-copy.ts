@@ -1,10 +1,10 @@
 /** Copy strings from docs/minimax-visibility-fix-spec-2026-08-28.md — do not paraphrase. */
 
 export const WELCOME_SCREENSHOT_SAMPLE_CTA =
-  'Extract with Kimi K3';
+  'Extract with MiniMax M3';
 
 export const WELCOME_SCREENSHOT_SAMPLE_HELPER =
-  'Use a sample itinerary screenshot. Kimi K3 will extract your flights and dates.';
+  'Use a sample itinerary screenshot. MiniMax M3 will extract your flights and dates.';
 
 export const WELCOME_READY_MADE_CTA =
   'Use sample — no extraction';
@@ -15,7 +15,7 @@ export const WELCOME_READY_MADE_HELPER =
 export const MINIMAX_EXTRACTION_LOADING =
   'MiniMax M3 is reading your itinerary…';
 
-export const MINIMAX_PROVENANCE_TAG = 'Extracted by Kimi K3';
+export const MINIMAX_PROVENANCE_TAG = 'Extracted by MiniMax M3';
 
 export const MINIMAX_OFFLINE_STATUS = 'MiniMax M3: offline';
 

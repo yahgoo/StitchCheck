@@ -29,9 +29,6 @@ export function mergeExtractionResult(
 ): ExtractionResult {
   const mappedFirst = mapProviderLeg(incoming.firstLeg as ProviderLeg | null | undefined);
   const mappedSecond = mapProviderLeg(incoming.secondLeg as ProviderLeg | null | undefined);
-  // #region agent log
-  fetch('http://127.0.0.1:7403/ingest/aac4d69a-d129-4aeb-abd0-e30af84b4350',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'d481ad'},body:JSON.stringify({sessionId:'d481ad',runId:'post-fix',hypothesisId:'B',location:'merge-extraction-result.ts:mapProviderLeg',message:'merge date→departureDate',data:{incomingFirstHasDate:Boolean((incoming.firstLeg as ProviderLeg | undefined)?.date),incomingFirstHasDepartureDate:Boolean(incoming.firstLeg?.departureDate),mappedFirstDepartureDate:mappedFirst?.departureDate || null,mappedFirstOrigin:mappedFirst?.origin || null},timestamp:Date.now()})}).catch(()=>{});
-  // #endregion
   return {
     ...prev,
     ...incoming,

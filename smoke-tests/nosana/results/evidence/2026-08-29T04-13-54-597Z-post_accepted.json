@@ -1,0 +1,31 @@
+{
+  "eventType": "post_accepted",
+  "recordedAt": "2026-08-29T04:13:54.597Z",
+  "phase": "post",
+  "jobId": "EDdUttgajPWJGMDmhFjQJ3wQ12Qh9yKsFupSJvduGTNg",
+  "jobIdField": "job",
+  "market": "7AtiXMSH6R1jjBxrcYjehCkkSF7zvYWte63gwEDBcGHq",
+  "ipfsHash": "QmTde7ck9jxNTuJNhyWenLLRnMq8XQu54GTcKJQmGFxWFf",
+  "creditsUsed": 44,
+  "costUsd": 0.044,
+  "reservationId": "aebc0462-ba5d-4d4f-a9fa-cef09c5ed320",
+  "project": "7LB623XexGGLN4b9nbiGvQXrQAnBaYeaJzaPtVfrL5fG",
+  "responseKeys": [
+    "tx",
+    "job",
+    "run",
+    "credits"
+  ],
+  "rawShape": {
+    "tx": "string",
+    "job": "string",
+    "run": "string",
+    "credits": {
+      "costUSD": "number",
+      "creditsUsed": "number",
+      "reservationId": "string",
+      "project": "string"
+    }
+  },
+  "submittedAt": "2026-08-29T04:13:49.418Z"
+}

@@ -1,0 +1,20 @@
+{
+  "eventType": "completed_success",
+  "recordedAt": "2026-08-29T04:14:00.553Z",
+  "phase": "complete",
+  "jobId": "EDdUttgajPWJGMDmhFjQJ3wQ12Qh9yKsFupSJvduGTNg",
+  "market": "7AtiXMSH6R1jjBxrcYjehCkkSF7zvYWte63gwEDBcGHq",
+  "ipfsHash": "QmTde7ck9jxNTuJNhyWenLLRnMq8XQu54GTcKJQmGFxWFf",
+  "resultIpfsHash": "QmZKP4rxV9D98tMMst437e8R4H3cZkrhvpzs6s8afr2E3A",
+  "creditsUsed": 44,
+  "costUsd": 0.044,
+  "reservationId": "aebc0462-ba5d-4d4f-a9fa-cef09c5ed320",
+  "project": "7LB623XexGGLN4b9nbiGvQXrQAnBaYeaJzaPtVfrL5fG",
+  "observedStates": [
+    "success"
+  ],
+  "outputSource": "opStates.stitchcheck-risk-calc.logs[0].log:json-string",
+  "latencyMs": 11134,
+  "submittedAt": "2026-08-29T04:13:49.418Z",
+  "completedAt": "2026-08-29T04:14:00.552Z"
+}

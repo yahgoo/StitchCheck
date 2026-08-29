@@ -1,0 +1,13 @@
+{
+  "eventType": "polling",
+  "recordedAt": "2026-08-29T04:09:05.486Z",
+  "phase": "poll",
+  "jobId": "fakeJobAddress123456",
+  "market": "fakeMarketAddress",
+  "ipfsHash": "QmFakeIpfsHashForRegressionTest",
+  "creditsUsed": 5,
+  "costUsd": 0.001,
+  "reservationId": null,
+  "project": null,
+  "submittedAt": "2026-08-29T04:09:05.485Z"
+}

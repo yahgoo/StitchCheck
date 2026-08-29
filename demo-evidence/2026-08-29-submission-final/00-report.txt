@@ -1,0 +1,35 @@
+StitchCheck submission capture + live walkthrough
+Started: 2026-08-29T06:11:36.099Z
+DATA_MODE source: app/.env.local
+
+── Rendered strings captured ──
+welcome_extract_cta_miniMax: true
+welcome_helper_miniMax: true
+welcome_no_retired_label: true
+review_extracted_by_miniMax_tag: true
+review_extraction_failed: false
+reached_options: true
+options_headline: "Your connection has a 29/100 risk of failing you — verified live."
+options_alternatives_lead: "18 single-ticket alternatives that remove this risk."
+options_source_note: "Source: Atlas Sandbox · live"
+options_headline_ok: true
+options_qualifier_tracked: true
+provider_order: "MiniMax M3 → Nosana → Atlas Sandbox → Daytona"
+provider_order_ok: true
+provider_bar_no_retired_label: true
+how_calculated_has_risk_band: true
+
+── Timing deltas ──
+welcome: +1810ms
+review: +5008ms
+options: +3446ms
+modals: +1716ms
+
+Total: 14923ms
+GATE (Block 5 regression): PASS
+Screenshots:
+  /Users/kmsum/Downloads/Gemini Hackathon - Daytona HackSprint - Alibaba x Atlas Travel/demo-evidence/2026-08-29-submission-final/01-welcome.png
+  /Users/kmsum/Downloads/Gemini Hackathon - Daytona HackSprint - Alibaba x Atlas Travel/demo-evidence/2026-08-29-submission-final/02-review.png
+  /Users/kmsum/Downloads/Gemini Hackathon - Daytona HackSprint - Alibaba x Atlas Travel/demo-evidence/2026-08-29-submission-final/03-options.png
+  /Users/kmsum/Downloads/Gemini Hackathon - Daytona HackSprint - Alibaba x Atlas Travel/demo-evidence/2026-08-29-submission-final/04-how-this-works.png
+  /Users/kmsum/Downloads/Gemini Hackathon - Daytona HackSprint - Alibaba x Atlas Travel/demo-evidence/2026-08-29-submission-final/05-how-this-was-calculated.png

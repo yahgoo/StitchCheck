@@ -1,0 +1,78 @@
+{
+  "success": true,
+  "provider": "dry-run",
+  "tierUsed": "none",
+  "usedFallback": true,
+  "evidenceSource": "dry-run",
+  "evidenceLabel": "Dry-run mode — job definition built and validated but NOT submitted to Nosana.",
+  "latencyMs": 1,
+  "jobMetadata": {
+    "jobId": null,
+    "market": "7AtiXMSH6R1jjBxrcYjehCkkSF7zvYWte63gwEDBcGHq",
+    "ipfsHash": null,
+    "submittedAt": null,
+    "completedAt": null,
+    "observedStates": [],
+    "creditsUsed": null,
+    "containerImage": "docker.io/tensorflow/tensorflow:2.17.0-gpu-jupyter",
+    "dryRunPayload": {
+      "version": "0.1",
+      "type": "container",
+      "ops": [
+        {
+          "id": "stitchcheck-risk-calc",
+          "type": "container/run",
+          "args": {
+            "image": "docker.io/tensorflow/tensorflow:2.17.0-gpu-jupyter",
+            "cmd": "python3 << 'PYEOF'\nimport json, os, sys, math, random\n\nrandom.seed(42)\n\ndata = json.loads(os.environ['RISK_INPUT_DATA'])\nhist = json.loads(os.environ['HISTORICAL_DELAY_DATA'])\n\nconn_min = data['connectionDurationMinutes']\nconn_apt = data['connectionAirport']\norigin = data['origin']\ndest = data['destination']\n\napt = hist.get('airports', {}).get(conn_apt, {})\navg_delay = apt.get('avgDelayMinutes', 20)\non_time = apt.get('onTimeRate', 0.75)\ntight_rate = apt.get('tightConnectionRate', 0.25)\nsample = apt.get('sampleSize', 500)\n\nroute = None\nfor r in hist.get('routes', []):\n    if r['origin'] == origin and r['connection'] == conn_apt:\n        route = r\n        break\nmiss_rate = route['avgMissRate'] if route else 0.20\n\nn_sims = min(1000, max(100, sample))\ntight_count = 0\nfor _ in range(n_sims):\n    d = max(0, random.gauss(avg_delay, avg_delay * 0.4))\n    remaining = conn_min - d\n    if remaining < 45:\n        tight_count += 1\n\ntight_ratio = tight_count / n_sims\nrisk_score = round(min(1.0, max(0.0, miss_rate * 0.6 + tight_ratio * 0.4)), 4)\n\nif risk_score < 0.25:\n    band = 'low'\nelif risk_score < 0.55:\n    band = 'medium'\nelse:\n    band = 'high'\n\nresult = {\n    'riskScore': risk_score,\n    'riskBand': band,\n    'assumptions': [\n        'Historical average delay at %s: %d min' % (conn_apt, avg_delay),\n        'On-time rate: %.2f' % on_time,\n        'Route miss rate: %.2f' % miss_rate,\n        'Monte Carlo simulations: %d' % n_sims,\n    ],\n    'simulationCount': n_sims,\n    'explanation': (\n        'A %d-minute connection at %s was evaluated against %d historical records. '\n        'Monte Carlo simulation (%d runs) estimated a %.1f%% probability of tight connection. '\n        'Combined with route miss rate, the heuristic risk score is %.4f (%s band). '\n        'This is a heuristic indication only — not a prediction or guarantee.'\n    ) % (conn_min, conn_apt, sample, n_sims, tight_ratio * 100, risk_score, band),\n}\n\nprint(json.dumps(result))\nPYEOF"
+          }
+        }
+      ],
+      "meta": {
+        "trigger": "api"
+      },
+      "global": {
+        "env": {
+          "RISK_INPUT_DATA": "{\"correlationId\":\"nosana-risk-run-178798…[redacted]…iiDeclaration\":true}",
+          "HISTORICAL_DELAY_DATA": "{\"datasetVersion\":\"hist-delay-v1\",\"descr…[redacted]….38,\"flights\":150}]}"
+        }
+      }
+    }
+  },
+  "riskResult": {
+    "correlationId": "nosana-risk-run-1787988233575",
+    "workloadStatus": "completed",
+    "jobOrServiceReference": null,
+    "riskBand": "medium",
+    "riskScore": 0.293,
+    "heuristicDisclaimer": "Heuristic risk estimate only — derived from a static/historical synthetic dataset; not a live delay, weather, legal, or guaranteed-outcome prediction. Synthetic local placeholder — not Nosana evidence",
+    "failureCascadeExplanation": "A 75-minute connection at BBB was evaluated against 800 historical records. Monte Carlo simulation (800 runs) estimated a 31.3% probability of tight connection. Combined with route miss rate, the heuristic risk score is 0.2930 (medium band). This is a heuristic indication only — not a prediction or guarantee.",
+    "datasetVersion": "hist-delay-v1",
+    "fallbackUsed": true,
+    "errorCode": null,
+    "errorMessage": null,
+    "evidenceSource": "dry-run",
+    "evidenceLabel": "Dry-run mode — job definition built and validated but NOT submitted to Nosana.",
+    "simulationCount": 800,
+    "assumptions": [
+      "Historical average delay at BBB: 25 min",
+      "On-time rate: 0.72",
+      "Route miss rate: 0.28",
+      "Monte Carlo simulations: 800"
+    ],
+    "latencyMs": 1,
+    "fallbackReason": "DRY_RUN"
+  },
+  "output": {
+    "riskScore": 0.293,
+    "riskBand": "medium",
+    "assumptions": [
+      "Historical average delay at BBB: 25 min",
+      "On-time rate: 0.72",
+      "Route miss rate: 0.28",
+      "Monte Carlo simulations: 800"
+    ],
+    "simulationCount": 800,
+    "explanation": "A 75-minute connection at BBB was evaluated against 800 historical records. Monte Carlo simulation (800 runs) estimated a 31.3% probability of tight connection. Combined with route miss rate, the heuristic risk score is 0.2930 (medium band). This is a heuristic indication only — not a prediction or guarantee."
+  }
+}
