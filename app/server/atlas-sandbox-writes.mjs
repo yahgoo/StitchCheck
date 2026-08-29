@@ -78,6 +78,11 @@ const ORDER_STATUS_FIELD_KEYS = Object.freeze([
   'status', 'orderStatus', 'order_status', 'state', 'orderState', 'order_state',
 ]);
 
+/** Envelope transport `status` words. They describe CLI delivery, not
+ *  the order, so they must never shadow the domain code (rehearsal
+ *  2026-08-29: envelope status "success" masked code "TICKETED"). */
+const ENVELOPE_TRANSPORT_STATUS_WORDS = new Set(['success', 'error', 'action_required']);
+
 /** Numeric status-code semantics (0/1/2/-3) remain unverified and
  *  BLOCKED (spec §3.5): numeric codes NEVER map to a success or
  *  terminal state — they stay `unknown` everywhere. */
@@ -1535,7 +1540,16 @@ export function createSandboxWriteHandler(env, execCliImpl = null, options = {})
         return;
       }
 
-      const rawCode = extractFieldValue(result.parsed, ORDER_STATUS_FIELD_KEYS);
+      let rawCode = extractFieldValue(result.parsed, ORDER_STATUS_FIELD_KEYS);
+      // The envelope's transport `status` word ("success" etc.) is not an
+      // order state. When extraction lands only on such a word, fall back
+      // to the envelope `code` (e.g. "TICKETED") before normalizing.
+      if (
+        (typeof rawCode !== 'string' || ENVELOPE_TRANSPORT_STATUS_WORDS.has(rawCode.trim()))
+        && typeof result.parsed.code === 'string' && result.parsed.code.trim().length > 0
+      ) {
+        rawCode = result.parsed.code.trim();
+      }
       const normalized = typeof rawCode === 'string' ? rawCode.trim() : null;
       // Normalize raw CLI codes to the AtlasSandboxOrderStatus union
       // (fix-round WARNING-3); numeric/unknown codes stay `unknown` and
