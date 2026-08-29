@@ -220,7 +220,7 @@ The offline suite covers extraction, risk, sandbox, and cross-cutting provenance
 
 | Suite | Location | Coverage |
 |---|---|---|
-| OpenRouter extraction adapter offline tests | `smoke-tests/extraction/openrouter-extraction-adapter-offline-tests.mjs` | MiniMax M3 extraction contract, schema validation, fallback labels |
+| MiniMax M3 extraction adapter offline tests | `smoke-tests/extraction/openrouter-extraction-adapter-offline-tests.mjs` | MiniMax M3 extraction contract (Nosana transport), schema validation, fallback labels |
 | MiniMax visibility tests | `smoke-tests/minimax-visibility-fix-offline-tests.mjs` | Provenance-tag truthfulness in the UI |
 | Nosana suites (10+) | `smoke-tests/nosana/` | Client boundary, cost ceiling, safety gate, timeout watchdog, live-evidence reconciliation, UI-label truthfulness |
 | Atlas adapter / guard / write-gate | `smoke-tests/atlas/` | Search/Verify contract, duplicate-booking prevention, sandbox write-gate (default-deny) |
@@ -285,7 +285,7 @@ app/                          React/Vite/TypeScript demo application
 core/                         Canonical provenance, safety, and flag modules
 app-fixture-contracts/        JSON contracts defining UI data shapes
 smoke-tests/
-  extraction/                 MiniMax M3 (OpenRouter) adapter, offline tests, fixtures
+  extraction/                 MiniMax M3 (Nosana) adapter, offline tests, fixtures
   atlas/                      Atlas adapter, offline tests, write-gate, live evidence
   nosana/                     Nosana client boundary, offline tests, live job evidence
   daytona/                    Daytona runner results and offline tests
