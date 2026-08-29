@@ -34,10 +34,10 @@
 
 **Spoken narrative:**
 
-> The user uploads a fictional test itinerary — a fictional image with no real passenger data. StitchCheck extracts the itinerary fields: airlines, flight numbers, origins, destinations, dates, and times. Every extracted field is fully editable. In this demo, the second-leg flight number is corrected from SC-202 to SC-299, with the correction recorded locally. Direct Gemini 3.7 — live extraction validated.
+> The user uploads a fictional test itinerary — a fictional image with no real passenger data. StitchCheck extracts the itinerary fields: airlines, flight numbers, origins, destinations, dates, and times. Every extracted field is fully editable. In this demo, the second-leg flight number is corrected from SC-202 to SC-299, with the correction recorded locally. MiniMax M3 via OpenRouter — live extraction validated.
 
 **Word count:** ~75 words.  
-**Visible proof:** Editable itinerary fields visible. Correction note visible. Direct Gemini — live validated.
+**Visible proof:** Editable itinerary fields visible. Correction note visible. MiniMax M3 via OpenRouter — live extraction validated.
 
 ---
 
@@ -127,9 +127,9 @@
 
 | # | Exact label | Segment | Panel |
 |---|---|---|---|
-| 1 | `Direct Gemini 3.7 — live validated` | 2 Input | Itinerary review |
+| 1 | `Source: AI extraction (MiniMax M3 via OpenRouter) · live` | 2 Input | Itinerary review |
 | 2 | `Local fallback — not Nosana evidence` | 4 Risk | Risk panel |
-| 3 | `Demo alternatives — local demo fixture` | 5 Provider | Alternatives panel |
+| 3 | `Local fixture` | 5 Provider | Alternatives panel |
 
 ---
 
@@ -137,7 +137,8 @@
 
 | Claim in script | Evidence source | Boundary |
 |---|---|---|
-| "Direct Gemini — live validated" | `smoke-tests/gemini/results/results-gemini-3.7-flash-success.json` | Gemini 3.7 live extraction validated. |
+| "MiniMax M3 via OpenRouter — live extraction validated" | `demo-evidence/2026-08-29-submission-final/00-report.txt`, `smoke-tests/extraction/` | MiniMax M3 live extraction validated (current provider). |
+| "Direct Gemini — live validated" (historical only) | `smoke-tests/gemini/results/results-gemini-3.7-flash-success.json` (historical artifact) | Gemini 3.7 live extraction was previously validated; Gemini was replaced by MiniMax M3 via OpenRouter on 2026-08-29. Not a current-state claim. |
 | "Historical temporary OpenRouter test path — not the active provider" | `smoke-tests/gemini/results/results.json`, `smoke-tests/live-demo-results/2026-08-21T05-37-31Z/gemini-live-result.md` | GEM-LIVE-01 via OpenRouter; historical temporary path only. |
 | "Atlas Sandbox Search and Verify completed successfully" | `smoke-tests/atlas/results/sandbox-search-verify-2026-08-21T07-02-42-099Z.json` (ATL-SBX-SV-01) | Read-only; hard stop after Verify; environment restored. |
 | "Atlas ticketing is activation-gated" | `docs/stitchcheck-submission-evidence-index.md`, `TICKETING_ACTIVATION_REQUIRED` | No booking, payment, or ticketing. |
@@ -146,12 +147,12 @@
 
 ### Prohibited claims — do not add
 
-- Direct Gemini was not validated or produced results (it was validated — see `results-gemini-3.7-flash-success.json`).
+- Direct Gemini is the current extraction provider (it was replaced by MiniMax M3 via OpenRouter on 2026-08-29; Gemini live validation exists only as the historical artifact `results-gemini-3.7-flash-success.json`).
 - The browser walkthrough made a live Nosana call (it did not — the browser uses local fixtures; the live Nosana result exists as a separate reconciled artifact).
 - Any offline fixture is labelled as live provider evidence.
 - Any booking, payment, reservation, ticket, order, or verification was created.
 - Credentials, PII, or raw provider output are shown.
-- The active provider is called OpenRouter(Gemini).
+- The current extraction provider is called Gemini or Google Gemini (it is MiniMax M3 via OpenRouter).
 
 ---
 

@@ -13,7 +13,7 @@ credential-free offline suite, then a typecheck and a production build:
 
 - Cross-provider invariant tests
 - Provenance-label offline tests
-- Extraction-adapter offline tests (OpenRouter historical path)
+- Extraction-adapter offline tests (current OpenRouter/MiniMax M3 extraction path)
 - Atlas adapter / duplicate-booking guard / schema validator / verify-retry resilience
 - Nosana client / schema / response-normalization / cost / child-process / UI-label /
   live-evidence-reconciliation / safety-gate / timeout-safety / workload-portability
