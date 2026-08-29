@@ -1,4 +1,4 @@
-# StitchCheck
+# StitchCheck — Alibaba Cloud x Atlas Agentic AI Hackathon
 
 StitchCheck turns a flight screenshot into a confirmed itinerary, explains self-transfer failure risk, and compares safer alternatives before a traveller commits. Built with **MiniMax M3 (via Nosana)**, **Nosana** (risk computation), **Atlas Sandbox** (flight search/verification), and **Alibaba Cloud** (infrastructure).
 
@@ -18,7 +18,7 @@ StitchCheck quantifies that hidden risk — a Monte Carlo connection-risk score 
 
 ## Solution
 
-StitchCheck extracts structured itinerary data from a screenshot, identifies the failure cascade, produces an editable confirmed itinerary, and compares safer alternatives via Atlas Sandbox before the traveller commits.
+StitchCheck extracts structured itinerary data from a flight screenshot using **MiniMax M3 (via Nosana)**, identifies the self-transfer failure cascade, produces an editable confirmed itinerary, and compares safer alternatives via Atlas Sandbox before the traveller commits.
 
 ## How it works
 
@@ -35,6 +35,8 @@ StitchCheck extracts structured itinerary data from a screenshot, identifies the
 | **Nosana** | Risk computation — Monte Carlo connection-risk simulation on decentralized GPU compute |
 | **Atlas Sandbox** | Flight search / verification of safer single-ticket alternatives |
 | **Alibaba Cloud** | Infrastructure |
+
+**Safety architecture**: 7-layer gate chain (kill switch, live mode, read-only, production flag exclusion, sandbox environment, sandbox base URL exact match, execution approval) — all fail-closed by default.
 
 ## Sponsored integrations
 
@@ -86,6 +88,28 @@ The repo includes a fully functional mock ticketing flow that runs against the A
 - **Implementation:** `scripts/atlas-sandbox-writes.mjs`, `app/src/components/SandboxOrderPanel.tsx`, `scripts/sandbox-write-gate-tests.mjs`
 
 See the "Mock Ticketing Flow" slide (slide 8) in the deck for the full safety gate chain.
+
+**To enable mock ticketing** (for testing only — not for production):
+
+1. Edit `.env.local` and un-comment the 4 sandbox-write flags:
+   ```
+   ATLAS_SANDBOX_WRITES_ENABLED=true
+   ATLAS_ENVIRONMENT=sandbox
+   ATLAS_SANDBOX_BASE_URL=https://sandbox.atriptech.com/
+   ATLAS_SANDBOX_WRITES_EXECUTION_APPROVED=true
+   ```
+2. Restart dev server (`npm run dev`)
+3. Run through the flow: Use sample → Check my itinerary → Options → Verify and select plan → Start Atlas Sandbox rehearsal → acknowledge → Create sandbox test order → Pay
+
+**Safety gates** (all must pass for mock ticketing to execute):
+
+1. `kill_switch` — `ATLAS_SANDBOX_WRITES_ENABLED === 'true'`
+2. `live_mode` — `DATA_MODE === 'live'`
+3. `read_only` — `ATLAS_LIVE_READ_ONLY === 'true'`
+4. `production_flag_exclusion` — `ATLAS_WRITES_ENABLED !== 'true'` (sandbox and production writes are mutually exclusive)
+5. `sandbox_environment` — `ATLAS_ENVIRONMENT === 'sandbox'`
+6. `sandbox_base_url` — `ATLAS_SANDBOX_BASE_URL` exact match (including trailing slash)
+7. `execution_approval` — `ATLAS_SANDBOX_WRITES_EXECUTION_APPROVED === 'true'` (final human checkpoint)
 
 ## Quantified metric (honest and traceable)
 
