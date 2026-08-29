@@ -56,8 +56,16 @@ output/
 # ── IDE / tool local state ──
 .cursor/
 .workbuddy-ai/
-.qoder/*
-!.qoder/specs/
+.qoder/
 
 # ── Presentation assets: deck files (*.key, *.pptx, *.pdf) are submission
 # artifacts and are intentionally tracked. ──
+
+# ── Post-hackathon cleanup — working scratch and build artifacts ──
+a/
+.qoder/specs/
+deck/
+submission/
+smoke-tests/atlas/live-app-runs/
+smoke-tests/nosana/results/evidence/
+StitchCheck-Deck-*.pdf
