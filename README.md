@@ -79,7 +79,7 @@ Evidence: `output/atlas-sandbox-evidence-2026-08-29.jsonl` (orderNo redacted by 
 - **Earlier deck (superseded):** [`deck/index.html`](deck/index.html) (10 slides) / [StitchCheck-Daytona-Nosana-Hackathon-2026.pdf](deck/StitchCheck-Daytona-Nosana-Hackathon-2026.pdf)
 - **Demo video:** Local artifact — see [Video Artifacts](#video-artifacts) section below. Not yet uploaded to an external platform.
 - **QR code (repo branch):** [`assets/qr-repo-branch.png`](assets/qr-repo-branch.png) — scannable link to `https://github.com/yahgoo/StitchCheck/tree/feature/atlas-sandbox-mock-ticketing` (for the final CTA slide / demo booth).
-<!-- TODO: add Google Drive link to updated deck once uploaded -->
+- **Deck (Google Drive):** [StitchCheck-Alibaba-Atlas-Hackathon-2026-Updated.pdf](https://drive.google.com/file/d/1Ydd6nPUBGDv3zhlve5TkJhkFJM_idU9z/view?usp=sharing) — `deck/StitchCheck-Alibaba-Atlas-Hackathon-2026-Updated.pdf` (11 slides)
 
 ## Mock Ticketing
 
