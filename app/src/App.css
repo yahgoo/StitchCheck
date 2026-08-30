@@ -1027,7 +1027,7 @@
 
 /* ── Screen 1 — Welcome ── */
 .sc-screen--welcome {
-  padding-top: 4rem;
+  padding-top: 1.5rem;
 }
 
 .sc-screen--welcome .sc-screen__title {

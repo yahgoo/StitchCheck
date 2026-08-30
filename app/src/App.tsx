@@ -53,6 +53,7 @@ import {
 } from './data/minimax-visibility-copy';
 import { MiniMaxProvenanceTag } from './components/MiniMaxProvenanceTag';
 import { Icon } from './components/Icon';
+import { LuggageAirplaneHero } from './components/icons/LuggageAirplaneHero';
 /* Demo fixture screenshots bundled inline (base64 data URLs) so the live
  * Live extraction receives the same itinerary image the traveller
  * selected in the ticket selectors, not a stand-in placeholder image. */
@@ -700,6 +701,7 @@ export default function App() {
         {step === 'welcome' && (
           <section className="sc-screen sc-screen--welcome" aria-label="Welcome">
             <div className="sc-screen__inner">
+              <LuggageAirplaneHero />
               <h2 className="sc-screen__title">StitchCheck</h2>
               <p className="sc-screen__subtitle">
                 Check your multi-leg itinerary for connection risks and find safer alternatives.
