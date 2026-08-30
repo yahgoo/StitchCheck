@@ -17,6 +17,13 @@ import {
   type DaytonaLiveEnvelope,
 } from './data/daytona-live-risk';
 import { atlasSearch, atlasVerify } from './atlas/client';
+import {
+  CLIENT_TRANSIENT_ATTEMPTS,
+  CLIENT_TRANSIENT_DELAY_MS,
+  atlasErrorCode,
+  delay,
+  isTransientAtlasCode,
+} from './atlas/transient-retry';
 import { mapSearchResponseToResult, mapVerifyResponse, mapErrorToResult } from './atlas/adapter';
 import type { VerifySummary } from './atlas/adapter';
 import {
@@ -292,36 +299,50 @@ export default function App() {
         adults: 1,
         currency: 'USD',
       };
-      const response = await atlasSearch(params);
-      warnIfAtlasSearchRouteMismatch(response.offers, confirmed, 'first');
-      const result = mapSearchResponseToResult(response);
-      setAlternativesResult(result);
-      /* Track Atlas provider status from live Search result */
-      setAtlasProviderStatus({
-        provider: 'atlas',
-        status: result.executed && !result.fallbackUsed ? 'live-success' : 'live-failed',
-        executed: result.executed ?? true,
-        fallbackUsed: result.fallbackUsed ?? false,
-        evidenceSource: result.evidenceSource ?? 'atlas-sandbox',
-        retrievedAt: new Date().toISOString(),
-        correlationId: result.correlationId,
-      });
-    } catch (err) {
-      const code = err instanceof Error && 'code' in err ? (err as { code: string }).code : 'UNKNOWN';
-      const message = err instanceof Error ? err.message : 'Atlas Search failed';
-      const result = mapErrorToResult({ code, message });
-      setAlternativesResult(result);
-      setSearchError(message);
-      setAtlasProviderStatus({
-        provider: 'atlas',
-        status: 'live-failed',
-        executed: true,
-        fallbackUsed: false,
-        evidenceSource: 'atlas-sandbox',
-        retrievedAt: new Date().toISOString(),
-        correlationId: `error-${Date.now()}`,
-        errorCode: code,
-      });
+      let lastError: unknown;
+      for (let attempt = 0; attempt < CLIENT_TRANSIENT_ATTEMPTS; attempt += 1) {
+        try {
+          const response = await atlasSearch(params);
+          warnIfAtlasSearchRouteMismatch(response.offers, confirmed, 'first');
+          const result = mapSearchResponseToResult(response);
+          setAlternativesResult(result);
+          setAtlasProviderStatus({
+            provider: 'atlas',
+            status: result.executed && !result.fallbackUsed ? 'live-success' : 'live-failed',
+            executed: result.executed ?? true,
+            fallbackUsed: result.fallbackUsed ?? false,
+            evidenceSource: result.evidenceSource ?? 'atlas-sandbox',
+            retrievedAt: new Date().toISOString(),
+            correlationId: result.correlationId,
+          });
+          lastError = undefined;
+          break;
+        } catch (err) {
+          lastError = err;
+          const code = atlasErrorCode(err);
+          if (!isTransientAtlasCode(code) || attempt === CLIENT_TRANSIENT_ATTEMPTS - 1) {
+            break;
+          }
+          await delay(CLIENT_TRANSIENT_DELAY_MS);
+        }
+      }
+      if (lastError !== undefined) {
+        const code = atlasErrorCode(lastError) || 'UNKNOWN';
+        const message = lastError instanceof Error ? lastError.message : 'Atlas Search failed';
+        const result = mapErrorToResult({ code, message });
+        setAlternativesResult(result);
+        setSearchError(message);
+        setAtlasProviderStatus({
+          provider: 'atlas',
+          status: 'live-failed',
+          executed: true,
+          fallbackUsed: false,
+          evidenceSource: 'atlas-sandbox',
+          retrievedAt: new Date().toISOString(),
+          correlationId: `error-${Date.now()}`,
+          errorCode: code,
+        });
+      }
     } finally {
       setSearchLoading(false);
     }
@@ -338,11 +359,26 @@ export default function App() {
     setVerifyResult(null);
     setSelectedOfferId(offerId);
     try {
-      const response = await atlasVerify(offerId);
-      const summary = mapVerifyResponse(offerId, response);
-      setVerifyResult(summary);
-      if (shouldSelectPlanAfterVerify(summary.status)) {
-        setDecision('switch');
+      let summary: VerifySummary | null = null;
+      for (let attempt = 0; attempt < CLIENT_TRANSIENT_ATTEMPTS; attempt += 1) {
+        try {
+          const response = await atlasVerify(offerId);
+          summary = mapVerifyResponse(offerId, response);
+          if (shouldSelectPlanAfterVerify(summary.status)) break;
+          if (!isTransientAtlasCode(summary.code) || attempt === CLIENT_TRANSIENT_ATTEMPTS - 1) break;
+        } catch (err) {
+          const code = atlasErrorCode(err);
+          if (!isTransientAtlasCode(code) || attempt === CLIENT_TRANSIENT_ATTEMPTS - 1) {
+            throw err;
+          }
+        }
+        await delay(CLIENT_TRANSIENT_DELAY_MS);
+      }
+      if (summary) {
+        setVerifyResult(summary);
+        if (shouldSelectPlanAfterVerify(summary.status)) {
+          setDecision('switch');
+        }
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Atlas Verify failed';
@@ -374,8 +410,8 @@ export default function App() {
   useEffect(() => {
     const confirmed = confirmedItinerary;
     if (step !== 'options' || !isLive || !confirmed) return undefined;
-    if (searchLoading) return undefined;
-    if (!alternativesResult && !searchError) return undefined;
+    if (searchLoading || searchError) return undefined;
+    if (!alternativesResult || alternativesResult.searchStatus !== 'completed') return undefined;
 
     let cancelled = false;
 
@@ -1172,6 +1208,7 @@ export default function App() {
               <SandboxOrderPanel
                 key={`sandbox-panel-${sandboxPanelKey}`}
                 bookingId={verifyResult.bookingId}
+                travelers={verifyResult.travelers}
                 offerId={selectedOfferId}
                 verifyStatus={verifyResult.status}
               />

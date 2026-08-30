@@ -92,6 +92,7 @@ assert(!isRetryableAtlasResult(transient('OFFER_EXPIRED')), 'non-transient offer
   const listSource = readFileSync(resolve(ROOT, 'app/src/components/LiveAlternativesList.tsx'), 'utf8');
   assert(gateSource.includes("return status === 'success'"), 'selection gate remains success-only');
   assert(appSource.includes('if (shouldSelectPlanAfterVerify(summary.status))'), 'App applies selection only through the success gate');
+  assert(appSource.includes('isTransientAtlasCode'), 'App retries transient Search/Verify without a second click');
   assert(listSource.includes("isVerifying ? 'Verifying…' : 'Verify and select plan'"), 'Verify UI remains honestly in progress across proxy retries');
 }
 
