@@ -125,6 +125,7 @@ out/
 !app/src/assets/*.jpg
 !smoke-tests/extraction/fixtures/*.png
 !smoke-tests/extraction/fixtures/*.svg
+!assets/qr-repo-branch.png
 
 # Keep the final Alibaba x Atlas submission deck versioned.
 !deck/
