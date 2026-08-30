@@ -42,14 +42,15 @@ StitchCheck extracts structured itinerary data from a flight screenshot using **
 
 Primary sponsors:
 
-- **Daytona** — sandboxed, reproducible risk-computation worker (`daytona-risk-worker-v1`) runs connection-risk scoring in an isolated, network-blocked sandbox (risk score 54, risk band *medium*, 6 ms worker latency). Live evidence is surfaced directly in the UI under "How this was calculated" with the tag `Source: Daytona sandbox · live`.
-- **Nosana** — the Monte Carlo connection-risk simulation runs as a Nosana GPU job. Completed-job evidence — job ID, `evidenceSource: "nosana-evidence"`, `fallbackUsed: false`, risk band *medium* (0.2895 over 800 simulations, $0.044 cost), IPFS-anchored job definition and result hashes — is reconciled and surfaced to the user as `Nosana · live` in the provider bar.
-
-Supporting providers:
-
 - **Atlas Sandbox** — live Search/Verify calls find and verify real single-ticket alternatives (18 alternatives surfaced in the final live walkthrough), strictly **read-only**: no booking, payment, order, or ticketing writes.
 - **MiniMax M3** (via Nosana) — itinerary screenshot-to-structured-data extraction, replacing manual data entry and feeding directly into the risk simulation.
 - **Alibaba Cloud** — target infrastructure for the submission stack. Current state: **local dev / staged** — nothing is deployed yet. A minimal, fail-closed deployment path (SAE container + OSS evidence store + KMS secrets, ap-southeast-1) is specified in [`deploy/README.md`](deploy/README.md), with a buildable image at [`deploy/Dockerfile`](deploy/Dockerfile) that hardcodes the safety defaults and must pass `verify:offline` during build.
+  
+
+Supporting providers:
+- **Daytona** — sandboxed, reproducible risk-computation worker (`daytona-risk-worker-v1`) runs connection-risk scoring in an isolated, network-blocked sandbox (risk score 54, risk band *medium*, 6 ms worker latency). Live evidence is surfaced directly in the UI under "How this was calculated" with the tag `Source: Daytona sandbox · live`.
+- **Nosana** — the Monte Carlo connection-risk simulation runs as a Nosana GPU job. Completed-job evidence — job ID, `evidenceSource: "nosana-evidence"`, `fallbackUsed: false`, risk band *medium* (0.2895 over 800 simulations, $0.044 cost), IPFS-anchored job definition and result hashes — is reconciled and surfaced to the user as `Nosana · live` in the provider bar.
+
 
 ## Provider and evidence status
 
