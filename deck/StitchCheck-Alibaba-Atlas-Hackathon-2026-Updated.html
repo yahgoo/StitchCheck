@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>StitchCheck — Itinerary Risk Checker | Alibaba Cloud × Atlas Agentic AI Hackathon</title>
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --ink-soft: #4a4a68;
+    --accent: #2c5cff;
+    --accent-warm: #ff6b35;
+    --success: #0f9d58;
+    --bg: #f6f7fb;
+    --card: #ffffff;
+    --line: #e3e6f0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #d8dbe6; }
+  body {
+    font-family: "Avenir Next", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--ink);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .slide {
+    width: 1280px;
+    height: 720px;
+    margin: 24px auto;
+    background: var(--card);
+    border-radius: 14px;
+    box-shadow: 0 8px 30px rgba(26, 26, 46, 0.14);
+    padding: 64px 72px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .slide::after {
+    content: attr(data-num);
+    position: absolute;
+    right: 28px;
+    bottom: 20px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    letter-spacing: 0.06em;
+  }
+  .slide::before {
+    content: "StitchCheck · Alibaba Cloud × Atlas Agentic AI Hackathon";
+    position: absolute;
+    left: 72px;
+    bottom: 20px;
+    font-size: 13px;
+    color: #9aa0b5;
+    letter-spacing: 0.04em;
+  }
+  .kicker {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+  h1 { font-size: 56px; line-height: 1.08; letter-spacing: -0.02em; }
+  h2 { font-size: 38px; line-height: 1.15; letter-spacing: -0.015em; margin-bottom: 22px; }
+  p.lead { font-size: 22px; line-height: 1.45; color: var(--ink-soft); }
+  ul.bullets { list-style: none; margin-top: 10px; }
+  ul.bullets li {
+    font-size: 19px;
+    line-height: 1.45;
+    color: var(--ink);
+    padding-left: 26px;
+    position: relative;
+    margin-bottom: 14px;
+  }
+  ul.bullets li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 10px;
+    width: 9px;
+    height: 9px;
+    border-radius: 3px;
+    background: var(--accent);
+  }
+  ul.bullets li strong { color: var(--ink); }
+  ul.bullets li .sub { color: var(--ink-soft); }
+  .screenshot {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 8px;
+  }
+  .screenshot img {
+    max-width: 100%;
+    max-height: 420px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: 0 4px 18px rgba(26, 26, 46, 0.10);
+    object-fit: contain;
+  }
+  .screenshot.compact img { max-height: 250px; }
+  .jrow-4 .jstep { padding: 12px 12px; }
+  .jrow-4 .jstep .jicon { font-size: 26px; margin-bottom: 6px; }
+  .jrow-4 .jstep .jtitle { font-size: 17px; }
+  .jrow-4 .jstep .jsub { font-size: 13.5px; }
+  .caption {
+    text-align: center;
+    font-size: 15px;
+    color: var(--ink-soft);
+    margin-top: 12px;
+  }
+  .mono {
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 16px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 3px 10px;
+    white-space: nowrap;
+  }
+  .src-note {
+    margin-top: auto;
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    border-top: 1px solid var(--line);
+    padding-top: 12px;
+    line-height: 1.5;
+  }
+  .title-slide { justify-content: center; background: linear-gradient(135deg, #ffffff 0%, #eef1fc 100%); }
+  .title-slide h1 span { color: var(--accent); }
+  .pitch {
+    margin-top: 28px;
+    font-size: 21px;
+    line-height: 1.55;
+    color: var(--ink);
+    border-left: 4px solid var(--accent-warm);
+    padding-left: 20px;
+    max-width: 940px;
+  }
+  /* Traveler journey diagram (vector flow — not an app screenshot) */
+  .journey { display: flex; align-items: stretch; gap: 0; margin-top: 20px; }
+  .jstep {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 18px 16px;
+    text-align: center;
+  }
+  .jstep .jicon { font-size: 34px; line-height: 1; margin-bottom: 10px; }
+  .jstep .jtitle { font-size: 19px; font-weight: 800; color: var(--ink); }
+  .jstep .jsub { font-size: 14.5px; color: var(--ink-soft); margin-top: 6px; line-height: 1.35; }
+  .jarrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    font-size: 30px;
+    color: var(--accent);
+    flex: 0 0 44px;
+  }
+  .provider-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 6px; }
+  .provider {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 20px;
+  }
+  .provider .role { font-size: 14px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+  .provider .name { font-size: 22px; font-weight: 800; margin: 4px 0; }
+  .provider .desc { font-size: 15.5px; color: var(--ink-soft); line-height: 1.4; }
+  .provider .tag { display: inline-block; margin-top: 8px; font-size: 13px; font-weight: 700; color: var(--success); background: #eaf6ef; border: 1px solid #cbe9d6; border-radius: 999px; padding: 2px 12px; }
+  /* Mock-ticketing 8-step flow (vector diagram — Atlas Sandbox test flow) */
+  .flow-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 8px; }
+  .fstep {
+    position: relative;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 24px 14px 12px 14px;
+    min-height: 108px;
+  }
+  .fstep .fnum {
+    position: absolute;
+    top: -14px;
+    left: 14px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .fstep .ficon { font-size: 26px; margin-bottom: 6px; }
+  .fstep .ftitle { font-size: 17px; font-weight: 800; line-height: 1.25; }
+  .fstep .fsub { font-size: 13.5px; color: var(--ink-soft); margin-top: 5px; line-height: 1.35; }
+  .fstep.done { background: #eaf6ef; border-color: #bfe3cd; }
+  .fstep.done .fnum { background: var(--success); }
+  .flow-turn { text-align: center; font-size: 18px; color: var(--accent); margin: 2px 0; line-height: 1; }
+  .demo-callout {
+    margin-top: 12px;
+    background: #fff7ec;
+    border: 1.5px solid #f0cfa0;
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 17px;
+    font-weight: 700;
+    color: #8a5a00;
+    text-align: center;
+  }
+  /* Completion-state card (proof slide) */
+  .proof-card {
+    background: var(--bg);
+    border: 1.5px solid var(--line);
+    border-left: 6px solid var(--success);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-top: 14px;
+  }
+  .proof-card .pc-state { font-size: 22px; font-weight: 800; color: var(--success); }
+  .proof-card .pc-line { font-size: 17px; color: var(--ink); margin-top: 8px; line-height: 1.5; }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  .chip {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 7px 16px;
+    font-size: 15.5px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .cta {
+    display: inline-block;
+    margin-top: 18px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 20px;
+    font-weight: 700;
+    border-radius: 10px;
+    padding: 14px 26px;
+  }
+  .placeholder {
+    font-size: 18px;
+    color: var(--ink-soft);
+    margin-top: 10px;
+  }
+  .placeholder .mono { font-size: 15px; }
+  @media print {
+    html, body { background: #fff; }
+    .slide {
+      margin: 0;
+      border-radius: 0;
+      box-shadow: none;
+      page-break-after: always;
+      break-after: page;
+    }
+  }
+  @page { size: 1280px 720px; margin: 0; }
+</style>
+</head>
+<body>
+
+<!-- Slide 1 — Title -->
+<!-- Speaker notes: Introduce StitchCheck in one breath: we price the risk of a tight self-transfer before the traveller commits, and we rehearsed the full booking-to-ticket pipeline safely in the Atlas Sandbox. -->
+<section class="slide title-slide" data-num="1 / 8">
+  <div class="kicker">Alibaba Cloud × Atlas Agentic AI Hackathon</div>
+  <h1>StitchCheck<br /><span>Itinerary Risk Checker</span></h1>
+  <p class="pitch">
+    Check a connection, understand the risk, compare safer options, and verify before acting —
+    then rehearse the full order-to-ticket journey <strong>safely in the Atlas Sandbox</strong>.
+  </p>
+</section>
+
+<!-- Slide 2 — The traveler problem -->
+<!-- Speaker notes: Keep it in traveler language. A cheap itinerary with a tight self-transfer is where the real cost hides: one delayed leg and the second ticket is gone, with no rebooking owed. -->
+<section class="slide" data-num="2 / 8">
+  <div class="kicker">The Traveler Problem</div>
+  <h2>A tight connection can turn a cheap trip into a missed-flight cost</h2>
+  <ul class="bullets">
+    <li><strong>Two separate tickets, one fragile chain.</strong> <span class="sub">If the first flight runs late, the second ticket is the traveler's problem — no airline owes a rebooking.</span></li>
+    <li><strong>The price you saw isn't the price you get.</strong> <span class="sub">Fares drift between searching and booking, sometimes within minutes.</span></li>
+    <li><strong>The risk is invisible at checkout.</strong> <span class="sub">Booking sites show the cheapest option, never "will this connection fail you?"</span></li>
+    <li><strong>The way out is one search away — but never shown.</strong> <span class="sub">Single-ticket alternatives that remove the risk entirely rarely appear at the moment of decision.</span></li>
+  </ul>
+</section>
+
+<!-- Slide 3 — How StitchCheck helps (traveler journey) -->
+<!-- Speaker notes: The whole product is four steps on one screen. The diagram is the journey; the screenshot shows what the traveler actually sees after uploading a ticket screenshot. -->
+<section class="slide" data-num="3 / 8">
+  <div class="kicker">How StitchCheck Helps</div>
+  <h2>Four steps, one screen, before you commit</h2>
+  <div class="journey jrow-4" style="margin-top: 8px;">
+    <div class="jstep"><div class="jicon">🧾</div><div class="jtitle">Check a connection</div><div class="jsub">Upload your ticket screenshot — we read both legs</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep"><div class="jicon">⚠️</div><div class="jtitle">Understand the risk</div><div class="jsub">One clear score for "will this connection fail me?"</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep"><div class="jicon">🔀</div><div class="jtitle">Compare safer options</div><div class="jsub">Single-ticket alternatives that remove the risk</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep"><div class="jicon">✅</div><div class="jtitle">Verify before acting</div><div class="jsub">Confirm the fare is still current with Atlas</div></div>
+  </div>
+  <div class="screenshot compact"><img src="assets/03-options.png" alt="StitchCheck options screen showing risk headline and safer alternatives" /></div>
+  <p class="caption" style="margin-top: 8px;">StitchCheck options screen: the risk headline and safer single-ticket alternatives, together on one screen.</p>
+</section>
+
+<!-- Slide 4 — Live agentic workflow -->
+<!-- Speaker notes: Three sponsor compute paths plus Atlas, each doing one distinct job. Every card is backed by evidence captured in the submission walkthrough — provenance labels are state-derived, never hardcoded. -->
+<section class="slide" data-num="4 / 8">
+  <div class="kicker">Live Agentic Workflow</div>
+  <h2>Each service does one job — with visible evidence</h2>
+  <div class="provider-grid">
+    <div class="provider"><div class="role">Itinerary extraction</div><div class="name">MiniMax M3 via Nosana</div><div class="desc">Ticket screenshot → structured, editable itinerary. The "Extracted by MiniMax M3" tag is derived from real extraction state.</div><div class="tag">Live, verified</div></div>
+    <div class="provider"><div class="role">Risk computation</div><div class="name">Nosana</div><div class="desc">Monte Carlo connection-risk simulation on decentralized GPU — one completed job, IPFS-anchored evidence, surfaced as "Nosana · live".</div><div class="tag">Live, verified</div></div>
+    <div class="provider"><div class="role">Sandboxed scoring</div><div class="name">Daytona</div><div class="desc">Reproducible risk-scoring worker in an isolated, network-blocked sandbox — shown in-app under "How this was calculated".</div><div class="tag">Live, verified</div></div>
+    <div class="provider"><div class="role">Fares &amp; alternatives</div><div class="name">Atlas Sandbox · live</div><div class="desc">Real flight search and price verification behind a read-only gate — no booking writes on the verify path.</div><div class="tag">Live, verified</div></div>
+  </div>
+  <div class="src-note">Evidence per README "Submission evidence status": <span class="mono">demo-evidence/2026-08-29-submission-final/</span> · <span class="mono">smoke-tests/nosana/results/</span> · <span class="mono">smoke-tests/daytona/results/</span> · <span class="mono">smoke-tests/atlas/results/</span></div>
+</section>
+
+<!-- Slide 5 — Atlas Sandbox mock-ticketing flow (NEW; vector diagram, NOT an app screenshot) -->
+<!-- Speaker notes: This is the story upgrade: after verifying a safer option, the traveler can rehearse the ENTIRE booking pipeline. Walk the eight steps left-to-right, top row then bottom. Emphasize the footer: demo mode, nothing real is booked, charged, or issued. -->
+<section class="slide" data-num="5 / 8">
+  <div class="kicker">Atlas Sandbox Test Flow · Diagram</div>
+  <h2>From safer option to Ticketed — safely in Atlas Sandbox</h2>
+  <div class="flow-grid">
+    <div class="fstep"><div class="fnum">1</div><div class="ficon">🔀</div><div class="ftitle">Choose a safer option</div><div class="fsub">Traveler picks a verified single-ticket alternative</div></div>
+    <div class="fstep"><div class="fnum">2</div><div class="ficon">✅</div><div class="ftitle">Verify with Atlas</div><div class="fsub">Current fare confirmed via Atlas Sandbox</div></div>
+    <div class="fstep"><div class="fnum">3</div><div class="ficon">🧪</div><div class="ftitle">Start Sandbox rehearsal</div><div class="fsub">Explicit action in the Sandbox order panel</div></div>
+    <div class="fstep"><div class="fnum">4</div><div class="ficon">🛡️</div><div class="ftitle">Acknowledge test-only flow</div><div class="fsub">Human checkpoint before any write step</div></div>
+  </div>
+  <div class="flow-turn">↓</div>
+  <div class="flow-grid">
+    <div class="fstep"><div class="fnum">5</div><div class="ficon">🧾</div><div class="ftitle">Create test order</div><div class="fsub">Order exists only in the Atlas Sandbox environment</div></div>
+    <div class="fstep"><div class="fnum">6</div><div class="ficon">💳</div><div class="ftitle">Pay in Sandbox</div><div class="fsub">Sandbox payment confirmation — no real charge</div></div>
+    <div class="fstep done"><div class="fnum">7</div><div class="ficon">🎫</div><div class="ftitle">Ticketed (test environment)</div><div class="fsub">Terminal status reached in the rehearsal run</div></div>
+    <div class="fstep done"><div class="fnum">8</div><div class="ficon">📎</div><div class="ftitle">Sandbox PNR / ticket reference</div><div class="fsub">Labeled "Atlas Sandbox test data" in-app</div></div>
+  </div>
+  <div class="demo-callout">Demo mode — no real booking, charge, or airline ticket is created.</div>
+  <div class="src-note">Flow diagram (not an app screenshot). Successful rehearsal recorded in <span class="mono">output/atlas-sandbox-evidence-2026-08-29.jsonl</span> and README: order <span class="mono">TESTA20260829181717829</span>, PNR <span class="mono">S30798</span>, terminal status <span class="mono">TICKETED</span> — Atlas Sandbox only.</div>
+</section>
+
+<!-- Slide 6 — Reliability and safety -->
+<!-- Speaker notes: Reliability is designed in: transient provider hiccups are retried automatically while Verify is in flight; everything that could write money or tickets is behind fail-closed gates that default to OFF. -->
+<section class="slide" data-num="6 / 8">
+  <div class="kicker">Reliability &amp; Safety</div>
+  <h2>Forgiving on flakiness, strict on anything that writes</h2>
+  <ul class="bullets">
+    <li><strong>One-click Verify, resilient underneath.</strong> <span class="sub">Search and Verify retry transient provider availability issues (e.g. <span class="mono">SERVICE_TEMPORARILY_UNAVAILABLE</span>) automatically while the UI is loading — no silent dead ends.</span></li>
+    <li><strong>Fail-closed safety gates protect order, payment, and ticketing steps.</strong> <span class="sub">A 7-layer gate chain — all seven must pass before any sandbox write executes; every flag defaults to off:</span></li>
+  </ul>
+  <div class="chip-row">
+    <span class="chip">Ticketing availability</span><span class="chip">Authorization</span><span class="chip">Route requirements</span><span class="chip">Sandbox mode</span><span class="chip">Sandbox base-URL exact match</span><span class="chip">Payment confirmation</span><span class="chip">Ticketing confirmation</span><span class="chip">Verification</span>
+  </div>
+  <ul class="bullets" style="margin-top: 16px;">
+    <li><strong>Production and sandbox writes are mutually exclusive.</strong> <span class="sub">The production write kill switch stays off — enforced and covered by the offline gate test suite.</span></li>
+    <li><strong>No real payment or ticket issuance.</strong> <span class="sub">Everything past Verify happens in the Atlas Sandbox test environment.</span></li>
+  </ul>
+  <div class="src-note">Per README safety architecture (7-layer gate chain) and <span class="mono">app/src/atlas/transient-retry.ts</span> (docs/session-handoff-2026-08-30-transient-retry-commit.md).</div>
+</section>
+
+<!-- Slide 7 — Proof of the end-to-end journey (completion-state diagram, not an app screenshot) -->
+<!-- Speaker notes: The claim is narrow and checkable: one full pipeline run reached Ticketed in the sandbox, with a sandbox PNR reference. The evidence file names the order; the README records the PNR. No production ticket was ever issued. -->
+<section class="slide" data-num="7 / 8">
+  <div class="kicker">Proof of the End-to-End Journey</div>
+  <h2>Search → Verify → Order → Pay → Ticketed</h2>
+  <p class="lead">The full pipeline was executed end-to-end against the Atlas Sandbox — test environment only.</p>
+  <div class="proof-card">
+    <div class="pc-state">✓ Completion state — Ticketed (test environment)</div>
+    <div class="pc-line">Sandbox rehearsal finished with terminal status <span class="mono">TICKETED</span> and a <span class="mono">Sandbox PNR / ticket reference</span> (Atlas Sandbox test data).</div>
+    <div class="pc-line">Recorded in <span class="mono">output/atlas-sandbox-evidence-2026-08-29.jsonl</span> · order <span class="mono">TESTA20260829181717829</span> · PNR <span class="mono">S30798</span> (README submission evidence).</div>
+  </div>
+  <div class="journey" style="margin-top: 22px;">
+    <div class="jstep"><div class="jtitle">Search</div><div class="jsub">Atlas Sandbox</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep"><div class="jtitle">Verify</div><div class="jsub">fare confirmed current</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep"><div class="jtitle">Order</div><div class="jsub">test order created</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep"><div class="jtitle">Pay</div><div class="jsub">sandbox confirmation</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep" style="background:#eaf6ef; border-color:#bfe3cd;"><div class="jtitle" style="color:var(--success);">Ticketed</div><div class="jsub">test environment</div></div>
+  </div>
+  <div class="src-note">Completion-state diagram (not an app screenshot). Pay steps with transient timeouts were re-driven to accepted <span class="mono">TICKETED</span> outcomes — see the 2026-08-29 / 2026-08-30 evidence logs.</div>
+</section>
+
+<!-- Slide 8 — Closing / call to action -->
+<!-- Speaker notes: Close on the traveler value, not the stack. Links intentionally say "to be added" — replace after hosting/uploading. -->
+<section class="slide title-slide" data-num="8 / 8">
+  <div class="kicker">Closing</div>
+  <h1 style="font-size: 44px;">StitchCheck makes risky connections<br /><span>understandable before they become expensive.</span></h1>
+  <p class="pitch">Understand the risk, compare safer options, verify the fare — and rehearse the whole journey to Ticketed, safely, in the Atlas Sandbox.</p>
+  <p class="placeholder">GitHub: <span class="mono">[to be added]</span> &nbsp;·&nbsp; Demo video: <span class="mono">[to be added]</span></p>
+  <div><span class="cta">Try it: upload a ticket screenshot → see the risk → choose the safer way</span></div>
+</section>
+
+</body>
+</html>

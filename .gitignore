@@ -125,3 +125,10 @@ out/
 !app/src/assets/*.jpg
 !smoke-tests/extraction/fixtures/*.png
 !smoke-tests/extraction/fixtures/*.svg
+
+# Keep the final Alibaba x Atlas submission deck versioned.
+!deck/
+deck/*
+!deck/StitchCheck-Alibaba-Atlas-Hackathon-2026-Updated.html
+!deck/StitchCheck-Alibaba-Atlas-Hackathon-2026-Updated.pdf
+!deck/export-updated-deck-pdf.mjs
