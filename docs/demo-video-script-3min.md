@@ -54,7 +54,7 @@
 
 **Voiceover:**
 
-> Under the hood, three providers do real work. MiniMax M3 via OpenRouter performs live extraction — schema-validated, no fallback. Nosana runs the risk workload as a decentralized GPU job — one live job accepted and completed, result recovered and validated. Atlas Sandbox powers flight search and fare verification — strictly read-only. The app runs on Alibaba Cloud infrastructure.
+> Under the hood, three providers do real work. MiniMax M3 via OpenRouter performs live extraction — schema-validated, no fallback. Nosana runs the risk workload as a decentralized GPU job — one live job accepted and completed, result recovered and validated. Atlas Sandbox powers flight search and fare verification — strictly read-only. The app today runs in local dev, staged on an Alibaba Cloud deployment path (SAE + OSS + KMS, ap-southeast-1) — nothing is deployed to production yet.
 >
 > Safety is architecture, not a disclaimer. A confirmation gate keeps every downstream panel locked until the traveller confirms. Labels are chosen from evidence fields — source, executed, fallback used — so an offline fixture can never be labelled as live evidence. Cross-provider tests enforce that invariant. The Nosana client refuses to run without explicit transport and authorization. Nothing writes without an explicit human confirmation.
 
@@ -80,7 +80,7 @@
 
 **Voiceover:**
 
-> StitchCheck: validate before you commit. Powered by Nosana, Atlas, and Alibaba Cloud. Everything you saw was sandbox and mock — no booking, payment, or ticket was created. Safe, reproducible, and honest.
+> StitchCheck: validate before you commit. Built with Nosana, Atlas, Daytona, and a staged Alibaba Cloud deployment path. Everything you saw was sandbox and mock — no booking, payment, or ticket was created. Safe, reproducible, and honest.
 
 **On-screen proof:** Closing statement: "No booking, payment, reservation, ticket, order, verification, or other write action has been created."
 
@@ -99,7 +99,7 @@
 | S7 | 1:05–1:18 | Alternatives panel | Featured card plus expanded list of 20 cards, price-sorted; cursor clicks the featured card's action button | Wide framing of the grid, then **zoom in** on the featured card and button | `Live Atlas alternatives (20)`; `Lowest price shown`; `Verify and select plan` → `Verifying…`; `See more live alternatives (19)`; source tag `Local fixture` / `Atlas Sandbox — live Search/Verify` per evidence state |
 | S8 | 1:18–1:30 | Mock ticketing flow | Sandbox rehearsal panel stepping through Confirm → Order → Pay → Ticketed | Step cuts on each state change; hold on terminal copy | Badge `Atlas Sandbox rehearsal` + `Test environment only`; checkbox `I understand this is a Sandbox test: no real booking, no real charge, no airline ticket will ever be created.`; buttons `Create sandbox test order`, `Review sandbox payment (test)`, `Pay sandbox test order (simulated)`; status `Sandbox test order created (unpaid, simulated). No real charge has occurred.`; terminal `Sandbox rehearsal complete: a simulated ticket was issued in the test environment. No real ticket exists.`; footnote `Sandbox only — synthetic passenger — no real payment and no real ticket` |
 | S9 | 1:30–1:48 | Providers | Provider status panel: MiniMax M3 / Nosana / Atlas rows | Slow rack down the list | `MiniMax M3 via OpenRouter — live extraction validated`; `Nosana — live job completed, result validated`; `Atlas Sandbox — live Search/Verify` |
-| S10 | 1:48–2:15 | Safety architecture | Text-overlay callout cards over a dimmed app background | Static cards, staggered fade-in | Callouts: confirmation gate; evidence-driven labels; offline client boundary; Alibaba Cloud infrastructure |
+| S10 | 1:48–2:15 | Safety architecture | Text-overlay callout cards over a dimmed app background | Static cards, staggered fade-in | Callouts: confirmation gate; evidence-driven labels; offline client boundary; Alibaba Cloud deployment path (staged) |
 | S11 | 2:15–2:30 | User correction moment | Flight-number field edited SC-202 → SC-299; correction note appears | **Zoom in** on the field, then on the note | `Corrections recorded`; note `User corrected secondLeg.flightNumber from SC-202 to SC-299` |
 | S12 | 2:30–2:45 | Human boundary | Locked panels before confirm vs unlocked after; decision controls | Split-screen or wipe transition | `Confirm itinerary first`; decision options `Keep` / `Switch` |
 | S13 | 2:45–3:00 | Close | End card: Nosana + Atlas + Alibaba Cloud; safety statement | Fade-in, hold | `No booking, payment, reservation, ticket, order, verification, or other write action has been created.` |

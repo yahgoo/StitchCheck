@@ -34,7 +34,7 @@ StitchCheck extracts structured itinerary data from a flight screenshot using **
 | **MiniMax M3** (via Nosana) | Screenshot → structured itinerary extraction |
 | **Nosana** | Risk computation — Monte Carlo connection-risk simulation on decentralized GPU compute |
 | **Atlas Sandbox** | Flight search / verification of safer single-ticket alternatives |
-| **Alibaba Cloud** | Infrastructure |
+| **Alibaba Cloud** | Infrastructure — local dev today; staged SAE + OSS + KMS deployment path in [`deploy/README.md`](deploy/README.md) |
 
 **Safety architecture**: 7-layer gate chain (kill switch, live mode, read-only, production flag exclusion, sandbox environment, sandbox base URL exact match, execution approval) — all fail-closed by default.
 
@@ -49,7 +49,7 @@ Supporting providers:
 
 - **Atlas Sandbox** — live Search/Verify calls find and verify real single-ticket alternatives (18 alternatives surfaced in the final live walkthrough), strictly **read-only**: no booking, payment, order, or ticketing writes.
 - **MiniMax M3** (via Nosana) — itinerary screenshot-to-structured-data extraction, replacing manual data entry and feeding directly into the risk simulation.
-- **Alibaba Cloud** — underlying infrastructure for the submission stack.
+- **Alibaba Cloud** — target infrastructure for the submission stack. Current state: **local dev / staged** — nothing is deployed yet. A minimal, fail-closed deployment path (SAE container + OSS evidence store + KMS secrets, ap-southeast-1) is specified in [`deploy/README.md`](deploy/README.md), with a buildable image at [`deploy/Dockerfile`](deploy/Dockerfile) that hardcodes the safety defaults and must pass `verify:offline` during build.
 
 ## Provider and evidence status
 
@@ -74,8 +74,9 @@ Evidence: `output/atlas-sandbox-evidence-2026-08-29.jsonl` (orderNo redacted by 
 
 ## Demo Assets
 
-- **Presentation deck (HTML):** [`deck/index.html`](deck/index.html) — 10 slides, printable to PDF via browser print-to-PDF
-- **Deck PDF:** [StitchCheck-Daytona-Nosana-Hackathon-2026.pdf](deck/StitchCheck-Daytona-Nosana-Hackathon-2026.pdf) — export from `deck/index.html`
+- **Presentation deck (HTML):** [`deck/StitchCheck-Alibaba-Atlas-Hackathon-2026-Updated.html`](deck/StitchCheck-Alibaba-Atlas-Hackathon-2026-Updated.html) — current submission deck (includes Alibaba Cloud staged-infrastructure, How-the-Agent-Decides, Built-with-Qoder, and business-case slides)
+- **Deck PDF:** [StitchCheck-Alibaba-Atlas-Hackathon-2026-Updated.pdf](deck/StitchCheck-Alibaba-Atlas-Hackathon-2026-Updated.pdf) — export via `node deck/export-updated-deck-pdf.mjs`
+- **Earlier deck (superseded):** [`deck/index.html`](deck/index.html) (10 slides) / [StitchCheck-Daytona-Nosana-Hackathon-2026.pdf](deck/StitchCheck-Daytona-Nosana-Hackathon-2026.pdf)
 - **Demo video:** Local artifact — see [Video Artifacts](#video-artifacts) section below. Not yet uploaded to an external platform.
 <!-- TODO: add Google Drive link to updated deck once uploaded -->
 
@@ -88,7 +89,7 @@ The repo includes a fully functional mock ticketing flow that runs against the A
 - **Evidence:** `output/atlas-sandbox-evidence-2026-08-29.jsonl` (bookingId `book_ae786a2307f7d670b2f114fd`)
 - **Implementation:** `scripts/atlas-sandbox-writes.mjs`, `app/src/components/SandboxOrderPanel.tsx`, `scripts/sandbox-write-gate-tests.mjs`
 
-See the "Mock Ticketing Flow" slide (slide 8) in the deck for the full safety gate chain.
+See the "Atlas Sandbox Test Flow" slide (slide 6) and the "Reliability & Safety" slide (slide 7) in `deck/StitchCheck-Alibaba-Atlas-Hackathon-2026-Updated.html` for the full safety gate chain.
 
 **To enable mock ticketing** (for testing only — not for production):
 
@@ -274,7 +275,24 @@ To view: open any `.mp4` file in a media player. All videos were rendered offlin
 
 ## Development attribution
 
-- **Development:** Built with Qoder (AI-assisted development).
+### Built with Qoder
+
+StitchCheck was developed end-to-end in the **Qoder agentic coding environment** using a **Spec → Agent → Expert → Agent** workflow: every feature was specified before code was written, implemented by the Qoder Agent, reviewed by Expert subagents (CodeReview / Plan), and verified by offline test suites before merge. Full walkthrough: [`docs/qoder-implementation-evidence.md`](docs/qoder-implementation-evidence.md).
+
+Reproducible evidence (run `node scripts/qoder-build-evidence.mjs` to regenerate):
+
+| Artifact | Count | Location |
+|---|---|---|
+| Qoder Specs (feature/integration/build specs) | 30 | `.qoder/specs/` |
+| Agent prompt briefs driving Qoder sessions | 54 Qoder-briefed (122 total agent briefs incl. Cursor/Codex review passes) | `a/` |
+| Qoder workflow docs (implementation evidence, credit budget, session handoff) | 3 | `docs/` |
+| Session handoff records between Qoder sessions | 16 | `docs/session-handoff-*.md` |
+| Shipped source produced via Qoder sessions | 85 files / ~15.8k lines (`core/` + `workers/` + `app/`) | repo-wide |
+| Offline test suites generated via Qoder sessions | 50 files / ~22.3k lines | `smoke-tests/`, `workers/*/tests/` |
+| Live evidence records (job/sandbox/walkthrough) | 48 files | `smoke-tests/**/results/`, `demo-evidence/` |
+
+Qoder-generated examples with file-level proof: the shared core (`core/domain/`, `core/provenance/`, `core/safety/`), the Daytona risk worker (`workers/daytona-risk-worker/`), the recovery-plan animation (`app/src/components/RecoveryPlanAnimation.tsx`), and the 354-assertion sandbox write-gate suite (`smoke-tests/atlas/sandbox-write-gate-tests.mjs`). **All application source and tests were produced through Qoder agent sessions**; review-only passes (README/deck iterations) also ran through Cursor and Codex briefs logged in `a/`.
+
 - **Travel-tech context:** WiT Singapore is the travel-tech context, not an endorsement.
 
 ## Repository Structure
@@ -292,7 +310,8 @@ smoke-tests/
   daytona/                    Daytona runner results and offline tests
   cross-provider-invariant-tests.mjs
   provenance-label-offline-tests.mjs
-scripts/                      Capture, orchestrator, live-runner, and preflight scripts
+scripts/                      Capture, orchestrator, live-runner, preflight, and Qoder-evidence scripts
+deploy/                       Alibaba Cloud deployment path (staged): Dockerfile + plan
 workers/
   daytona-risk-worker/        Daytona sandbox risk-computation worker (daytona-risk-worker-v1)
   daytona-atlas-worker/       Daytona Atlas worker (not live)

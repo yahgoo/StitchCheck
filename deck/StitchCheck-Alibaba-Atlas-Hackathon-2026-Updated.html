@@ -86,6 +86,8 @@
   }
   ul.bullets li strong { color: var(--ink); }
   ul.bullets li .sub { color: var(--ink-soft); }
+  ul.bullets.compact li { font-size: 17px; margin-bottom: 10px; line-height: 1.4; }
+  ul.bullets.compact li::before { top: 9px; }
   .screenshot {
     flex: 1;
     display: flex;
@@ -173,6 +175,27 @@
   .provider .name { font-size: 22px; font-weight: 800; margin: 4px 0; }
   .provider .desc { font-size: 15.5px; color: var(--ink-soft); line-height: 1.4; }
   .provider .tag { display: inline-block; margin-top: 8px; font-size: 13px; font-weight: 700; color: var(--success); background: #eaf6ef; border: 1px solid #cbe9d6; border-radius: 999px; padding: 2px 12px; }
+  .provider.staged { grid-column: 1 / -1; border-left: 5px solid var(--accent-warm); display: flex; flex-wrap: wrap; align-items: center; gap: 2px 14px; padding: 8px 18px; }
+  .provider.staged .tag { margin: 0 0 0 auto; color: #8a5a00; background: #fff7ec; border-color: #f0cfa0; }
+  .provider-grid.rows-3 .provider { padding: 12px 18px; }
+  .provider-grid.rows-3 { gap: 12px 16px; }
+  .provider-grid.rows-3 .provider .name { font-size: 19px; margin: 2px 0; }
+  .provider-grid.rows-3 .provider .desc { font-size: 13.5px; line-height: 1.3; }
+  .provider-grid.rows-3 .provider .tag { margin-top: 5px; }
+  .provider.staged .role { margin: 0; }
+  .provider.staged .name { margin: 0; }
+  .provider.staged .desc { flex: 1 1 100%; }
+  .envelope {
+    margin-top: 12px;
+    background: var(--bg);
+    border: 1px dashed var(--line);
+    border-radius: 10px;
+    padding: 10px 18px;
+    font-size: 15.5px;
+    color: var(--ink-soft);
+    text-align: center;
+  }
+  .envelope strong { color: var(--ink); }
   /* Mock-ticketing 8-step flow (vector diagram — Atlas Sandbox test flow) */
   .flow-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 8px; }
   .fstep {
@@ -238,7 +261,7 @@
   }
   .cta {
     display: inline-block;
-    margin-top: 18px;
+    margin-top: 14px;
     background: var(--accent);
     color: #fff;
     font-size: 20px;
@@ -269,7 +292,7 @@
 
 <!-- Slide 1 — Title -->
 <!-- Speaker notes: Introduce StitchCheck in one breath: we price the risk of a tight self-transfer before the traveller commits, and we rehearsed the full booking-to-ticket pipeline safely in the Atlas Sandbox. -->
-<section class="slide title-slide" data-num="1 / 8">
+<section class="slide title-slide" data-num="1 / 11">
   <div class="kicker">Alibaba Cloud × Atlas Agentic AI Hackathon</div>
   <h1>StitchCheck<br /><span>Itinerary Risk Checker</span></h1>
   <p class="pitch">
@@ -280,7 +303,7 @@
 
 <!-- Slide 2 — The traveler problem -->
 <!-- Speaker notes: Keep it in traveler language. A cheap itinerary with a tight self-transfer is where the real cost hides: one delayed leg and the second ticket is gone, with no rebooking owed. -->
-<section class="slide" data-num="2 / 8">
+<section class="slide" data-num="2 / 11">
   <div class="kicker">The Traveler Problem</div>
   <h2>A tight connection can turn a cheap trip into a missed-flight cost</h2>
   <ul class="bullets">
@@ -293,7 +316,7 @@
 
 <!-- Slide 3 — How StitchCheck helps (traveler journey) -->
 <!-- Speaker notes: The whole product is four steps on one screen. The diagram is the journey; the screenshot shows what the traveler actually sees after uploading a ticket screenshot. -->
-<section class="slide" data-num="3 / 8">
+<section class="slide" data-num="3 / 11">
   <div class="kicker">How StitchCheck Helps</div>
   <h2>Four steps, one screen, before you commit</h2>
   <div class="journey jrow-4" style="margin-top: 8px;">
@@ -309,23 +332,38 @@
   <p class="caption" style="margin-top: 8px;">StitchCheck options screen: the risk headline and safer single-ticket alternatives, together on one screen.</p>
 </section>
 
-<!-- Slide 4 — Live agentic workflow -->
-<!-- Speaker notes: Three sponsor compute paths plus Atlas, each doing one distinct job. Every card is backed by evidence captured in the submission walkthrough — provenance labels are state-derived, never hardcoded. -->
-<section class="slide" data-num="4 / 8">
-  <div class="kicker">Live Agentic Workflow</div>
-  <h2>Each service does one job — with visible evidence</h2>
-  <div class="provider-grid">
-    <div class="provider"><div class="role">Itinerary extraction</div><div class="name">MiniMax M3 via Nosana</div><div class="desc">Ticket screenshot → structured, editable itinerary. The "Extracted by MiniMax M3" tag is derived from real extraction state.</div><div class="tag">Live, verified</div></div>
-    <div class="provider"><div class="role">Risk computation</div><div class="name">Nosana</div><div class="desc">Monte Carlo connection-risk simulation on decentralized GPU — one completed job, IPFS-anchored evidence, surfaced as "Nosana · live".</div><div class="tag">Live, verified</div></div>
-    <div class="provider"><div class="role">Sandboxed scoring</div><div class="name">Daytona</div><div class="desc">Reproducible risk-scoring worker in an isolated, network-blocked sandbox — shown in-app under "How this was calculated".</div><div class="tag">Live, verified</div></div>
-    <div class="provider"><div class="role">Fares &amp; alternatives</div><div class="name">Atlas Sandbox · live</div><div class="desc">Real flight search and price verification behind a read-only gate — no booking writes on the verify path.</div><div class="tag">Live, verified</div></div>
-  </div>
-  <div class="src-note">Evidence per README "Submission evidence status": <span class="mono">demo-evidence/2026-08-29-submission-final/</span> · <span class="mono">smoke-tests/nosana/results/</span> · <span class="mono">smoke-tests/daytona/results/</span> · <span class="mono">smoke-tests/atlas/results/</span></div>
+<!-- Slide 4 — How the agent decides (Block C) -->
+<!-- Speaker notes: This is the agentic core, in plain words: hard constraints are non-negotiable and violations are printed, trade-offs are presented as options, and the agent is allowed to say "no safe plan". Every write stops at a human. -->
+<section class="slide" data-num="4 / 11">
+  <div class="kicker">How the Agent Decides</div>
+  <h2>Constraints first, trade-offs second, a human last</h2>
+  <ul class="bullets">
+    <li><strong>Hard constraints first.</strong> <span class="sub">Connection window, airport changes, viability threshold — violations are listed, never hidden.</span></li>
+    <li><strong>Then trade-offs.</strong> <span class="sub">Price Δ vs arrival impact vs buffer minutes; missing data prints "not available", never fabricated.</span></li>
+    <li><strong>Re-plans max twice.</strong> <span class="sub">And "no safe plan" is an answer it will show you.</span></li>
+    <li><strong>Every write stops at a human.</strong> <span class="sub">7 gates, all fail-closed.</span></li>
+  </ul>
+  <div class="src-note">Constraint ordering and fallback semantics per <span class="mono">core/domain/</span> and <span class="mono">core/safety/</span>; gate chain covered in detail on the Reliability &amp; Safety slide.</div>
 </section>
 
-<!-- Slide 5 — Atlas Sandbox mock-ticketing flow (NEW; vector diagram, NOT an app screenshot) -->
+<!-- Slide 5 — Live agentic workflow + Alibaba Cloud (Block A extends the service table) -->
+<!-- Speaker notes: Three sponsor compute paths plus Atlas, each doing one distinct job. Every card is backed by evidence captured in the submission walkthrough — provenance labels are state-derived, never hardcoded. The fifth card is deliberately tagged staged — honest about deployment status. -->
+<section class="slide" data-num="5 / 11">
+  <div class="kicker">Live Agentic Workflow</div>
+  <h2>Each service does one job — with visible evidence</h2>
+  <div class="provider-grid rows-3">
+    <div class="provider"><div class="role">Itinerary extraction</div><div class="name">MiniMax M3 via Nosana</div><div class="desc">Ticket screenshot → structured, editable itinerary — the in-app "Extracted by MiniMax M3" tag is state-derived.</div><div class="tag">Live, verified</div></div>
+    <div class="provider"><div class="role">Risk computation</div><div class="name">Nosana</div><div class="desc">Monte Carlo connection-risk simulation on decentralized GPU — one completed job, IPFS-anchored evidence.</div><div class="tag">Live, verified</div></div>
+    <div class="provider"><div class="role">Sandboxed scoring</div><div class="name">Daytona</div><div class="desc">Reproducible risk-scoring worker in an isolated, network-blocked sandbox — shown in-app under "How this was calculated".</div><div class="tag">Live, verified</div></div>
+    <div class="provider"><div class="role">Fares &amp; alternatives</div><div class="name">Atlas Sandbox · live</div><div class="desc">Real flight search and price verification behind a read-only gate — no booking writes on the verify path.</div><div class="tag">Live, verified</div></div>
+    <div class="provider staged"><div class="role">Where it runs</div><div class="name">Alibaba Cloud · staged</div><div class="tag">Staged — not deployed yet</div><div class="desc">Local dev today → staged for Alibaba Cloud (ap-southeast-1, Singapore): SAE container from our fail-closed Dockerfile · OSS private evidence store (SSE-KMS) · KMS-injected secrets — no key ever in image or git. Security: VPC-isolated, egress allow-listed to sponsor APIs; risk compute stays in Daytona's network-blocked sandbox. Envelope: &lt; US$16/mo demo scale · measured 6 ms risk compute · $0.044 Monte-Carlo job.</div></div>
+  </div>
+  <div class="src-note" style="margin-top: 6px;">Evidence per README "Submission evidence status": <span class="mono">demo-evidence/2026-08-29-submission-final/</span> · <span class="mono">smoke-tests/nosana/results/</span> · <span class="mono">smoke-tests/daytona/results/</span> · <span class="mono">smoke-tests/atlas/results/</span> · deployment path per <span class="mono">deploy/README.md</span></div>
+</section>
+
+<!-- Slide 6 — Atlas Sandbox mock-ticketing flow (vector diagram, NOT an app screenshot) -->
 <!-- Speaker notes: This is the story upgrade: after verifying a safer option, the traveler can rehearse the ENTIRE booking pipeline. Walk the eight steps left-to-right, top row then bottom. Emphasize the footer: demo mode, nothing real is booked, charged, or issued. -->
-<section class="slide" data-num="5 / 8">
+<section class="slide" data-num="6 / 11">
   <div class="kicker">Atlas Sandbox Test Flow · Diagram</div>
   <h2>From safer option to Ticketed — safely in Atlas Sandbox</h2>
   <div class="flow-grid">
@@ -345,9 +383,9 @@
   <div class="src-note">Flow diagram (not an app screenshot). Successful rehearsal recorded in <span class="mono">output/atlas-sandbox-evidence-2026-08-29.jsonl</span> and README: order <span class="mono">TESTA20260829181717829</span>, PNR <span class="mono">S30798</span>, terminal status <span class="mono">TICKETED</span> — Atlas Sandbox only.</div>
 </section>
 
-<!-- Slide 6 — Reliability and safety -->
+<!-- Slide 7 — Reliability and safety -->
 <!-- Speaker notes: Reliability is designed in: transient provider hiccups are retried automatically while Verify is in flight; everything that could write money or tickets is behind fail-closed gates that default to OFF. -->
-<section class="slide" data-num="6 / 8">
+<section class="slide" data-num="7 / 11">
   <div class="kicker">Reliability &amp; Safety</div>
   <h2>Forgiving on flakiness, strict on anything that writes</h2>
   <ul class="bullets">
@@ -364,9 +402,9 @@
   <div class="src-note">Per README safety architecture (7-layer gate chain) and <span class="mono">app/src/atlas/transient-retry.ts</span> (docs/session-handoff-2026-08-30-transient-retry-commit.md).</div>
 </section>
 
-<!-- Slide 7 — Proof of the end-to-end journey (completion-state diagram, not an app screenshot) -->
+<!-- Slide 8 — Proof of the end-to-end journey (completion-state diagram, not an app screenshot) -->
 <!-- Speaker notes: The claim is narrow and checkable: one full pipeline run reached Ticketed in the sandbox, with a sandbox PNR reference. The evidence file names the order; the README records the PNR. No production ticket was ever issued. -->
-<section class="slide" data-num="7 / 8">
+<section class="slide" data-num="8 / 11">
   <div class="kicker">Proof of the End-to-End Journey</div>
   <h2>Search → Verify → Order → Pay → Ticketed</h2>
   <p class="lead">The full pipeline was executed end-to-end against the Atlas Sandbox — test environment only.</p>
@@ -389,13 +427,55 @@
   <div class="src-note">Completion-state diagram (not an app screenshot). Pay steps with transient timeouts were re-driven to accepted <span class="mono">TICKETED</span> outcomes — see the 2026-08-29 / 2026-08-30 evidence logs.</div>
 </section>
 
-<!-- Slide 8 — Closing / call to action -->
-<!-- Speaker notes: Close on the traveler value, not the stack. Links intentionally say "to be added" — replace after hosting/uploading. -->
-<section class="slide title-slide" data-num="8 / 8">
-  <div class="kicker">Closing</div>
-  <h1 style="font-size: 44px;">StitchCheck makes risky connections<br /><span>understandable before they become expensive.</span></h1>
-  <p class="pitch">Understand the risk, compare safer options, verify the fare — and rehearse the whole journey to Ticketed, safely, in the Atlas Sandbox.</p>
-  <p class="placeholder">GitHub: <span class="mono">[to be added]</span> &nbsp;·&nbsp; Demo video: <span class="mono">[to be added]</span></p>
+<!-- Slide 9 — Built with Qoder (Block B) -->
+<!-- Speaker notes: The build trail itself is evidence: every spec, brief, and number on this slide is reproducible with one local command. ≈38k LOC = shipped source + offline test suites, per scripts/qoder-build-evidence.mjs. -->
+<section class="slide" data-num="9 / 11">
+  <div class="kicker">Built with Qoder</div>
+  <h2>Spec → Agent → Expert → offline tests — before any merge</h2>
+  <div class="journey jrow-4" style="margin-top: 8px;">
+    <div class="jstep"><div class="jicon">📐</div><div class="jtitle">30 Qoder Specs</div><div class="jsub">authored in .qoder/specs/ before code</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep"><div class="jicon">🤖</div><div class="jtitle">Agent implementation</div><div class="jsub">≈38k lines shipped across Qoder agent sessions (app core, workers, 50 offline test suites)</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep"><div class="jicon">👓</div><div class="jtitle">Expert review</div><div class="jsub">multi-agent review pass on each implementation</div></div>
+    <div class="jarrow">→</div>
+    <div class="jstep"><div class="jicon">🧪</div><div class="jtitle">Offline tests</div><div class="jsub">full suite must pass before any merge</div></div>
+  </div>
+  <div class="chip-row" style="margin-top: 18px;">
+    <span class="chip">30 specs</span><span class="chip">≈38k lines shipped</span><span class="chip">50 offline test suites</span><span class="chip">≈123 agent prompt briefs in-repo (a/)</span>
+  </div>
+  <ul class="bullets compact" style="margin-top: 16px;">
+    <li><strong>The full build trail is auditable.</strong> <span class="sub">Every agent prompt brief is kept in-repo under <span class="mono">a/</span> — nothing was summarized after the fact.</span></li>
+    <li><strong>Reproduce it yourself:</strong> <span class="mono">node scripts/qoder-build-evidence.mjs</span> <span class="sub">— prints spec, brief, LOC, and test-suite counts from this repo.</span></li>
+  </ul>
+  <div class="src-note">Counts verified 2026-08-30 by the script above; workflow documented in <span class="mono">docs/qoder-implementation-evidence.md</span>.</div>
+</section>
+
+<!-- Slide 10 — Why this matters (Block E, business case) -->
+<!-- Speaker notes: Land the stakes: an unpriced, unprotected behaviour at APAC scale; we measured the fare volatility live; each warning is a switch moment we can monetize. -->
+<section class="slide" data-num="10 / 11">
+  <div class="kicker">Why This Matters</div>
+  <h2>An unpriced, unprotected behavior at APAC scale</h2>
+  <ul class="bullets">
+    <li><strong>A multi-billion behavior, zero contractual protection.</strong> <span class="sub">Self-transfer stitching is how APAC LCC travellers buy — the traveller carries 100% of the risk.</span></li>
+    <li><strong>One misconnection costs US$150–400 to rebook.</strong> <span class="sub">And we watched a "current" fare swing +217% ($64.38 → $203.99) in one search→verify cycle.</span></li>
+    <li><strong>Every risk warning is a monetizable switch moment:</strong> <span class="sub">a verified single ticket, offered at booking-intent peak.</span></li>
+    <li><strong>Model:</strong> <span class="sub">per-booking fee on converted alternatives (OTA/TMC) · per-check SaaS (insurers).</span></li>
+  </ul>
+  <div class="src-note">+217% fare swing is our own measured evidence: README "Submission evidence status" · fare <span class="mono">off_11db11bad81302c295da16f1</span>. Rebooking-cost range is an industry estimate, not our measurement.</div>
+</section>
+
+<!-- Slide 11 — Final CTA / where to verify (Block D, replaces the previous end card) -->
+<!-- Speaker notes: Close on traveler value, then hand judges the exact artifacts: repo branch, deck, video, and one offline verify command. Everything on this slide is checkable today. -->
+<section class="slide title-slide" data-num="11 / 11">
+  <div class="kicker">Closing · Where to Verify Everything</div>
+  <h1 style="font-size: 36px;">StitchCheck makes risky connections<br /><span>understandable before they become expensive.</span></h1>
+  <ul class="bullets compact" style="margin-top: 20px; max-width: 1060px;">
+    <li><strong>Code:</strong> <span class="mono">github.com/yahgoo/StitchCheck</span> → branch <span class="mono">feature/atlas-sandbox-mock-ticketing</span> <span class="sub">(QR placeholder — point at the repo branch, not a demo URL)</span></li>
+    <li><strong>Deck:</strong> <span class="sub">Google Drive link — <strong>TODO</strong>, upload <span class="mono">deck/StitchCheck-Alibaba-Atlas-Hackathon-2026-Updated.pdf</span></strong></li>
+    <li><strong>Demo video:</strong> <span class="sub">local artifact, recording now — will be linked from the README "Demo video" line</span></li>
+    <li><strong>One command to verify everything offline:</strong> <span class="mono">npm --prefix app run verify:offline</span></li>
+  </ul>
   <div><span class="cta">Try it: upload a ticket screenshot → see the risk → choose the safer way</span></div>
 </section>
 
