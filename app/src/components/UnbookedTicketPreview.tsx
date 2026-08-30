@@ -23,7 +23,7 @@ export function UnbookedTicketPreview({
   return (
     <article
       className={`sc-unbooked-preview ${verified ? 'sc-unbooked-preview--verified' : 'sc-unbooked-preview--unverified'}`}
-      aria-label={`Unbooked preview ${index + 1}`}
+      aria-label={`Safer option ${index + 1}`}
     >
       {showDisclosureBanner && (
         <p className="sc-unbooked-preview__disclosure" role="note">
@@ -38,27 +38,18 @@ export function UnbookedTicketPreview({
         {shortStatus}
       </p>
 
-      {card.isLiveVerified && (
-        <span className="sc-source-tag sc-source-tag--live sc-unbooked-preview__live-tag">
-          Atlas Sandbox · live
-        </span>
-      )}
-
       <header className="sc-unbooked-preview__header">
         <h4 className="sc-unbooked-preview__route">{card.routeSummary}</h4>
         <p className="sc-unbooked-preview__meta">
           {card.connectionType} · {card.departureTime}–{card.arrivalTime}
+          {card.isLiveVerified ? ' · Price checked just now.' : ''}
         </p>
       </header>
 
       {verified && card.verifySummary && (
         <dl className="sc-unbooked-preview__details">
           <div>
-            <dt>Offer</dt>
-            <dd>{card.offerReference}</dd>
-          </div>
-          <div>
-            <dt>Search price</dt>
+            <dt>Price</dt>
             <dd>{card.priceDisplay}</dd>
           </div>
           {card.verifySummary.currentPrice !== 'Not available from Atlas response' && (

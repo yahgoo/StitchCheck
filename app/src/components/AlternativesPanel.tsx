@@ -124,11 +124,8 @@ export function AlternativesPanel({
                   <dt>Connection:</dt><dd>{alt.connectionDurationMinutes} min</dd>
                   <dt>Price:</dt><dd>{alt.priceDisplay}</dd>
                   <dt>Currency:</dt><dd>{alt.currency}</dd>
-                  <dt>Availability:</dt><dd>{alt.availabilityLabel}</dd>
                 </dl>
-                <p className="sc-alt-ref">
-                  Offer ID: {alt.offerReference} (display-only)
-                </p>
+                <p className="sc-price-checked">Price checked just now.</p>
                 {isLive && onVerifyOffer && (
                   <button
                     type="button"

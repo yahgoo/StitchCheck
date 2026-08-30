@@ -992,6 +992,51 @@
   font-weight: 600;
 }
 
+.sc-risk-status-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.5rem;
+}
+
+.sc-status-chip {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+}
+
+.sc-status-chip--at-risk {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #f59e0b;
+}
+
+.sc-risk-reason {
+  font-size: 1rem;
+  color: #334155;
+  margin: 0 0 1rem;
+  line-height: 1.45;
+}
+
+.sc-how-we-checked {
+  margin-top: 0.5rem;
+}
+
+.sc-how-we-checked .sc-source-note {
+  text-align: left;
+  margin-top: 0.5rem;
+}
+
+.sc-price-checked {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin: 0.35rem 0 0;
+}
+
 .sc-screen__intro {
   font-size: 1rem;
   color: #555;

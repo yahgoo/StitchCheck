@@ -46,9 +46,10 @@ function AlternativeCard({
         <span className="sc-alt-card__lowest-price">Lowest price shown</span>
       )}
       <h4>{alt.routeSummary}</h4>
-      <p>{alt.connectionType} · {alt.departureTime}–{alt.arrivalTime}</p>
-      <p>Price: {alt.priceDisplay} · Offer: {alt.offerReference}</p>
-      <p>Availability: {alt.availabilityLabel}</p>
+      <p>{alt.departureTime}–{alt.arrivalTime}</p>
+      <p>{alt.connectionType}</p>
+      <p>Price: {alt.priceDisplay}</p>
+      <p className="sc-price-checked">Price checked just now.</p>
       {decision !== 'switch' && decision !== 'keep' && (
         <button
           className="sc-btn sc-btn--small sc-btn--primary"
@@ -93,6 +94,8 @@ export function LiveAlternativesList({
 }: LiveAlternativesListProps) {
   const [expanded, setExpanded] = useState(false);
   const { featured, remaining } = splitAlternativesForDisplay(alternatives);
+  const previewExtras = remaining.slice(0, 2);
+  const overflow = remaining.slice(2);
 
   if (!featured) return null;
 
@@ -100,7 +103,7 @@ export function LiveAlternativesList({
     <div className="sc-more-options">
       <h3 className="sc-more-options__title">
         <Icon name="airplane" />
-        Live Atlas alternatives ({alternatives.length})
+        Safer options ({alternatives.length})
       </h3>
 
       <div className="sc-more-options__featured">
@@ -114,9 +117,22 @@ export function LiveAlternativesList({
           decision={decision}
           onVerifyAndSelectPlan={onVerifyAndSelectPlan}
         />
+        {previewExtras.map((alt) => (
+          <AlternativeCard
+            key={alt.offerReference}
+            alt={alt}
+            isFeatured={false}
+            showLowestPriceLabel={false}
+            selectedOfferId={selectedOfferId}
+            verifyResult={verifyResult}
+            verifyLoading={verifyLoading}
+            decision={decision}
+            onVerifyAndSelectPlan={onVerifyAndSelectPlan}
+          />
+        ))}
       </div>
 
-      {remaining.length > 0 && (
+      {remaining.length > 2 && overflow.length > 0 && (
         <>
           {!expanded && (
             <button
@@ -125,16 +141,17 @@ export function LiveAlternativesList({
               onClick={() => setExpanded(true)}
               aria-expanded={false}
             >
-              See more live alternatives ({remaining.length})
+              See more live alternatives ({overflow.length})
             </button>
           )}
 
           {expanded && (
             <div
               className="sc-more-options__remaining"
-              aria-label={`${remaining.length} additional live alternatives`}
+              aria-label={`${overflow.length} additional live alternatives`}
             >
-              {remaining.map((alt) => (
+              {remaining.map((alt, index) => (
+                index < 2 ? null : (
                 <AlternativeCard
                   key={alt.offerReference}
                   alt={alt}
@@ -146,6 +163,7 @@ export function LiveAlternativesList({
                   decision={decision}
                   onVerifyAndSelectPlan={onVerifyAndSelectPlan}
                 />
+                )
               ))}
             </div>
           )}

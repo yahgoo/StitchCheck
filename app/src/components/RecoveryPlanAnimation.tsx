@@ -47,8 +47,22 @@ interface Props {
 }
 
 /** Render a non-critical value, or a low-alarm placeholder when null. */
+const SANDBOX_MISSING = 'not available from Sandbox response';
+
+function isSandboxMissing(value: string | number | null): boolean {
+  return value === SANDBOX_MISSING;
+}
+
 function valueOrNotAvailable(value: string | number | null): string {
-  return value === null ? NON_CRITICAL_MISSING : String(value);
+  if (value === null) return NON_CRITICAL_MISSING;
+  if (isSandboxMissing(value)) return 'Time not available';
+  return String(value);
+}
+
+function departureOrUnavailable(value: string | number | null): string {
+  if (value === null) return NON_CRITICAL_MISSING;
+  if (isSandboxMissing(value)) return 'Departure time unavailable';
+  return String(value);
 }
 
 /** Format an ISO timestamp into a readable UTC string, e.g. "23 Aug 2026, 09:00 UTC".
@@ -90,7 +104,7 @@ function OptionCard({ option, variant }: { option: RecoveryOption; variant?: str
       <dl className="rpa-option__details">
         <div className="rpa-option__row">
           <dt>Departs</dt>
-          <dd>{valueOrNotAvailable(option.departureTime)}</dd>
+          <dd>{departureOrUnavailable(option.departureTime)}</dd>
         </div>
         <div className="rpa-option__row">
           <dt>Arrives</dt>
@@ -105,17 +119,14 @@ function OptionCard({ option, variant }: { option: RecoveryOption; variant?: str
         {option.connectionType !== null && (
           <span className="rpa-option__tag">{option.connectionType}</span>
         )}
-        {option.availabilityLabel !== null && (
-          <span className="rpa-option__tag">{option.availabilityLabel}</span>
-        )}
-        {option.priceDisplay !== null ? (
+        {option.priceDisplay !== null && !isSandboxMissing(option.priceDisplay) ? (
           <span className="rpa-option__price">
             {option.priceDisplay}
             {option.currency !== null ? ` ${option.currency}` : ''}
           </span>
         ) : (
           <span className="rpa-option__price rpa-option__price--na">
-            {CRITICAL_MISSING}
+            {option.priceDisplay === null ? CRITICAL_MISSING : 'Price not available'}
           </span>
         )}
       </div>
@@ -206,7 +217,7 @@ function dataSourceToTag(
 function missingLabelForSource(
   source: RecoveryPlanAnimationData['dataSource'],
 ): string | undefined {
-  return source === 'daytona-live-risk' ? 'not available from Sandbox response' : undefined;
+  return source === 'daytona-live-risk' ? 'Time not available' : undefined;
 }
 
 export function RecoveryPlanAnimation({ data, executionMode: _executionMode }: Props) {
@@ -326,11 +337,15 @@ export function RecoveryPlanAnimation({ data, executionMode: _executionMode }: P
               {data.originalFirstLeg.routeSummary}
             </strong>
             <span className="rpa-trigger__times">
-              Dep {valueOrNotAvailable(data.originalFirstLeg.scheduledDeparture)} · Arr{' '}
+              Dep {departureOrUnavailable(data.originalFirstLeg.scheduledDeparture)} · Arr{' '}
               {valueOrNotAvailable(data.originalFirstLeg.scheduledArrival)}
             </span>
           </div>
-          <p className="rpa-trigger__label">{triggerLabel}</p>
+          {data.delayTrigger.isRealDelaySignal ? (
+            <p className="rpa-trigger__label">{triggerLabel}</p>
+          ) : (
+            <p className="rpa-sr-only">{SIMULATED_TRIGGER_LABEL}</p>
+          )}
         </div>
       </div>
 

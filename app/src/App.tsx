@@ -60,7 +60,12 @@ import {
 } from './data/minimax-visibility-copy';
 import { MiniMaxProvenanceTag } from './components/MiniMaxProvenanceTag';
 import { Icon } from './components/Icon';
+import { HowWeCheckedThis } from './components/HowWeCheckedThis';
 import { LuggageAirplaneHero } from './components/icons/LuggageAirplaneHero';
+import {
+  TIGHT_CONNECTION_REASON,
+  tightConnectionHeadline,
+} from './copy/connection-headline';
 /* Demo fixture screenshots bundled inline (base64 data URLs) so the live
  * Live extraction receives the same itinerary image the traveller
  * selected in the ticket selectors, not a stand-in placeholder image. */
@@ -701,7 +706,8 @@ export default function App() {
   const showMiniMaxOfflineExplanation =
     itineraryInputMode === 'sample' || confirmedItinerary?.inputMode === 'sample';
 
-  /* Risk headline score (0–100) — never invented; null when band is unavailable. */
+  /* Risk headline score (0–100) — never invented; null when band is unavailable.
+   * Shown in "How we checked this", not on the primary traveler headline. */
   const riskScoreOutOf100 =
     riskResult && riskResult.riskScore !== null && riskResult.riskBand !== 'unavailable'
       ? Math.round(riskResult.riskScore * 100)
@@ -713,6 +719,33 @@ export default function App() {
     ? ' — verified live'
     : ' — replayed evidence';
   const alternativesCount = alternatives.length;
+  const connectionAirport =
+    confirmedItinerary?.firstLeg.destination ?? extraction.firstLeg.destination;
+  const connectionMinutes =
+    confirmedItinerary?.connectionDurationMinutes ?? extraction.connectionDurationMinutes;
+  const optionsHeadline = tightConnectionHeadline(connectionMinutes, connectionAirport);
+  const evidenceSourceNote =
+    alternativesResult && alternativesResult.searchStatus === 'completed'
+      && alternativesResult.evidenceSource === 'atlas-sandbox'
+      && alternativesResult.executed === true
+      && alternativesResult.fallbackUsed === false
+      ? 'Source: Atlas Sandbox · live'
+      : alternativesResult && alternativesResult.searchStatus === 'completed'
+        ? 'Source: Local fixture'
+        : searchLoading
+          ? 'Checking current alternatives…'
+          : searchError
+            ? 'Live alternatives unavailable'
+            : 'Source: Offline fallback';
+  const pricesCheckedAt = alternativesResult?.retrievedAt
+    ? new Date(alternativesResult.retrievedAt).toLocaleString()
+    : 'just now';
+  const howCheckedTechnicalNotes = [
+    riskScoreOutOf100 !== null
+      ? `Connection risk score: ${riskScoreOutOf100}/100${riskProvenanceQualifier}.`
+      : null,
+    'Simulated delay trigger — downstream impact is analysis only',
+  ].filter((note): note is string => Boolean(note));
 
   return (
     <div className="sc-app">
@@ -1017,17 +1050,49 @@ export default function App() {
         {step === 'options' && (
           <section className="sc-screen sc-screen--options" aria-label="Your options">
             <h2 className="sc-screen__title">
-              {riskScoreOutOf100 !== null
-                ? `Your connection has a ${riskScoreOutOf100}/100 risk of failing you${riskProvenanceQualifier}.`
-                : 'Your connection is at risk'}
+              {optionsHeadline}
             </h2>
+            <div className="sc-risk-status-row">
+              <span className="sc-status-chip sc-status-chip--at-risk">At risk</span>
+            </div>
+            <p className="sc-risk-reason">{TIGHT_CONNECTION_REASON}</p>
 
-            {riskScoreOutOf100 !== null && alternativesCount > 0 && (
+            {alternativesCount > 0 && (
               <p className="sc-options-alternatives-lead">
-                {alternativesCount} single-ticket alternative
-                {alternativesCount === 1 ? '' : 's'} that remove this risk.
+                We found {alternativesCount} safer option{alternativesCount === 1 ? '' : 's'}
               </p>
             )}
+
+            <HowWeCheckedThis
+              open={showHowCalculated}
+              onToggle={setShowHowCalculated}
+              checkedAtLabel={pricesCheckedAt}
+              provenanceLabel={recoveryAnimationData?.provenanceLabel ?? null}
+              heuristicDisclaimer={howCalculated?.heuristicDisclaimer}
+              sourceNote={evidenceSourceNote}
+              extraTechnicalNotes={howCheckedTechnicalNotes}
+            >
+              {howCalculated && (
+                <>
+                  <p className="sc-how-calculated__risk-band">
+                    <Icon
+                      name="warning"
+                      className={
+                        howCalculated.riskBand === 'medium'
+                          ? 'sc-icon--risk-medium'
+                          : undefined
+                      }
+                    />
+                    Risk band: <strong>{howCalculated.riskBand}</strong>
+                  </p>
+                  <p className="sc-explanation">{howCalculated.failureCascadeExplanation}</p>
+                  <p className="sc-meta-small">
+                    Dataset: {howCalculated.datasetVersion}
+                    {howCalculated.latencyMs !== undefined && ` · Latency: ${howCalculated.latencyMs}ms`}
+                  </p>
+                </>
+              )}
+            </HowWeCheckedThis>
 
             {extractionError && !extractionLoading && (
               <div className="sc-banner sc-banner--error" role="alert">
@@ -1104,7 +1169,15 @@ export default function App() {
                     <div><dt>Onward</dt><dd>{recommendedPlan.onwardOption.routeSummary}</dd></div>
                   )}
                   {recommendedPlan.replacementFirstLeg.priceDisplay && (
-                    <div><dt>Price</dt><dd>{recommendedPlan.replacementFirstLeg.priceDisplay}</dd></div>
+                    <div>
+                      <dt>Price</dt>
+                      <dd>
+                        {recommendedPlan.replacementFirstLeg.priceDisplay ===
+                        'not available from Sandbox response'
+                          ? 'Price not available'
+                          : recommendedPlan.replacementFirstLeg.priceDisplay}
+                      </dd>
+                    </div>
                   )}
                 </dl>
                 {recommendedPlan.tradeoffs
@@ -1119,7 +1192,7 @@ export default function App() {
                     onClick={() => setDecision('switch')}
                     type="button"
                   >
-                    Switch to this plan
+                    Choose this safer option
                   </button>
                 )}
               </div>
@@ -1134,44 +1207,10 @@ export default function App() {
                     executionMode={recoveryExecutionMode}
                   />
                 )}
-
-                <details
-                  className="sc-how-calculated"
-                  open={showHowCalculated}
-                  onToggle={(e) => setShowHowCalculated((e.target as HTMLDetailsElement).open)}
-                >
-                  <summary>How this was calculated</summary>
-                  <div className="sc-how-calculated__body">
-                    {howCalculated && (
-                      <>
-                        {recoveryAnimationData && (
-                          <p data-testid="rpa-how-provenance">{recoveryAnimationData.provenanceLabel}</p>
-                        )}
-                        <p className="sc-how-calculated__risk-band">
-                          <Icon
-                            name="warning"
-                            className={
-                              howCalculated.riskBand === 'medium'
-                                ? 'sc-icon--risk-medium'
-                                : undefined
-                            }
-                          />
-                          Risk band: <strong>{howCalculated.riskBand}</strong>
-                        </p>
-                        <p className="sc-disclaimer">{howCalculated.heuristicDisclaimer}</p>
-                        <p className="sc-explanation">{howCalculated.failureCascadeExplanation}</p>
-                        <p className="sc-meta-small">
-                          Dataset: {howCalculated.datasetVersion}
-                          {howCalculated.latencyMs !== undefined && ` · Latency: ${howCalculated.latencyMs}ms`}
-                        </p>
-                      </>
-                    )}
-                  </div>
-                </details>
               </div>
             </details>
 
-            <h3 className="sc-options-section-title">Verified unbooked previews</h3>
+            <h3 className="sc-options-section-title">Safer options by flight</h3>
 
             {/* ── Per-leg unbooked ticket previews (read-only, up to 5 per leg) ── */}
             {isLive && (
@@ -1237,22 +1276,6 @@ export default function App() {
               </div>
             )}
 
-            {/* ── Source label — derived from provenance, not DATA_MODE ── */}
-            <p className="sc-source-note">
-              {alternativesResult && alternativesResult.searchStatus === 'completed'
-                && alternativesResult.evidenceSource === 'atlas-sandbox'
-                && alternativesResult.executed === true
-                && alternativesResult.fallbackUsed === false
-                ? 'Source: Atlas Sandbox · live'
-                : alternativesResult && alternativesResult.searchStatus === 'completed'
-                  ? 'Source: Local fixture'
-                  : searchLoading
-                    ? 'Checking current alternatives…'
-                    : searchError
-                      ? 'Live alternatives unavailable'
-                      : 'Source: Offline fallback'}
-            </p>
-
             {/* ── Decision section ── */}
             <div className="sc-decision-section">
               <h3 className="sc-decision-section__title">Your choice</h3>
@@ -1272,7 +1295,7 @@ export default function App() {
                     type="button"
                     aria-pressed={false}
                   >
-                    Switch to this plan
+                    Choose this safer option
                   </button>
                 )}
               </div>
@@ -1280,10 +1303,10 @@ export default function App() {
               {decision && (
                 <div className="sc-decision-confirm">
                   <p className="sc-decision-status">
-                    {decision === 'switch' ? 'Switch selected' : 'Keeping current itinerary'}
+                    {decision === 'switch' ? 'Choose this safer option' : 'Keeping current itinerary'}
                   </p>
-                  <p className="sc-safety-sentence">
-                    No booking action is taken. No booking, payment, reservation, or order is created. Search is read-only.
+                  <p className="sc-meta-small">
+                    No booking action is taken.
                   </p>
                   <button
                     className="sc-btn sc-btn--primary"
@@ -1304,7 +1327,7 @@ export default function App() {
             <div className="sc-screen__inner">
               <div className="sc-done-icon" aria-hidden="true">✓</div>
               <h2 className="sc-screen__title">
-                {decision === 'switch' ? 'Switch selected' : 'Itinerary kept'}
+                {decision === 'switch' ? 'Safer option chosen' : 'Itinerary kept'}
               </h2>
               <p className="sc-done-message">
                 {decision === 'switch'
