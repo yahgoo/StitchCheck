@@ -4,7 +4,7 @@ StitchCheck turns a flight screenshot into a confirmed itinerary, explains self-
 
 ## Hackathon Submission
 
-- **Event:** Alibaba Cloud x Atlas Agentic AI Hackathon — Daytona HackSprint, Singapore
+- **Event:** Alibaba Cloud x Atlas Agentic AI Hackathon, Singapore
 - **Project status:** Functional prototype — live, verified integrations across four sponsor stacks (Daytona, Nosana, Atlas Sandbox, MiniMax M3 via Nosana)
 - **Demo video:** Local artifact — see [Video Artifacts](#video-artifacts) section below. Not yet uploaded to an external platform.
 
@@ -75,8 +75,9 @@ Evidence: `output/atlas-sandbox-evidence-2026-08-29.jsonl` (orderNo redacted by 
 ## Demo Assets
 
 - **Presentation deck (HTML):** [`deck/index.html`](deck/index.html) — 10 slides, printable to PDF via browser print-to-PDF
-- **Deck PDF:** [StitchCheck-Deck-Daytona-Nosana-10-Slides.pdf](deck/StitchCheck-Deck-Daytona-Nosana-10-Slides.pdf) — export from `deck/index.html`
+- **Deck PDF:** [StitchCheck-Daytona-Nosana-Hackathon-2026.pdf](deck/StitchCheck-Daytona-Nosana-Hackathon-2026.pdf) — export from `deck/index.html`
 - **Demo video:** Local artifact — see [Video Artifacts](#video-artifacts) section below. Not yet uploaded to an external platform.
+<!-- TODO: add Google Drive link to updated deck once uploaded -->
 
 ## Mock Ticketing
 
